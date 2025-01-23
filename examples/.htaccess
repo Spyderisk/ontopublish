@@ -1,0 +1,38 @@
+# Turn off MultiViews
+Options -MultiViews
+
+# Directive to ensure *.rdf files served as appropriate content type, 
+# if not present in main apache config
+
+AddType	application/rdf+xml	.rdf
+AddType	application/n-triples	.nt
+AddType	text/turtle		.ttl
+
+# Rewrite engine setup
+RewriteEngine	On
+RewriteBase	/ns/beam
+
+# Serve RDF/XML serialization from vocabulary URI (latest version)
+RewriteCond %{HTTP_ACCEPT} application/rdf+xml
+RewriteRule ^ns/beam$ /ns/beam/0.1.1/beam.rdf [R=303,L]
+
+# Serve NT serialization from vocabulary URI (latest version)
+RewriteCond %{HTTP_ACCEPT} application/n-triples
+RewriteRule ^ns/beam$ /ns/beam/0.1.1/beam.nt [R=303,L]
+
+# Serve Turtle serialization from vocabulary URI (latest version)
+RewriteCond %{HTTP_ACCEPT} text/turtle [OR]
+RewriteCond %{HTTP_ACCEPT} text/\* [OR]
+RewriteCond %{HTTP_ACCEPT} \*/turtle
+RewriteRule ^ns/beam$ /ns/beam/0.1.1/beam.ttl [R=303,L]
+
+RewriteCond %{HTTP_ACCEPT} text/html
+RewriteRule ^ns/beam$ /ns/beam/0.1.1/index.html [R=303,L]
+
+
+# Redirect valid formats to latest version
+#RewriteCond %{HTTP_ACCEPT} text/turtle [OR]
+#RewriteCond %{HTTP_ACCEPT} application/rdf+xml [OR]
+#RewriteCond %{HTTP_ACCEPT} application/n-triples
+#RewriteRule ^ns/beam/beam.(.+)$ /ns/beam/0.1.1/beam.$1 [R=303,L]
+#RewriteRule ^$ns/beam/0.1.1/beam.ttl [R=303,L]
