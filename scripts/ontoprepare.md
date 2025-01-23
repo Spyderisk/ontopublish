@@ -91,9 +91,12 @@ Set the new version arbitrarily:
 Sample options:
 
 	ontoprepare [options]
-	-I --increment-major     Increment version major component
-	-i --increment-minor     Increment version minor component
-	-p --increment-patch     Increment version patch-level component
-	-f --force-version VSN   Use VSN as new version (MAJOR.MINOR.PATCH)
-	-d --directory DIR       Use DIR as ontology deployment directory
-	-h --help                Display this help message
+	  -I --increment-major     Increment version major component
+	  -i --increment-minor     Increment version minor component
+	  -p --increment-patch     Increment version patch-level component
+	  -f --force-version VSN   Use VSN as new version (MAJOR.MINOR.PATCH)
+	  -d --directory DIR       Use DIR as ontology deployment directory
+	  -E --exclude-preamble    Exclude the preamble so that output can be concatenated
+	  -V --version-only        Return the new, incremented version string only
+	  -h --help                Display this help message
+
