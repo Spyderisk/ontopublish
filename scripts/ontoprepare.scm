@@ -151,7 +151,7 @@
      (apply append
       (map rewrite-shim media/file-pairs)))))
 
-(define (make-htaccess-contents media/file-pairs target-base latest-version)
+(define (make-htaccess-contents media/file-pairs target-base latest-version exclude-preamble)
   (let* ((media/ext-pairs
           (map (lambda (pair)
 		(cons (car pair)
@@ -167,15 +167,17 @@
                        (string-append target-file-prefix
                                       "."(cdr pair))))
                media/file-pairs)
-          '(("text/html" . "index.html")))))
-        
-    (string-append
-     (make-lead-in '(["-" . "MultiViews"])
-		   media/ext-pairs
-		   (string-append "/" no-slash-preceding-base))
-     (make-rewrite-rules-proper pairs-with-html
-                                no-slash-preceding-base
-				latest-version))))
+          '(("text/html" . "index.html"))))
+        (must-include-rules
+         (make-rewrite-rules-proper pairs-with-html
+                                    no-slash-preceding-base
+                                    latest-version)))
+    (if exclude-preamble
+        must-include-rules
+        (string-append (make-lead-in '(["-" . "MultiViews"])
+                                     media/ext-pairs
+                                     (string-append "/" no-slash-preceding-base))
+                       must-include-rules))))
 
 (let* ((option-spec
 	'((increment-major (single-char #\I) (value #f))
@@ -183,13 +185,17 @@
           (increment-patch (single-char #\p) (value #f))
           (forced-version (single-char #\f) (value #t))
           (directory (single-char #\d) (value #t))
+          (version-only (single-char #\V) (value #f))
+          (exclude-preamble (single-char #\E) (value #f))
 	  (help (single-char #\h) (value #f))))
        (options (getopt-long (command-line) option-spec))
+       (exclude-preamble (option-ref options 'exclude-preamble #f))
        (incr-major (option-ref options 'increment-major #f))
        (incr-minor (option-ref options 'increment-minor #f))
        (incr-patch (option-ref options 'increment-patch #f))
        (forced-version (option-ref options 'forced-version #f))
        (set-cwd  (option-ref options 'directory #f))
+       (version-only (option-ref options 'version-only #f))
        (help (option-ref options 'help #f))
        (default-type-pairs '(("text/turtle" . "ttl")
                              ("application/n-triples" . "nt")
@@ -208,9 +214,12 @@
                     (and mo (match:substring mo))))))
   (cond (forced-version
          (cond ((and (chk-vsn forced-version) set-cwd) ;; correct version and Dir exists
-                (display (make-htaccess-contents default-type-pairs
-                                                 set-cwd
-                                                 forced-version)))
+                (if version-only
+                    (display forced-version)
+                    (display (make-htaccess-contents default-type-pairs
+                                                     set-cwd
+                                                     forced-version
+                                                     exclude-preamble))))
                ((access? set-cwd R_OK)
                 (display "Version should be of form MAJOR.MINOR.PATCH, components numeric"))
                (else
@@ -220,10 +229,13 @@
          (let* ((last-version (search-for-latest-version set-cwd))
                 (new-version (get-vsn last-version)))
            (if new-version
-               (display
-                (make-htaccess-contents default-type-pairs
-                                        set-cwd
-                                        new-version))
+               (if version-only
+                   (display new-version)
+                   (display
+                    (make-htaccess-contents default-type-pairs
+                                            set-cwd
+                                            new-version
+                                            exclude-preamble)))
                (display
                 (string-append "No such file or directory: " set-cwd)))))
         (else (display "\
@@ -233,6 +245,8 @@ ontoprepare [options]
   -p --increment-patch     Increment version patch-level component
   -f --force-version VSN   Use VSN as new version (MAJOR.MINOR.PATCH)
   -d --directory DIR       Use DIR as ontology deployment directory
+  -E --exclude-preamble    Exclude the preamble so that output can be concatenated
+  -V --version-only        Return the new, incremented version string only
   -h --help                Display this help message
 "))))
 (newline)
