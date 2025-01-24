@@ -4,10 +4,6 @@
 	     (ice-9 ftw)
              (ice-9 regex))
 
-;;
-;;;;
-;;
-
 (define (search-for-latest-version target-dir)
   (let* ((version-dirs (scandir target-dir))
          (re (make-regexp "^[0-9]+.[0-9]+.[0-9]+$"))
@@ -60,28 +56,46 @@
 (define (parse-version combined-version)
   (map string->number (string-split combined-version #\.)))
 
-(define-syntax increment-component
+(define-syntax reset-component
   (lambda (stx)
     (syntax-case stx (major minor patch)
-      [(increment-component vsn major minor patch)
+      [(reset-component minor vsn)
        #'(let ((split (parse-version vsn)))
-           (apply make-version
-                  (map (lambda (k) (+ 1 k))
-                       split)))]
-      [(increment-component vsn major)
+           (make-version (car split)
+                         0
+                         (caddr split)))]
+      [(reset-component patch vsn)
        #'(let ((split (parse-version vsn)))
-           (apply make-version `(,(+ 1 (car split)) . 
-                                 ,(cdr split))))]
-      [(increment-component vsn minor)
+           (make-version (car split)
+                         (cadr split)
+                         0))]
+      [(reset-component minor+patch vsn)
+       #'(reset-component minor
+          (reset-component patch vsn))])))
+      
+(define-syntax increment-component
+  (lambda (stx)
+    (syntax-case stx (major minor patch major+reset minor+reset)
+      [(increment-component major vsn)
        #'(let ((split (parse-version vsn)))
-           (make-version `,(car split)
-                         `,(+ 1 (cadr split))
-                         `,(caddr split)))]
-      [(increment-component vsn patch)
+            (apply make-version `(,(+ 1 (car split))
+                                . ,(cdr split))))]
+      [(increment-component minor vsn)
        #'(let ((split (parse-version vsn)))
-           (make-version `,(car split)
-                         `,(cadr split)
-                         `,(+ 1 (caddr split))))])))
+            (make-version (car split)
+                          (+ 1 (cadr split))
+                          (caddr split)))]
+      [(increment-component patch vsn)
+       #'(let ((split (parse-version vsn)))
+           (make-version (car split)
+                         (cadr split)
+                         (+ 1 (caddr split))))]
+      [(increment-component major+reset vsn)
+       #'(reset-component minor+patch
+           (increment-component major vsn))]
+      [(increment-component minor+reset vsn)
+       #'(reset-component patch
+           (increment-component minor vsn))])))
 
 (define (make-add-type type-pair)
   (let ((media-type (car type-pair))
@@ -134,19 +148,17 @@
 	       (cons (string-append last-rule "\n")
 		     (map pair-up leading-type-pairs)))))))
 
-
 (define (make-rewrite-rules-proper media/file-pairs no-slash-preceding-base latest-version)
-  (let* ((target-latest-version (lambda (target-file)
+  (let* ((incl-redir (lambda (target-file)
 	  (string-append "/" no-slash-preceding-base
 			 "/" latest-version
 			 "/" target-file)))
 	 (rewrite-shim
 	  (lambda (pair)
 	    (make-rewrite `(("%{HTTP_ACCEPT}" . ,(car pair)))
-			  (string-append "^" no-slash-preceding-base "$")
-			  (target-latest-version
-                           (cdr pair))
-			  303))))
+			  (string-append "^" (cdr pair) "$")
+			  (incl-redir (cdr pair))
+                          303))))
     (string-concatenate
      (apply append
       (map rewrite-shim media/file-pairs)))))
@@ -203,11 +215,9 @@
        (vsn-regexp (make-regexp "^[0-9]+.[0-9]+.[0-9]+$"))
        (get-vsn (lambda (last-version)
                   (cond ((not last-version) last-version)
-                        ((and incr-major incr-minor incr-patch)
-                         (increment-component last-version major minor patch))
-                        (incr-major (increment-component last-version major))
-                        (incr-minor (increment-component last-version minor))
-                        (incr-patch (increment-component last-version patch))
+                        (incr-major (increment-component major+reset last-version))
+                        (incr-minor (increment-component minor+reset last-version))
+                        (incr-patch (increment-component patch last-version))
                         (else #f))))
        (chk-vsn (lambda (vsn)
                   (let ((mo (regexp-exec vsn-regexp vsn)))
@@ -224,8 +234,7 @@
                 (display "Version should be of form MAJOR.MINOR.PATCH, components numeric"))
                (else
                 (display (string-append "No such file or directory: " set-cwd)))))
-        ((and set-cwd
-              (or incr-major incr-minor incr-patch))
+        (set-cwd
          (let* ((last-version (search-for-latest-version set-cwd))
                 (new-version (get-vsn last-version)))
            (if new-version
