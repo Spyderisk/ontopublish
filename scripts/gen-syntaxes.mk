@@ -83,16 +83,8 @@ save-old-htaccess:
 		mv -f $(TARGET_HTACCESS) $(INPUT_BASE).$(ORIGINAL_VERSION).htaccess.old
 	fi
 
-define tab "  "
-endef
-
-prep-mkdocs:
-	cat << EOF > /tmp/$(INPUT_BASE).mkdocs.yaml
-	site_name: $(TITLE)
-	docs_dir:  /tmp/docs
-	theme:
-	${tab}name: material
-	EOF
+prep-mkdocs: 
+	cat mkdocs.yaml.in | sed s/TITLE/${TITLE}/ > /tmp/${INPUT_BASE}.mkdocs.yaml
 
 $(SITE_DIR):
 	mkdir -p $@
