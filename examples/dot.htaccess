@@ -11,22 +11,26 @@ AddType	text/turtle		.ttl
 # Rewrite engine setup
 # RewriteBase doesn't seem to be necessary.
 RewriteEngine	On
-#RewriteBase	/ns/beam
+RewriteBase	/ns/beam
 
 # Serve RDF/XML serialization from vocabulary URI (latest version)
 RewriteCond %{HTTP_ACCEPT} application/rdf+xml
-RewriteRule ^beam$ /ns/beam/0.1.1/beam.rdf [R=303,L]
+#RewriteRule ^beam$ /ns/beam/0.1.1/beam.rdf [R=303,L]
+RewriteRule ^$ 0.1.1/beam.rdf [R=303,L]
 
 # Serve NT serialization from vocabulary URI (latest version)
 RewriteCond %{HTTP_ACCEPT} application/n-triples
-RewriteRule ^beam$ /ns/beam/0.1.1/beam.nt [R=303,L]
+#RewriteRule ^beam$ /ns/beam/0.1.1/beam.nt [R=303,L]
+RewriteRule ^$ 0.1.1/beam.nt [R=303,L]
 
 # Serve Turtle serialization from vocabulary URI (latest version)
 RewriteCond %{HTTP_ACCEPT} text/turtle [OR]
 RewriteCond %{HTTP_ACCEPT} text/\* [OR]
 RewriteCond %{HTTP_ACCEPT} \*/turtle
-RewriteRule ^beam$ /ns/beam/0.1.1/beam.ttl [R=303,L]
+#RewriteRule ^beam$ /ns/beam/0.1.1/beam.ttl [R=303,L]
+RewriteRule ^$ 0.1.1/beam.ttl [R=303,L]
 
 # Serve human-readable HTML documentation (latest version)
 RewriteCond %{HTTP_ACCEPT} text/html
-RewriteRule ^beam$ /ns/beam/0.1.1/index.html [R=303,L]
+#RewriteRule ^beam$ /ns/beam/0.1.1/index.html [R=303,L]
+RewriteRule ^$ 0.1.1/index.html [R=303,L]

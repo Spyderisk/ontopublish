@@ -112,8 +112,8 @@
 	      (list (string-concatenate
 		     (cons "Options" (map make-opt opt-pairs))))
 	      (map make-add-type type-pairs)
-	      (list "RewriteEngine On")))
-        ;(list (string-append "RewriteBase" " " dir-base))))
+	      (list "RewriteEngine On")
+              (list (string-append "RewriteBase" " " dir-base))))
 	(pair-up (lambda (k) (string-append k "\n"))))
     (string-concatenate
      (map pair-up (apply append tgt)))))
@@ -148,16 +148,14 @@
 	       (cons (string-append last-rule "\n")
 		     (map pair-up leading-type-pairs)))))))
 
-(define (make-rewrite-rules-proper media/file-pairs no-slash-preceding-base latest-version)
+(define (make-rewrite-rules-proper media/file-pairs latest-version)
   (let* ((incl-redir (lambda (target-file)
-	  (string-append "/" no-slash-preceding-base
-			 "/" latest-version
-			 "/" target-file)))
+	  (string-append latest-version "/" target-file)))
 	 (rewrite-shim
 	  (lambda (pair)
 	    (make-rewrite `(("%{HTTP_ACCEPT}" . ,(car pair)))
-			  (string-append "^" (cadr pair) "$")
-			  (incl-redir (caddr pair))
+			  "^$"
+			  (incl-redir (cdr pair))
                           303))))
     (string-concatenate
      (apply append
@@ -173,17 +171,15 @@
          (no-slash-preceding-base (extract-base-directory target-base))
          (target-file-prefix (extract-ending-file no-slash-preceding-base))
          (pairs-with-html
-          (append
+          (cons
+           '("text/html" . "index.html")
            (map (lambda (pair)
-                  (list (car pair)
-                        target-file-prefix
-                        (string-append target-file-prefix "." (cdr pair))))
-                media/file-pairs)
-           `(("text/html" ,target-file-prefix "index.html"))))
+                  (cons 
+                   (car pair)
+                   (string-append target-file-prefix "." (cdr pair))))
+                media/file-pairs)))
         (must-include-rules
-         (make-rewrite-rules-proper pairs-with-html
-                                    no-slash-preceding-base
-                                    latest-version)))
+         (make-rewrite-rules-proper pairs-with-html latest-version)))
     (if exclude-preamble
         must-include-rules
         (string-append (make-lead-in '(["-" . "MultiViews"])
@@ -198,6 +194,7 @@
           (forced-version (single-char #\F) (value #t))
           (directory (single-char #\d) (value #t))
           (version-only (single-char #\V) (value #f))
+          (prev-version (single-char #\L) (value #f))
           (exclude-preamble (single-char #\E) (value #f))
 	  (help (single-char #\h) (value #f))))
        (options (getopt-long (command-line) option-spec))
@@ -206,6 +203,7 @@
        (incr-minor (option-ref options 'increment-minor #f))
        (incr-patch (option-ref options 'increment-patch #f))
        (forced-version (option-ref options 'forced-version #f))
+       (prev-version (option-ref options 'prev-version #f))
        (set-cwd  (option-ref options 'directory #f))
        (version-only (option-ref options 'version-only #f))
        (help (option-ref options 'help #f))
@@ -221,32 +219,8 @@
                         (else #f))))
        (chk-vsn (lambda (vsn)
                   (let ((mo (regexp-exec vsn-regexp vsn)))
-                    (and mo (match:substring mo))))))
-  (cond (forced-version
-         (cond ((and (chk-vsn forced-version) set-cwd) ;; correct version and Dir exists
-                (if version-only
-                    (display forced-version)
-                    (display (make-htaccess-contents default-type-pairs
-                                                     set-cwd
-                                                     forced-version
-                                                     exclude-preamble))))
-               ((access? set-cwd R_OK)
-                (display "Version should be of form MAJOR.MINOR.PATCH, components numeric"))
-               (else
-                (display (string-append "No such file or directory: " set-cwd)))))
-        (set-cwd
-         (let* ((last-version (search-for-latest-version set-cwd))
-                (new-version (get-vsn last-version)))
-           (if new-version
-               (if version-only
-                   (display new-version)
-                   (display
-                    (make-htaccess-contents default-type-pairs
-                                            set-cwd
-                                            new-version
-                                            exclude-preamble)))
-                (display "Need an increment version component flag (-I|-i|-p), or force-set version (-F)"))))
-        (else (display "
+                    (and mo (match:substring mo)))))
+       (help-msg "
 ontoprepare [options]
   -I --increment-major     Increment version major component
   -i --increment-minor     Increment version minor component
@@ -255,6 +229,40 @@ ontoprepare [options]
   -d --directory DIR       Use DIR as ontology deployment directory
   -E --exclude-preamble    Exclude the preamble so that output can be concatenated
   -V --version-only        Return the new, incremented version string only
+  -L --last-version        Return the last valid version directory found
   -h --help                Display this help message
-"))))
+"))
+  (cond (help
+         (display help-msg))
+        (forced-version
+         (let ((goodv (chk-vsn forced-version)))
+           (if (not goodv)
+               (display "Version should be of form MAJOR.MINOR.PATCH, components numeric")
+               (if version-only
+                   (display forced-version)
+                   (if (and set-cwd (access? set-cwd R_OK))
+                       (display (make-htaccess-contents default-type-pairs
+                                                        set-cwd
+                                                        forced-version
+                                                        exclude-preamble))
+                       (display "No such file or directory"))))))
+        ((not set-cwd)
+         (display "No such file or directory"))
+        (set-cwd
+         (let* ((last-version (search-for-latest-version set-cwd))
+                (new-version (get-vsn last-version)))
+           (cond (prev-version (display last-version))
+                 ((and new-version version-only)
+                  (display new-version))
+                 (new-version
+                  (display (make-htaccess-contents default-type-pairs
+                                                   set-cwd
+                                                   new-version
+                                                   exclude-preamble)))
+                 ((and set-cwd (access? set-cwd R_OK))
+                  (display "Need an increment version component flag (-I|-i|-p), or force-set version (-F)"))
+                 (else
+                  (display "No such file or directory")))))
+        (else
+         (display help-msg))))
 (newline)

@@ -19,11 +19,11 @@ The other assumption that we make about versioning is that when incrementing a m
 
 ## In practice
 
-The script generates an initial `.htaccess` file. This file will sit at the same level as the ontologies (e.g. under `ns/.htaccess` for ontologies like `ns/beam`, `ns/core`). This rewrites requests at the top-level (`ns/<ontology-base-name>`), given the requisite content-type headers, to lead to the various serialisations.
+The script generates an initial `.htaccess` file. The purpose of this is to redirect requests to the latest version, and to rewrite requests so that they go to the requested RDF syntax/serialisation. The script is designed to be called by a makefile, and the assumption is that subsequent, separate stages will generate the serialisations and HTML.
+
+The `.htaccess` file will sit at the same level as the ontology in question, so there is one per ontology. This does duplicate work—since we might in principle want a single, simple `.htaccess` configuration which handles only the content type headers—but for each deployed vocabulary, it lets us generate different rules, formats and pointers to latest versions. 
 
 The rules are that with `text/html`, the human-readable documentation is returned at `index.html`. That's what happens when we use a web browser. The other requests (e.g. `application/n-triples`) point to the right serialisation.
-
-This is designed to be called by a makefile, and the assumption is that subsequent, separate stages will generate the serialisations and HTML.
 
 This script is written in Scheme. It is moderately complex, so a shell-scripting language isn't practical, and we imagine working on the RDF directly in future to annotate it with versions. We also imagine working with non-RDF formats. It doesn't write to the filesystem at the moment, but prepares an existing well-formed structure.
 
@@ -89,12 +89,13 @@ Set the new version arbitrarily:
 
 Sample options:
 
-	ontoprepare [options]
-      -I --increment-major     Increment version major component
+    ontoprepare [options]
+	  -I --increment-major     Increment version major component
 	  -i --increment-minor     Increment version minor component
 	  -p --increment-patch     Increment version patch-level component
 	  -F --force-version VSN   Use VSN as new version (MAJOR.MINOR.PATCH)
 	  -d --directory DIR       Use DIR as ontology deployment directory
 	  -E --exclude-preamble    Exclude the preamble so that output can be concatenated
 	  -V --version-only        Return the new, incremented version string only
+	  -L --last-version        Return the last valid version directory found
 	  -h --help                Display this help message

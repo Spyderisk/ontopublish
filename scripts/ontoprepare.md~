@@ -1,0 +1,42 @@
+# Preparation script for deployment
+## Preamble
+This preparation script has two elements:
+
+1. Increment the version (major, minor or patch-level components) from the latest version. (See https://semver.org/)
+2. Generate a new `.htaccess` document pointing to that new version, with redirects for the standard semweb content types.
+
+## Assumptions
+
+This script assumes we deploy in a directory with a structure not unlike the following:
+
+`ns/<ontology-base-name>/<version>/<ontology-base-name>.{ttl,rdf,nt}`
+
+as well as `index.html` for HTML documentation at the same level as the RDF serialisations.
+
+## In practice
+
+The script generates an initial `.htaccess` file which will receive requests at the top-level (`ns/<ontology-base-name>`) with the requisite content-type headers, for the various serialisations.
+
+The rules are that with `text/html`, the human-readable documentation is returned at `index.html`. That's what happens when we use a web browser. The other requests (e.g. `application/n-triples`) point to the right serialisation.
+
+This is designed to be called by a makefile, and the assumption is that subsequent, separate stages will generate the serialisations and HTML.
+
+This script is written in Scheme. It is moderately complex, so a shell-scripting language isn't practical, and we imagine working on the RDF directly in future to annotate it with versions. We also imagine working with non-RDF formats. It doesn't write to the filesystem at the moment, but prepares an existing well-formed structure.
+
+## Example usage
+
+	% /ontoprepare.scm -f 32.3.3 -d ./ns/some-ontology
+	Options -MultiViews
+	AddType text/turtle .ttl
+	AddType application/n-triples .nt
+	AddType application/rdf+xml .rdf
+	RewriteEngine On
+RewriteBase /ns/some-ontology
+RewriteCond %{HTTP_ACCEPT} text/turtle
+RewriteRule ^ns/some-ontology$ /ns/some-ontology/32.3.3/some-ontology.ttl [R=303,L]
+RewriteCond %{HTTP_ACCEPT} application/n-triples
+RewriteRule ^ns/some-ontology$ /ns/some-ontology/32.3.3/some-ontology.nt [R=303,L]
+RewriteCond %{HTTP_ACCEPT} application/rdf+xml
+RewriteRule ^ns/some-ontology$ /ns/some-ontology/32.3.3/some-ontology.rdf [R=303,L]
+RewriteCond %{HTTP_ACCEPT} text/html
+RewriteRule ^ns/some-ontology$ /ns/some-ontology/32.3.3/index.html [R=303,L]
