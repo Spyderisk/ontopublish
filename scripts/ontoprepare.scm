@@ -112,8 +112,8 @@
 	      (list (string-concatenate
 		     (cons "Options" (map make-opt opt-pairs))))
 	      (map make-add-type type-pairs)
-	      (list "RewriteEngine On")
-	      (list (string-append "RewriteBase" " " dir-base))))	
+	      (list "RewriteEngine On")))
+        ;(list (string-append "RewriteBase" " " dir-base))))
 	(pair-up (lambda (k) (string-append k "\n"))))
     (string-concatenate
      (map pair-up (apply append tgt)))))
@@ -156,8 +156,8 @@
 	 (rewrite-shim
 	  (lambda (pair)
 	    (make-rewrite `(("%{HTTP_ACCEPT}" . ,(car pair)))
-			  (string-append "^" (cdr pair) "$")
-			  (incl-redir (cdr pair))
+			  (string-append "^" (cadr pair) "$")
+			  (incl-redir (caddr pair))
                           303))))
     (string-concatenate
      (apply append
@@ -172,14 +172,14 @@
 	      media/file-pairs))
          (no-slash-preceding-base (extract-base-directory target-base))
          (target-file-prefix (extract-ending-file no-slash-preceding-base))
-	(pairs-with-html
-	 (append
-          (map (lambda (pair)
-                 (cons (car pair)
-                       (string-append target-file-prefix
-                                      "."(cdr pair))))
-               media/file-pairs)
-          '(("text/html" . "index.html"))))
+         (pairs-with-html
+          (append
+           (map (lambda (pair)
+                  (list (car pair)
+                        target-file-prefix
+                        (string-append target-file-prefix "." (cdr pair))))
+                media/file-pairs)
+           `(("text/html" ,target-file-prefix "index.html"))))
         (must-include-rules
          (make-rewrite-rules-proper pairs-with-html
                                     no-slash-preceding-base
@@ -195,7 +195,7 @@
 	'((increment-major (single-char #\I) (value #f))
           (increment-minor (single-char #\i) (value #f))
           (increment-patch (single-char #\p) (value #f))
-          (forced-version (single-char #\f) (value #t))
+          (forced-version (single-char #\F) (value #t))
           (directory (single-char #\d) (value #t))
           (version-only (single-char #\V) (value #f))
           (exclude-preamble (single-char #\E) (value #f))
@@ -245,14 +245,13 @@
                                             set-cwd
                                             new-version
                                             exclude-preamble)))
-               (display
-                (string-append "No such file or directory: " set-cwd)))))
-        (else (display "\
+                (display "Need an increment version component flag (-I|-i|-p), or force-set version (-F)"))))
+        (else (display "
 ontoprepare [options]
   -I --increment-major     Increment version major component
   -i --increment-minor     Increment version minor component
   -p --increment-patch     Increment version patch-level component
-  -f --force-version VSN   Use VSN as new version (MAJOR.MINOR.PATCH)
+  -F --force-version VSN   Use VSN as new version (MAJOR.MINOR.PATCH)
   -d --directory DIR       Use DIR as ontology deployment directory
   -E --exclude-preamble    Exclude the preamble so that output can be concatenated
   -V --version-only        Return the new, incremented version string only

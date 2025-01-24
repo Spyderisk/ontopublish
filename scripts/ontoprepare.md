@@ -15,9 +15,11 @@ as well as `index.html` for HTML documentation at the same level as the RDF seri
 
 The versioning is meaningful, following the [Semantic Versioning](https://semver.org/) scheme. We imagine that changes to an ontology's semantics which break existing, downstream usage, constitute a major change; modifications which add new semantics but don't break existing usage constitute a minor change; and fixes like typos in human-readable RDF/S labels/comments constitute patch-level changes. The script supports incrementing these individually.
 
+The other assumption that we make about versioning is that when incrementing a major or minor version, the lower-level components are reset to 0. This would mean that if the major version of 10.2.99 was incremented, we would end up with 11.0.0. Semantic versioning also supports extra version information after the patch-level numeric identifier, e.g. rc1, and if we extended our scheme to support that, we might reset that too when incrementing the patch version.
+
 ## In practice
 
-The script generates an initial `.htaccess` file which will receive requests at the top-level (`ns/<ontology-base-name>`) with the requisite content-type headers, for the various serialisations.
+The script generates an initial `.htaccess` file. This file will sit at the same level as the ontologies (e.g. under `ns/.htaccess` for ontologies like `ns/beam`, `ns/core`). This rewrites requests at the top-level (`ns/<ontology-base-name>`), given the requisite content-type headers, to lead to the various serialisations.
 
 The rules are that with `text/html`, the human-readable documentation is returned at `index.html`. That's what happens when we use a web browser. The other requests (e.g. `application/n-triples`) point to the right serialisation.
 
@@ -40,34 +42,32 @@ Increment the major version compared to the latest version found:
 	AddType application/n-triples .nt
 	AddType application/rdf+xml .rdf
 	RewriteEngine On
-	RewriteBase /ns/some-ontology
 	RewriteCond %{HTTP_ACCEPT} text/turtle
-	RewriteRule ^ns/some-ontology$ /ns/some-ontology/5.2.13/some-ontology.ttl [R=303,L]
+	RewriteRule ^some-ontology$ /ns/some-ontology/5.0.0/some-ontology.ttl [R=303,L]
 	RewriteCond %{HTTP_ACCEPT} application/n-triples
-	RewriteRule ^ns/some-ontology$ /ns/some-ontology/5.2.13/some-ontology.nt [R=303,L]
+	RewriteRule ^some-ontology$ /ns/some-ontology/5.0.0/some-ontology.nt [R=303,L]
 	RewriteCond %{HTTP_ACCEPT} application/rdf+xml
-	RewriteRule ^ns/some-ontology$ /ns/some-ontology/5.2.13/some-ontology.rdf [R=303,L]
+	RewriteRule ^some-ontology$ /ns/some-ontology/5.0.0/some-ontology.rdf [R=303,L]
 	RewriteCond %{HTTP_ACCEPT} text/html
-	RewriteRule ^ns/some-ontology$ /ns/some-ontology/5.2.13/index.html [R=303,L]
+	RewriteRule ^some-ontology$ /ns/some-ontology/5.0.0/index.html [R=303,L]
 
 Increment the minor version:
 
 	% ./ontoprepare -i -d ./ns/some-ontology
-	
+
+	Options -MultiViews
 	AddType text/turtle .ttl
 	AddType application/n-triples .nt
 	AddType application/rdf+xml .rdf
 	RewriteEngine On
-	RewriteBase /ns/some-ontology
 	RewriteCond %{HTTP_ACCEPT} text/turtle
-	RewriteRule ^ns/some-ontology$ /ns/some-ontology/4.3.13/some-ontology.ttl [R=303,L]
+	RewriteRule ^some-ontology$ /ns/some-ontology/4.3.0/some-ontology.ttl [R=303,L]
 	RewriteCond %{HTTP_ACCEPT} application/n-triples
-	RewriteRule ^ns/some-ontology$ /ns/some-ontology/4.3.13/some-ontology.nt [R=303,L]
+	RewriteRule ^some-ontology$ /ns/some-ontology/4.3.0/some-ontology.nt [R=303,L]
 	RewriteCond %{HTTP_ACCEPT} application/rdf+xml
-	RewriteRule ^ns/some-ontology$ /ns/some-ontology/4.3.13/some-ontology.rdf [R=303,L]
+	RewriteRule ^some-ontology$ /ns/some-ontology/4.3.0/some-ontology.rdf [R=303,L]
 	RewriteCond %{HTTP_ACCEPT} text/html
-	RewriteRule ^ns/some-ontology$ /ns/some-ontology/4.3.13/index.html [R=303,L]
-
+	RewriteRule ^some-ontology$ /ns/some-ontology/4.3.0/index.html [R=303,L]
 
 Set the new version arbitrarily:
 
@@ -78,25 +78,23 @@ Set the new version arbitrarily:
 	AddType application/n-triples .nt
 	AddType application/rdf+xml .rdf
 	RewriteEngine On
-	RewriteBase /ns/some-ontology
 	RewriteCond %{HTTP_ACCEPT} text/turtle
-	RewriteRule ^ns/some-ontology$ /ns/some-ontology/32.3.3/some-ontology.ttl [R=303,L]
+	RewriteRule ^some-ontology$ /ns/some-ontology/4.2.14/some-ontology.ttl [R=303,L]
 	RewriteCond %{HTTP_ACCEPT} application/n-triples
-	RewriteRule ^ns/some-ontology$ /ns/some-ontology/32.3.3/some-ontology.nt [R=303,L]
+	RewriteRule ^some-ontology$ /ns/some-ontology/4.2.14/some-ontology.nt [R=303,L]
 	RewriteCond %{HTTP_ACCEPT} application/rdf+xml
-	RewriteRule ^ns/some-ontology$ /ns/some-ontology/32.3.3/some-ontology.rdf [R=303,L]
+	RewriteRule ^some-ontology$ /ns/some-ontology/4.2.14/some-ontology.rdf [R=303,L]
 	RewriteCond %{HTTP_ACCEPT} text/html
-	RewriteRule ^ns/some-ontology$ /ns/some-ontology/32.3.3/index.html [R=303,L]
+	RewriteRule ^some-ontology$ /ns/some-ontology/4.2.14/index.html [R=303,L]
 
 Sample options:
 
 	ontoprepare [options]
-	  -I --increment-major     Increment version major component
+      -I --increment-major     Increment version major component
 	  -i --increment-minor     Increment version minor component
 	  -p --increment-patch     Increment version patch-level component
-	  -f --force-version VSN   Use VSN as new version (MAJOR.MINOR.PATCH)
+	  -F --force-version VSN   Use VSN as new version (MAJOR.MINOR.PATCH)
 	  -d --directory DIR       Use DIR as ontology deployment directory
 	  -E --exclude-preamble    Exclude the preamble so that output can be concatenated
 	  -V --version-only        Return the new, incremented version string only
 	  -h --help                Display this help message
-
