@@ -45,7 +45,7 @@ increment-major:	html-components rdf-components coalesce-with-new-major
 increment-minor:	html-components rdf-components coalesce-with-new-minor
 increment-patch:	html-components rdf-components coalesce-with-new-patch
 
-initialise-with: # html-components rdf-components
+initialise-with: html-components rdf-components
 	./ontoprepare.scm -F $(INITIAL_VERSION) -d $(TARGET_ROOT) > $(TARGET_HTACCESS) ;
 	TARGET_SITE=$(TARGET_ROOT)/$(INITIAL_VERSION) ;
 	mv -v /tmp/site $$TARGET_SITE ;
