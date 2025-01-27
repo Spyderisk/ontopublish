@@ -1,6 +1,6 @@
 .ONESHELL:
 
-TITLE		= My Ontology
+TITLE		= "My Ontology"
 INPUT_BASE	= my-ontology
 
 # 1. Start by looking in the webroot for existence of .htaccess file
@@ -103,7 +103,7 @@ save-old-htaccess:
 		mv -f $(TARGET_HTACCESS) $(INPUT_BASE).$(ORIGINAL_VERSION).htaccess.old
 	fi
 
-prep-mkdocs: 
+prep-mkdocs:
 	cat mkdocs.yaml.in | sed s/TITLE/${TITLE}/ > /tmp/${INPUT_BASE}.mkdocs.yaml
 
 $(SITE_DIR):
