@@ -1,7 +1,7 @@
 .ONESHELL:
 
-# TITLE		= "BEAM ontology: Ontology of the Erlang virtual machine"
-# INPUT_BASE	= beam
+TITLE		= My Ontology
+INPUT_BASE	= my-ontology
 
 # 1. Start by looking in the webroot for existence of .htaccess file
 # 2. Get the previous version (-L option of ontoprepare). If the .htaccess file exists, copy it to <prev version>.htaccess and put it somewhere in the source directory of ontologies.
