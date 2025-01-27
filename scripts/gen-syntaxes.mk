@@ -29,9 +29,29 @@ TARGET_ROOT	= $(SUB_ROOT)/$(INPUT_BASE)
 TARGET_HTACCESS	= $(TARGET_ROOT)/.htaccess
 TARGET_DOC_CONF	= $(INPUT_BASE).mkdocs.yaml
 
+INITIAL_VERSION = 0.0.1
+
+help:
+	@echo "
+	Versioning scheme: MAJOR.MINOR.PATCH
+	
+	make initialise-with VERSION (default 0.0.1)
+	make increment-major (increment MAJOR version component)
+	make increment-minor (increment MINOR version component)
+	make increment-patch (increment PATCH version component)
+	"
+
 increment-major:	html-components rdf-components coalesce-with-new-major
 increment-minor:	html-components rdf-components coalesce-with-new-minor
 increment-patch:	html-components rdf-components coalesce-with-new-patch
+
+initialise-with: # html-components rdf-components
+	./ontoprepare.scm -F $(INITIAL_VERSION) -d $(TARGET_ROOT) > $(TARGET_HTACCESS) ;
+	TARGET_SITE=$(TARGET_ROOT)/$(INITIAL_VERSION) ;
+	mv -v /tmp/site $$TARGET_SITE ;
+	cp -v $(INPUT_TTL) $$TARGET_SITE ;
+	mv -v /tmp/$(EXTRA_N_TRIPLES) $$TARGET_SITE ;
+	mv -v /tmp/$(EXTRA_RDF_XML) $$TARGET_SITE
 
 html-components:	gen-md gen-site #prep-mkdocs gen-md gen-site
 rdf-components:		gen-syntaxes
@@ -52,7 +72,7 @@ coalesce-with-new-major: save-old-htaccess
 	TARGET_SITE=$(TARGET_ROOT)/$$NEW_VERSION/
 	./ontoprepare.scm -I -d $(TARGET_ROOT) > $(TARGET_HTACCESS) ;
 
-	mv -v /tmp/site $$TARGET_SITE
+	mv -v /tmp/site $$TARGET_SITE 
 	cp -v $(INPUT_TTL) $$TARGET_SITE
 	mv -v /tmp/$(EXTRA_N_TRIPLES) $$TARGET_SITE
 	mv -v /tmp/$(EXTRA_RDF_XML) $$TARGET_SITE
@@ -96,7 +116,7 @@ $(TARGET_ROOT):
 	mkdir -p $@
 
 clean:
-	rm  -f $(TARGET_DOC_CONF) &&
+	rm -f $(TARGET_DOC_CONF) &&
 	rm -f /tmp/$(EXTRA_RDF_XML) &&
 	rm -f /tmp/$(EXTRA_N_TRIPLES) &&
 	rm -rf $(MD_DIR) &&
