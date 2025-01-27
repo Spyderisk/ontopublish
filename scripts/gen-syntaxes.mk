@@ -1,7 +1,7 @@
 .ONESHELL:
 
-TITLE		= "BEAM ontology: Ontology of the Erlang virtual machine"
-INPUT_BASE	= beam
+# TITLE		= "BEAM ontology: Ontology of the Erlang virtual machine"
+# INPUT_BASE	= beam
 
 # 1. Start by looking in the webroot for existence of .htaccess file
 # 2. Get the previous version (-L option of ontoprepare). If the .htaccess file exists, copy it to <prev version>.htaccess and put it somewhere in the source directory of ontologies.
@@ -53,7 +53,7 @@ initialise-with: html-components rdf-components
 	mv -v /tmp/$(EXTRA_N_TRIPLES) $$TARGET_SITE ;
 	mv -v /tmp/$(EXTRA_RDF_XML) $$TARGET_SITE
 
-html-components:	gen-md gen-site #prep-mkdocs gen-md gen-site
+html-components:	prep-mkdocs gen-md gen-site
 rdf-components:		gen-syntaxes
 
 gen-syntaxes: $(TARGET_ROOT)
