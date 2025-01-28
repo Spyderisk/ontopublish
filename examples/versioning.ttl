@@ -1,0 +1,58 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdfg: <http://www.w3.org/2004/03/trix/rdfg-1/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix wsl:  <http://www.wsmo.org/ns/wsmo-lite#> .
+
+@prefix score: <http://ontology.spyderisk.org/ns/core#> .
+@prefix send: <http://ontology.spyderisk.org/ns/endpoint#> .
+
+# Largely following https://doi.org/10.1016/j.jbi.2012.07.005
+
+send:Version a rdfs:Class .
+
+send:major_component a rdf:Property ;
+    rdfs:label "Major version component, incremented for non-conservative changes to ontology semantics" ;
+    rdfs:domain send:Version ;
+    rdfs:range  xsd:integer .
+    
+send:minor_component a rdf:Property ;
+    rdfs:label "Minor version component, incremented for conservative changes to ontology semantics" ;
+    rdfs:domain send:Version ;
+    rdfs:range  xsd:integer .
+    
+send:patch_component a rdf:Property ;
+    rdfs:label "Patch-level version component, incremented for bug-fix changes (e.g. typos in labels) to ontology semantics" ;
+    rdfs:domain send:Version ;
+    rdfs:range  xsd:integer .
+
+send:version_represented_as a rdf:Property ;
+    rdfs:label "System-specific serialisation of versioning scheme" ;
+    rdfs:domain send:Version ;
+    rdfs:range  xsd:string .
+    
+send:see_previous a rdf:Property ;
+    rdfs:label "The previous version, not necessarily the patch, minor or major component minus 1." ;
+    rdfs:domain send:Version ;
+    rdfs:range  send:Version .
+
+send:valid_from a rdf:Property ;
+    rdfs:label "Date from which version applied (inclusive)" ;
+    rdfs:domain send:Version ;
+    rdfs:range  xsd:date .
+
+send:valid_to a rdf:Property ;
+    rdfs:label "Date up to which version applied (inclusive)" ;
+    rdfs:domain send:Version ;
+    rdfs:range  xsd:date .
+    
+send:applies_to a rdf:Property ;
+    rdfs:label "Primary graph to which version relates" ;
+    rdfs:domain send:Version ;
+    rdfs:range rdfg:Graph .
+
+send:applies_also a rdf:Property ;
+    rdfs:label "Additional graphs to which version applies" ;
+    rdfs:domain send:Version ;
+    rdfs:range rdfg:Graph .
+    
