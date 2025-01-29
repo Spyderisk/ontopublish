@@ -1,4 +1,5 @@
-# Preparation script for deployment
+# `ontoprepare`: Validating and incrementing versioning
+
 ## Preamble
 This preparation script has two elements:
 

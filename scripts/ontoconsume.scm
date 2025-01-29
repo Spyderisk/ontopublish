@@ -145,7 +145,7 @@
 ;;       send:see_previous <http://ontology.spyderisk.org/v/core#0.0.9> ;
 ;;       send:valid_from "2025-01-01"^^xsd:date ;
 ;;       send:valid_to "2025-01-16"^^xsd:date ;
-;;       send:applies_to <https://w3id.org/example> .
+;;       send:applies_to <http://ontology.spyderisk.org/ns/core> .
 
 (define-syntax divert
   (lambda (stx)

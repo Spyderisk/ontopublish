@@ -36,6 +36,11 @@ send:see_previous a rdf:Property ;
     rdfs:domain send:Version ;
     rdfs:range  send:Version .
 
+send:version_history a rdf:Property ;
+    rdfs:label "Part of version history is described in" ;
+    rdfs:domain send:Version ;
+    rdfs:range  rdfg:Graph .
+    
 send:valid_from a rdf:Property ;
     rdfs:label "Date from which version applied (inclusive)" ;
     rdfs:domain send:Version ;
@@ -56,3 +61,12 @@ send:applies_also a rdf:Property ;
     rdfs:domain send:Version ;
     rdfs:range rdfg:Graph .
     
+send:has_version a rdf:Property ;
+    rdfs:label "RDF graph has version" ;
+    rdfs:domain rdfg:Graph ;
+    rdfs:range  send:Version .
+
+send:has_version_history a rdf:Property ;
+    rdfs:label "Graph version history is described in" ;
+    rdfs:domain rdfg:Graph ;
+    rdfs:range  rdfg:Graph .
