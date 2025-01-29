@@ -4,8 +4,6 @@
 ;; 2. Annotate the RDF with a version number. This should support emitting both a file annotated directly, and a separate file which will also be annotated with endpoint information.
 ;; 3. Output either the original format or the original format + other syntaxes.
 
-;; At minimum, there ought to be an interactive CLI mode with Q/A options.
-
 (use-modules (ice-9 receive)
              (srfi srfi-1)
 	     (srfi srfi-9)
@@ -39,10 +37,11 @@
      (string-append endpoint ref))
    (list "Version"
          "major_component" "minor_component" "patch_component"
-         "version_represented_as"
+         "version_represented_as" "version_history"
          "see_previous" "see_also"
          "valid_from" "valid_to"
-         "applies_to" "applies_also")))
+         "applies_to" "applies_also"
+         "has_version" "has_version_history")))
 
 (define-record-type <version-annotation>
   (version-annotation major-component minor-component patch-component
@@ -60,11 +59,56 @@
   (applies-to version-annotation-applies-to set-against-graph!)
   (applies-also version-annotation-applies-also set-related-graphs!))
 
+(define (emit-versioning subject versioning)
+  (let ((get-with (lambda (ref proc)
+                    (let ((maybe-elem
+                           (proc versioning)))
+                      (if maybe-elem
+                          (make-rdf-triple subject
+                                           (string-append endpoint ref)
+                                           maybe-elem)
+                          #f)))))
+    (filter (lambda (k) (and k))
+            (list
+     (get-with "major_component" version-annotation-major-component)
+     (get-with "minor_component" version-annotation-minor-component)
+     (get-with "patch_component" version-annotation-patch-component)
+     (get-with "see_previous" version-annotation-see-previous)
+     (get-with "valid-from" version-annotation-valid-from)
+     (get-with "valid-from" version-annotation-valid-to)
+     (get-with "applies-to" version-annotation-applies-to)))))
+
+;; If they have the same major version, proceed to checking the minor version. GTEq 0 1 does not hold.
+;; If they have the same minor version, proceed to checking the patch version.
+;; If they have the same patch version, then GTEq does hold.
+
+(define (compare-versions version0 version1)
+  (let* ((major0 (version-annotation-major-component version0))
+         (minor0 (version-annotation-minor-component version0))
+         (patch0 (version-annotation-patch-component version0))
+         (major1 (version-annotation-major-component version1))
+         (minor1 (version-annotation-minor-component version1))
+         (patch1 (version-annotation-patch-component version1)))
+    (cond ((not (and major0 minor0 patch0 major1 minor1 patch1)) #f)
+          ((and (equal? major0 major1)
+               (equal? minor0 minor1)
+               (equal? patch0 patch1)) #t)
+          ((> major0 major1) #t)
+          ((> minor0 minor1) #t)
+	  ((> patch0 patch1) #t)
+	  (else #f))))
+
 (define (make-empty-version-annotation)
   (version-annotation #f #f #f
 		      #f #f
 		      #f #f
 		      #f #f))
+
+(define (make-initial-annotation M m p)
+  (version-annotation M m p
+                      #f #f
+                      #f #f
+                      #f #f))
 
 (define (make-version major minor patch)
   (string-append (number->string major) "."
@@ -103,61 +147,119 @@
 ;;       send:valid_to "2025-01-16"^^xsd:date ;
 ;;       send:applies_to <https://w3id.org/example> .
 
+(define-syntax divert
+  (lambda (stx)
+    (syntax-case stx ()
+      [(divert proc-reslv pred obj ([ref0 proc-div0] ...))
+       #'(cond [(equal? pred (proc-reslv ref0))
+                (proc-div0 obj)]
+               ...
+               [else #f])])))
+
 ;; Start by defining a function to take a set of statements and gather them up.
 ;; So we expect that we're dealing with the blank node in the example above.
-(define (coalesce-versioning statements base working-node)
-  (let ((target-map (make-empty-version-annotation))
-	(target-major #f)
-	(target-minor #f)
-	(target-patch #f)
-	(rejected '())
-	(rslv (lambda (ref)
-		(string-append endpoint ref))))
+(define (coalesce-versioning statements)
+  (let* ((target-map (make-empty-version-annotation))
+         (target-major #f)
+         (target-minor #f)
+         (target-patch #f)
+         (rejected '())
+         (rslv (lambda (ref)
+           (string-append endpoint ref)))
+         (lexf rdf-literal-lexical-form)
+         (proc (lambda (lit)
+           (string->number
+            (rdf-literal-lexical-form lit)))))
     (letrec ((statement-helper
-	      (lambda (stmt)
-		(let ((subj (rdf-triple-subject stmt))
-		      (pred (rdf-triple-predicate stmt))
-		      (obj (rdf-triple-object stmt)))
-		  ;(if (not (equal? subj working-node))
-		  ;    (set! rejected (cons stmt rejected))
-		      (cond
-		       [(equal? pred (rslv "Version"))
-			#f]
-		       [(equal? pred (rslv "major_component"))
-			(set! target-major
-			      (string->number
-			       (rdf-literal-lexical-form obj)))]
-		       [(equal? pred (rslv "minor_component"))
-			(set! target-minor
-			      (string->number
-			       (rdf-literal-lexical-form obj)))]
-		       [(equal? pred (rslv "patch_component"))
-			(set! target-patch
-			      (string->number
-			       (rdf-literal-lexical-form obj)))]
-		       [(equal? pred (rslv "valid_from"))
-			(set-valid-from! target-map
-					 (rdf-literal-lexical-form obj))]
-		       [(equal? pred (rslv "valid_to"))
-			(set-valid-to! target-map
-					 (rdf-literal-lexical-form obj))]
-		       [else #f])))))
+      (lambda (stmt)
+        (let ((subj (rdf-triple-subject stmt))
+              (pred (rdf-triple-predicate stmt))
+              (obj (rdf-triple-object stmt)))
+          (divert rslv pred obj
+                  (["major_component" (lambda (a)
+                     (set! target-major (proc a)))]
+                   ["minor_component" (lambda (a)
+                     (set! target-minor (proc a)))]
+                   ["patch_component" (lambda (a)
+                     (set! target-patch (proc a)))]
+                   ["valid_from" (lambda (a)
+                     (set-valid-from! target-map (lexf a)))]
+                   ["valid_to" (lambda (a)
+                     (set-valid-to! target-map (lexf a)))]))))))
       (for-each statement-helper statements))
     (set-major-component! target-map target-major)
     (set-minor-component! target-map target-minor)
     (set-patch-component! target-map target-patch)
     target-map))
 
-		      
-(define (hash-versioning-scheme graph base)
+;; 1. Start by finding the version associated with the current document.
+;;    This might well be some blank node, but it doesn't have to be.
+;;    Statements like: <this graph> send:hasVersion <vsn>
+;; 2. Query the graph for the statements associated with the version.
+;; 3. Check it matches the current one.
+
+(define (parse-version combined-version)
+  (map string->number (string-split combined-version #\.)))
+
+(define (hash-versioning-scheme graph base target-version-string valid-from valid-to history?)
   (receive (vss nvss)
       (partition (lambda (st)
                    (member (rdf-triple-predicate st)
                            version-statements))
                  graph)
-    (if (null? vss)
-        (display
-         "Looks like it's not annotated yet.")
-        (display
-         "Looks like this graph is annotated with our versioning scheme already."))
-    (newline)))
+    (let* ((parsed-version (parse-version target-version-string))
+           (major (car parsed-version))
+           (minor (cadr parsed-version))
+           (patch (caddr parsed-version))
+           (target-new
+            (version-annotation major minor patch
+                                #f #f
+                                valid-from valid-to
+                                #f #f))
+           (target-triples
+            (emit-versioning (string-append base target-version-string)
+                             target-new)))
+      (display
+       "Looks like this graph is annotated with our versioning scheme already.")
+      (newline)
+      ;; Find the matching versions
+      (let* ((target-versions
+              (map rdf-triple-object
+                   (filter (lambda (stmt)
+                             (equal?
+                              (rdf-triple-predicate stmt)
+                              (string-append endpoint "has_version")))
+                           vss)))
+             (found-in-graph
+              (map (lambda (vsn)
+                     (coalesce-versioning
+                      (filter (lambda (stmt)
+                                (equal? vsn
+                                        (rdf-triple-subject stmt)))
+                              vss)))
+                   target-versions)))
+        (if (null? found-in-graph)
+                (begin (display
+                        "Looks like it's not annotated yet.")
+                       (append graph target-triples))
+                (let ((nominal-latest
+                       (car
+                        (sort-list found-in-graph compare-versions))))
+                  (cond [(and (compare-versions target-new nominal-latest)
+                              history?)
+                         (begin
+                           (display "Requested version is newer than nominal latest, and this graph records history. Appending the requested version to this graph.")
+                           (newline)
+                           (append graph target-triples))] ;; vss + nvss
+                        [(compare-versions target-new nominal-latest)
+                         (begin
+                           (display "Requested version is newer than nominal latest, but this graph does not record history. Remove existing versioning statements and annotate with requested.")
+                           (newline)
+                           (append nvss target-triples))] ;; non-versioning statements
+                        [else
+                         (begin
+                           (display "Requested version is less than latest transcribed in the file. Not overwriting.")
+                           graph)])))))))
+
+
+           
