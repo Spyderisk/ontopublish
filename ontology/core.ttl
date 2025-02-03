@@ -176,9 +176,9 @@ score:Likelihood a skos:ConceptScheme, rdfs:Class ;
     dct:title "Likelihood level scheme"@en .
 score:negligeable_likelihood a skos:Concept, score:Likelihood ;
     skos:inScheme score:Likelihood ;
-    skos:prefLabel "negleagible"@en ;
+    skos:prefLabel "negligeable"@en ;
     skos:altLabel "negligible"@en ;
-    rdfs:label "'negleagible' likelihood"@en .
+    rdfs:label "'negligeable' likelihood"@en .
 score:very_low_likelihood a skos:Concept, score:Likelihood ;
     skos:inScheme score:Likelihood ;
     skos:prefLabel "very low"@en ;
