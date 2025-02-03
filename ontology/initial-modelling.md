@@ -14,11 +14,19 @@ Hence there are effectively three core sections to model:
 2. Construction patterns, which are rules matching on (asset) nodes and their positional information. I think the nodes and edges are implicit in the structure of the data, but they depend on edge-level attributes, so I'm not sure how to model that in RDF yet.
 3. Assets, which form part of the target system.
 
+Define the following prefixes (`score` is this V1 core model):
+```turtle
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix score: <http://ontology.spyderisk.org/ns/core#> .
+```
+
 ## Semantics
 
-This vocabulary goes beyond RDF/S by introducing (SKOS)[https://www.w3.org/2004/02/skos/]. SKOS is useful because it enriches are descriptions of concepts, and how they relate to each other. Not everything can be modelled effectively with RDF and RDF/S properties and classes alone. It is also relatively lightweight: the semantics imply relatively little about what we associate with `skos:Concept`.
+This vocabulary goes beyond RDF/S by introducing [SKOS](https://www.w3.org/2004/02/skos/). SKOS is useful because it enriches our descriptions of concepts, and how they relate to each other. Not everything can be modelled effectively with RDF and RDF/S properties and classes alone. It is also relatively lightweight: the semantics imply relatively little about what we associate with `skos:Concept`.
 
-What SKOS does not get us is things like constraints, such as on cardinality. For this, one would need to use something like OWL, or one of the newer shape constraints languages like (SHeX)[https://shex.io/] or (SHACL)[https://www.w3.org/TR/shacl/].
+What SKOS does not get us is things like constraints, such as on cardinality. For this, one would need to use something like OWL, or one of the newer shape constraints languages like [ShEx](https://shex.io/) or [SHACL](https://www.w3.org/TR/shacl/).
 
 ## Patterns
 
@@ -33,6 +41,11 @@ The trick here is to further *attribute* these edges. These would be the role of
 
 The former approach is significantly cumbersome. It involves defining a number of classes and sub-classes. In contrast, the second approach associates a pattern with much fewer properties, albeit attributes on edges in RDF can be difficult to reason about (essentially an edge which spans an edge and a node).
 
+Selecting the second approach, this involves a couple of things:
+1. Defining a general `score:asset_relation` property for spanning edges between causal entities, which can be elaborated by downstream vocabularies or instances. Defining this is necessary because the `score:match_via` links a pattern to this spanning edge type.
+2. Complementing `score:match_via` with `score:match_on_source` and `score:match_on_target`, which associate pattern with a source and target asset node respectively. These can then be attributed by downstream vocabularies or instances using the `score:conditioned_via` and `score:conditioned_on` properties, which associate a link with a `score:SpanningAttribute` and `score:RoleAttribute` respectively.
+3. Role attributes are defined as sub-classes of `score:RoleAttribute`, which is also a SKOS concept scheme. Likewise, spanning attributes are defined similarly.
+
 ## Asset (control) properties
 
 As given, the distinction between asset control properties and asset properties is unclear. Indeed, the causal model is defined by the set (A, T, B, W, C, G): assets, threats, behaviours, trustworthiness controls and control strategies. As such, I have treated asset control properties and asset properties as one. Hence, both assets and control strategies may have an asset property.
@@ -41,7 +54,7 @@ As given, the distinction between asset control properties and asset properties 
 
 Similarly, as given, threats, threat causes, and asset properties are considered to be sub-classes of causal entities (things with likelihood). The motivation here appears to be that these are all things which can have a likelihood.
 
-I have modelled this in two ways. First, I have modelled 'causal entity' as a SKOS concept scheme. The hierarchy is modelled using `skos:broader` and `skos:broaderTransitive`. Second, I have associated everything defined as a sub-class of 'causal entity' to have a 'likelihood' property. This likelihood is also modelled as a SKOS concept scheme, with order imposed using `skos:OrderedCollection`.
+I have modelled this in two ways. First, I have modelled 'causal entity' as part of a SKOS concept scheme. The hierarchy is modelled using `skos:broader` and `skos:broaderTransitive`. Second, I have associated everything defined as a sub-class of 'causal entity' to have a 'likelihood' property. This likelihood is also modelled as a SKOS concept scheme, with order imposed using `skos:OrderedCollection`.
 
 ## Asset behaviours and trustworthiness
 
@@ -58,6 +71,6 @@ Excepting the shaded items relating to asset behaviours, shaded items are 'types
 
 The vocabulary does not currently develop constraints on cardinality, as given. The exact approach to employ here is not clear:
 - We may not want to adopt OWL, which is rich, but also complex. Nonetheless, invoking `skos:Concept` does imply one thing: anything we associate with it is also an `owl:Class`. It is feasible that we may want to adopt certain elements of OWL.
-- Shape constraints languages like SHEX or SHACL are relatively new, and would likely be suitable here. The key advantage is that they may be less complex than certain concepts from OWL. They let us describe the shape of data and apply constraints.
+- Shape constraints languages like ShEx or SHACL are relatively new, and would likely be suitable here. The key advantage is that they may be less complex than certain concepts from OWL. They let us describe the shape of data and apply constraints.
 
 The way in which we enforce constraints depends on the constraints we need, and how we intend to enforce them, neither of which are especially clear.
