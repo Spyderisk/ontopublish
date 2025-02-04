@@ -1,0 +1,87 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix score: <http://ontology.spyderisk.org/ns/core#> .
+@prefix my: <http://ontology.spyderisk.org/p/example#> .
+
+# Instantiation / ontology re-use example
+## RDF reification to make statements about statements.
+
+my:RS232_from a score:asset_relation ;
+    rdfs:label "example asset relation: dedicated RS232"@en .
+my:baud_rate a rdf:Property ;
+    rdfs:label "baud rate (float)"@en ;
+    rdfs:domain my:RS232_from ;
+    rdfs:range  xsd:float .
+
+my:Symbolics3600 a score:Asset ;
+    rdfs:label "example asset: Symbolics 3600 series Lisp Machine"@en .
+my:VT100 a score:Asset ;
+    rdfs:label "example asset: VT100 serial terminal asset"@en ;
+    my:RS232_from my:Symbolics3600 .
+        
+my:MaliciousMacroAuthor a score:Threat ;
+    rdfs:label "example instantiation of Threat: malicious macro author"@en ;
+    score:introduces my:MaliciousMacroPattern .
+
+_:b0 a rdf:Statement ;
+    score:pattern_asset_role score:role_unique ;
+    rdf:subject   my:MaliciousMacroPattern ;
+    rdf:predicate my:pattern_asset ;
+    rdf:domain    my:Symbolics3600 .
+_:b1 a rdf:Statement ;
+    score:pattern_asset_role score:role_unique ;
+    rdf:subject   my:MaliciousMacroPattern ;
+    rdf:predicate my:pattern_asset ;
+    rdf:domain    my:VT100 .
+
+_:b2 a rdf:Statement ;
+    my:baud_rate  "134.5"^^xsd:float ;
+    rdf:subject   my:Symbolics3600 ;
+    rdf:predicate my:asset_relation ;
+    rdf:domain    my:VT100 .
+
+my:MaliciousMacroPattern a score:Pattern ;
+    score:pattern_asset my:VT100, my:Symbolics3600 .
+    
+## Sample likelihood scheme
+
+my:SampleLikelihood a skos:ConceptScheme ;
+    dct:title "Example likelihood level scheme"@en .
+
+my:negligeable_likelihood a skos:Concept, score:Likelihood ;
+    skos:inScheme   my:SampleLikelihoodScheme ;
+    skos:prefLabel  "negligeable"@en ;
+    skos:altLabel   "negligible"@en ;
+    rdfs:label      "'negligeable' likelihood"@en .
+my:very_low_likelihood a skos:Concept, score:Likelihood ;
+    skos:inScheme   my:SampleLikelihoodScheme ;
+    skos:prefLabel  "very low"@en ;
+    rdfs:label      "'very low' likelihood"@en .
+my:low_likelihood a skos:Concept, score:Likelihood ;
+    skos:inScheme   my:SampleLikelihoodScheme ;
+    skos:prefLabel  "low"@en ;
+    rdfs:label      "'low' likelihood"@en .
+my:medium_likelihood a skos:Concept, score:Likelihood ;
+    skos:inScheme   my:SampleLikelihoodScheme ;
+    skos:prefLabel  "medium"@en ;
+    rdfs:label      "'medium' likelihood"@en .
+my:high_likelihood a skos:Concept, score:Likelihood ;
+    skos:inScheme   my:SampleLikelihoodScheme ;
+    skos:prefLabel  "high"@en ;
+    rdfs:label      "'high' likelihood"@en .
+my:very_high_likelihood a skos:Concept, score:Likelihood ;
+    skos:inScheme   my:SampleLikelihoodScheme ;
+    skos:prefLabel  "very high"@en ;
+    rdfs:label      "'very high' likelihood"@en .
+
+my:SampleLikelihoodOrder rdf:type skos:OrderedCollection ;
+    skos:prefLabel "likelihood ordering, least likely to most likely"@en ;
+    skos:memberList (
+        my:negligeable_likelihood
+        my:very_low_likelihood
+        my:low_likelihood
+        my:medium_likelihood
+        my:high_likelihood
+        my:very_high_likelihood ) .

@@ -14,6 +14,13 @@ score:CausalEntity a rdfs:Class, skos:Concept ;
     skos:prefLabel "causal entity"@en ;
     skos:inScheme score:CausalEntityScheme .
 
+score:StructuralEntity a rdfs:Class, skos:Concept ;
+    skos:prefLabel "structural entity"@en .
+
+score:Likelihood a rdfs:Class ;
+    rdfs:label "likelihood"@en ;
+    rdfs:description "Likelihood property taken by causal (non-structural) entities. Definition of the scheme, including any applicable order, is specific to the domain model."@en .
+    
 score:has_likelihood a rdf:Property ;
     rdfs:label "likelihood"@en ;
     rdfs:description "Entity has likelihood. It is a causal entity."@en ;
@@ -43,8 +50,19 @@ score:ControlStrategy a rdfs:Class, skos:Concept ;
     skos:broader    score:ThreatCause ;
     skos:inScheme   score:CausalEntityScheme .
 
+score:control_property a rdf:Property ;
+    rdfs:label "control strategy incorporates property"@en ;
+    rdfs:domain score:ControlStrategy ;
+    rdfs:range  score:AssetControlProperty .
+
+score:triggered_by a rdf:Property ;
+    rdfs:label "threat triggered by control strategy"@en ;
+    rdfs:domain score:Threat ;
+    rdfs:range  score:ControlStrategy .
+
 score:AssetProperty a rdfs:Class, skos:Concept ;
     skos:prefLabel "asset property"@en ;
+    rdfs:description "General asset property class. Sub-classes elaborate on relation to threats: caused by, not caused by, unaffected by."@en ;
     rdfs:subClassOf score:CausalEntity ;
     skos:inScheme   score:CausalEntityScheme ;
     skos:broaderTransitive score:CausalEntity .
@@ -52,20 +70,21 @@ score:AssetProperty a rdfs:Class, skos:Concept ;
 score:Asset a rdfs:Class, skos:Concept ;
     skos:prefLabel "system asset"@en .
 
-score:has_property a rdf:Property ;
-    rdfs:label "incorporates property"@en ;
-    rdfs:domain score:ControlStrategy, score:Asset ;
+score:asset_property a rdf:Property ;
+    rdfs:label "asset incorporates property"@en ;
+    rdfs:domain score:Asset ;
     rdfs:range  score:AssetProperty .
 
-score:asset_relation a rdf:Property, skos:Concept ;
-    rdfs:label "relation between two assets"@en ;
-    rdfs:domain score:Asset ;
-    rdfs:range  score:Asset .
-
-###
+score:AssetControlProperty a rdfs:Class, skos:Concept ;
+    skos:prefLabel "asset control property"@en ;
+    rdfs:description "Asset control property. Distinguished from other asset properties by being unaffected by threats."@en ;
+    rdfs:subClassOf score:AssetProperty ;
+    skos:inScheme   score:CausalEntityScheme ;
+    skos:broaderTransitive score:AssetProperty .
 
 score:AssetTrustworthiness a rdfs:Class, skos:Concept ;
     skos:prefLabel "asset trust level"@en ;
+    rdfs:description "Asset trustworthiness attribute. Distinguished from other asset properties by not being caused by threats." @en ;
     rdfs:subClassOf score:AssetProperty ;
     skos:inScheme   score:CausalEntityScheme ;
     skos:broaderTransitive score:AssetProperty .
@@ -78,6 +97,8 @@ score:undermines a rdf:Property ;
 
 score:AssetBehaviour a rdfs:Class, skos:Concept ;
     skos:prefLabel "asset behaviour"@en ;
+    skos:altLabel  "threat effect"@en ;
+    rdfs:description "Asset behaviour. Distinguished from other asset properties by being caused by threats, i.e. a threat effect."@en ;
     rdfs:subClassOf score:AssetProperty ;
     skos:inScheme   score:CausalEntityScheme ;
     skos:broaderTransitive score:AssetProperty .
@@ -86,51 +107,32 @@ score:exploits a rdf:Property ;
     rdfs:label "threat exploits behaviour"@en ;
     rdfs:domain score:Threat ;
     rdfs:range  score:AssetBehaviour .
+    
+####
 
-###
+score:asset_relation a rdf:Property, skos:Concept ;
+    rdfs:label "relation between two assets"@en ;
+    rdfs:domain score:Asset ;
+    rdfs:range  score:Asset .
 
+score:Pattern a rdfs:Class, skos:Concept ;
+    skos:prefLabel "pattern"@en .
+    
 score:introduces a rdf:Property ;
     rdfs:label "introduces threat pattern"@en ;
-    rdfs:label "Threat or control strategy introduces threat pattern"@en ;
+    rdfs:description "Threat or control strategy introduces threat pattern"@en ;
     rdfs:domain score:Threat, score:ControlStrategy  ;
     rdfs:range  score:Pattern .
 
-score:match_on_source a rdf:Property ;
-    rdfs:label "match on source node"@en ;
+score:pattern_asset a rdf:Property ;
+    rdfs:label "pattern concerned with asset type"@en ;
     rdfs:domain score:Pattern ;
     rdfs:range  score:Asset .
 
-score:match_on_target a rdf:Property ;
-    rdfs:label "match on target node"@en ;
-    rdfs:domain score:Pattern ;
-    rdfs:range  score:Asset .
-
-score:match_via a rdf:Property ;
-    rdfs:label "match via edge"@en ;
-    rdfs:domain score:Pattern ;
-    rdfs:range  score:asset_relation .
-
-
-score:Pattern a skos:Concept ;
-    skos:prefLabel   "pattern"@en ;
-    rdfs:description """A threat pattern is associated with an asset. It is composed of an 
-association with a node, and the presence of a link, with another node.
-First, this is *conditioned* on the target node's role type and role 
-proper. Second, it is conditioned on an edge between the asset type and
-the target node. This edge is attributed, namely relationship type."""@en .
-
-score:conditioned_on a rdf:Property ;
-    rdfs:label "match source/target node conditioned with role attribute"@en ;
-    rdfs:domain score:match_on_source, score:match_on_target ;
+score:pattern_asset_role a rdf:Property ;
+    rdfs:label "pattern asset type role attribute"@en ;
+    rdfs:domain score:pattern_asset ;
     rdfs:range  score:RoleAttribute .
-    
-score:conditioned_via a rdf:Property ;
-    rdfs:label "match conditioned via edge attribute"@en ;
-    rdfs:domain score:match_edge ;
-    rdfs:range  score:SpanningAttribute .
-
-
-####
 
 score:RoleAttribute a skos:ConceptScheme, rdfs:Class ;
     dct:title "Node role attribute"@en .
@@ -152,56 +154,4 @@ score:role_prohibited a skos:Concept, score:RoleAttribute ;
     skos:inScheme   score:RoleAttribute ;
     skos:prefLabel  "prohibited"@en ;
     rdfs:label      "'prohibited' node role"@en .
-
-####
-
-score:SpanningAttribute a skos:ConceptScheme, rdfs:Class ;
-    dct:title "Edge spanning attribute"@en .
     
-score:conn_mandatory a skos:Concept, score:SpanningAttribute ;
-    skos:inScheme   score:SpanningAttribute ;
-    skos:prefLabel  "mandatory"@en ;
-    rdfs:label      "'mandatory' connection"@en .
-score:conn_prohibited a skos:Concept, score:SpanningAttribute ;
-    skos:inScheme   score:SpanningAttribute ;
-    skos:prefLabel  "prohibited"@en ;
-    rdfs:label      "'prohibited' connection"@en .
-
-score:Likelihood a skos:ConceptScheme, rdfs:Class ;
-    dct:title "Likelihood level scheme"@en .
-    
-score:negligeable_likelihood a skos:Concept, score:Likelihood ;
-    skos:inScheme   score:Likelihood ;
-    skos:prefLabel  "negligeable"@en ;
-    skos:altLabel   "negligible"@en ;
-    rdfs:label      "'negligeable' likelihood"@en .
-score:very_low_likelihood a skos:Concept, score:Likelihood ;
-    skos:inScheme   score:Likelihood ;
-    skos:prefLabel  "very low"@en ;
-    rdfs:label      "'very low' likelihood"@en .
-score:low_likelihood a skos:Concept, score:Likelihood ;
-    skos:inScheme   score:Likelihood ;
-    skos:prefLabel  "low"@en ;
-    rdfs:label      "'low' likelihood"@en .
-score:medium_likelihood a skos:Concept, score:Likelihood ;
-    skos:inScheme   score:Likelihood ;
-    skos:prefLabel  "medium"@en ;
-    rdfs:label      "'medium' likelihood"@en .
-score:high_likelihood a skos:Concept, score:Likelihood ;
-    skos:inScheme   score:Likelihood ;
-    skos:prefLabel  "high"@en ;
-    rdfs:label      "'high' likelihood"@en .
-score:very_high_likelihood a skos:Concept, score:Likelihood ;
-    skos:inScheme   score:Likelihood ;
-    skos:prefLabel  "very high"@en ;
-    rdfs:label      "'very high' likelihood"@en .
-
-score:LikelihoodOrder rdf:type skos:OrderedCollection ;
-    skos:prefLabel "likelihood ordering, least likely to most likely"@en ;
-    skos:memberList (
-        score:negligeable_likelihood
-        score:very_low_likelihood
-        score:low_likelihood
-        score:medium_likelihood
-        score:high_likelihood
-        score:very_high_likelihood ) .
