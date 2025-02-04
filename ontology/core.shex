@@ -12,6 +12,7 @@ PREFIX scoresh: <http://ontology.spyderisk.org/sh/core#>
 # Then enforce presence of at most one pattern per control strategy, 'undermines' edge.
 # Move on to defining the following causal entities: a) threat b) threat cause c) control strategy d) asset property e) asset behaviour
 
+# 1. Asset
 scoresh:AssetShape {
     rdfs:label              xsd:string? ;
     score:has_property      @scoresh:AssetPropertyShape* .
@@ -21,6 +22,8 @@ scoresh:AssetRelationShape {
     rdfs:domain             @scoresh:AssetShape ;
     rdfs:range              @scoresh:AssetShape .
 }
+
+# 2. Pattern
 scoresh:PatternShape {
     rdfs:label              xsd:string? ;
     score:match_on_source   @scoresh:AssetShape ;
@@ -29,11 +32,15 @@ scoresh:PatternShape {
 }
 scoresh:ConditioningOnShape {
     rdfs:label              xsd:string? ;
-    score:conditioned_on    @scoresh:RoleAttributeShape .
+    score:conditioned_on    ( score:role_unique
+                              score:role_necessary
+			      score:role_sufficient
+			      score:role_prohibited ) .
 }
 scoresh:ConditioningViaShape {
     rdfs:label              xsd:string? ;
-    score:conditioned_via   @scoresh:SpanningAttributeShape .
+    score:conditioned_via   ( score:conn_mandatory
+                              score:conn_prohibited ) .
 }
 scoresh:RoleAttributeShape {
     rdfs:label              xsd:string? ;
@@ -47,18 +54,27 @@ scoresh:SpanAttributeShape {
     skos:altLabel           xsd:string? ;
     skos:inScheme           score:SpanningAttribute .
 }
+
+# 3. Generic causal entity
 scoresh:CausalEntityShape {
     rdfs:label              xsd:string? ;
-    score:has_likelihood    score:Likelihood ;
+    score:has_likelihood    ( score:negligeable_likelihood
+                              score:very_low_likelihood
+			      score:low_likelihood
+			      score:medium_likelihood
+			      score:high_likelihood
+			      score:very_high_likelihood ) ;
     skos:inScheme           score:CausalEntityScheme? ;
     skos:broader            @scoresh:CausalEntityShape* ;
     skos:broaderTransitive  @scoresh:CausalEntityShape* ;
     skos:narrower           @scoresh:CausalEntityShape* ;
     skos:narrowerTransitive @scoresh:CausalEntityShape* .
 }
+
+# 4. Miscellaneous
 scoresh:AssetPropertyShape {
     rdfs:label              xsd:string? ;
-    score:undermined_by     @scoresh:AssetBehaviourShape
+    score:undermined_by     @scoresh:AssetBehaviourShape .
 }
 scoresh:AssetBehaviourShape {
     rdfs:label              xsd:string? ;
