@@ -53,7 +53,7 @@ In the RDF world, this kind of pattern is key to incremental re-use and elaborat
 
 ## Patterns
 
-(Note that this has been revised, so this portion of the document reflects the first iteration, and will be updated accordingly later.)
+**(Note that this has been revised, so this portion of the document reflects the first iteration, and will be updated accordingly later.)**
 
 This was the most difficult part of the modelling exercise. It is not clear how best to model this. A pattern has a 'node' and a 'link' component. There are a several ways in which we might approach this:
 1. Model a pattern using simple classes and properties. Comprising a parent class with sub-properties source node and link, sub-properties should be classes with additional properties. First, node should have a role type: 'unique', 'redundant' &c. Second, the link should connect a source and a target asset, and similarly there should be a link type: 'mandatory' or 'prohibited'. 
@@ -71,22 +71,11 @@ Selecting the second approach, this involves a couple of things:
 2. Complementing `score:match_via` with `score:match_on_source` and `score:match_on_target`, which associate pattern with a source and target asset node respectively. These can then be attributed by downstream vocabularies or instances using the `score:conditioned_via` and `score:conditioned_on` properties, which associate a link with a `score:SpanningAttribute` and `score:RoleAttribute` respectively.
 3. Role attributes are defined as sub-classes of `score:RoleAttribute`, which is also a SKOS concept scheme. Likewise, spanning attributes are defined similarly.
 
-## Asset (control) properties
-
-As given, the distinction between asset control properties and asset properties is unclear. Indeed, the causal model is defined by the set (A, T, B, W, C, G): assets, threats, behaviours, trustworthiness controls and control strategies. As such, I have treated asset control properties and asset properties as one. Hence, both assets and control strategies may have an asset property.
-
 ## Causal entities and likelihoods
 
 Similarly, as given, threats, threat causes, and asset properties are considered to be sub-classes of causal entities (things with likelihood). The motivation here appears to be that these are all things which can have a likelihood.
 
 I have modelled this in two ways. First, I have modelled 'causal entity' as part of a SKOS concept scheme. The hierarchy is modelled using `skos:broader` and `skos:broaderTransitive`. Second, I have associated everything defined as a sub-class of 'causal entity' to have a 'likelihood' property. This likelihood is also modelled as a SKOS concept scheme, with order imposed using `skos:OrderedCollection`.
-
-## Asset behaviours and trustworthiness
-
-The 'type' of an asset behaviour undermines the 'trustworthiness' of an external cause. We also see that asset property is a super-class of asset property, so we can infer that if an asset property is also associated with a *measure* of trust. 
-1. For asset behaviour (a.k.a. threat effect), we have an instantiation or sub-class of which, called 'behaviour type'.
-2. For asset trustworthiness attribute (a.k.a. external cause) we have an instantiation or sub-class of which, called 'trustworthiness attribute'.
-3. There is a directed edge of cardinality 1, 'undermines'. So asset behaviours undermine asset trustworthiness attributes.
 
 ## Next steps
 
