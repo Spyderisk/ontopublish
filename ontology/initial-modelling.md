@@ -14,15 +14,15 @@ Hence there are effectively three core sections to model:
 2. Construction patterns, which are rules matching on (asset) nodes and their positional information. I think the nodes and edges are implicit in the structure of the data, but they depend on edge-level attributes, so I'm not sure how to model that in RDF yet.
 3. Assets, which form part of the target system.
 
-Define the following prefixes (`score` is this V1 core model):
+## Vocabularies
+
+This document uses the following prefixes (`score` is this V1 core model RDF representation):
 ```turtle
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix score: <http://ontology.spyderisk.org/ns/core#> .
 ```
-
-## Semantics
 
 This vocabulary goes beyond RDF/S by introducing [SKOS](https://www.w3.org/2004/02/skos/). SKOS is useful because it enriches our descriptions of concepts, and how they relate to each other. Not everything can be modelled effectively with RDF and RDF/S properties and classes alone. It is also relatively lightweight: the semantics imply relatively little about what we associate with `skos:Concept`.
 

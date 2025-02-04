@@ -11,8 +11,7 @@ score:CausalEntityScheme a skos:ConceptScheme ;
     skos:hasTopConcept score:CausalEntity .
 
 score:CausalEntity a rdfs:Class, skos:Concept ;
-    skos:prefLabel "structural entity"@en ;
-    rdfs:description "Most general type of structural entity"@en ;
+    skos:prefLabel "causal entity"@en ;
     skos:inScheme score:CausalEntityScheme .
 
 score:has_likelihood a rdf:Property ;
@@ -113,7 +112,7 @@ score:match_via a rdf:Property ;
 
 
 score:Pattern a skos:Concept ;
-    skos:prefLabel   "construction pattern"@en ;
+    skos:prefLabel   "pattern"@en ;
     rdfs:description """A threat pattern is associated with an asset. It is composed of an 
 association with a node, and the presence of a link, with another node.
 First, this is *conditioned* on the target node's role type and role 
