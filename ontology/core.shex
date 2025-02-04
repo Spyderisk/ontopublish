@@ -1,0 +1,77 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdfg: <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX score: <http://ontology.spyderisk.org/ns/core#>
+PREFIX scoresh: <http://ontology.spyderisk.org/sh/core#>
+
+# Define shapes for asset, pattern and general causal entity.
+# Start by saying that a causal entity must have a likelihood statement.
+# Then enforce presence of at most one pattern per control strategy, 'undermines' edge.
+# Move on to defining the following causal entities: a) threat b) threat cause c) control strategy d) asset property e) asset behaviour
+
+scoresh:AssetShape {
+    rdfs:label              xsd:string? ;
+    score:has_property      @scoresh:AssetPropertyShape* .
+}
+scoresh:AssetRelationShape {
+    rdfs:label              xsd:string? ;
+    rdfs:domain             @scoresh:AssetShape ;
+    rdfs:range              @scoresh:AssetShape .
+}
+scoresh:PatternShape {
+    rdfs:label              xsd:string? ;
+    score:match_on_source   @scoresh:AssetShape ;
+    score:match_on_target   @scoresh:AssetShape ;
+    score:match_via         @scoresh:AssetRelationShape .
+}
+scoresh:ConditioningOnShape {
+    rdfs:label              xsd:string? ;
+    score:conditioned_on    @scoresh:RoleAttributeShape .
+}
+scoresh:ConditioningViaShape {
+    rdfs:label              xsd:string? ;
+    score:conditioned_via   @scoresh:SpanningAttributeShape .
+}
+scoresh:RoleAttributeShape {
+    rdfs:label              xsd:string? ;
+    skos:prefLabel          xsd:string? ;
+    skos:altLabel           xsd:string? ;
+    skos:inScheme           score:RoleAttribute .
+}
+scoresh:SpanAttributeShape {
+    rdfs:label              xsd:string? ;
+    skos:prefLabel          xsd:string? ;
+    skos:altLabel           xsd:string? ;
+    skos:inScheme           score:SpanningAttribute .
+}
+scoresh:CausalEntityShape {
+    rdfs:label              xsd:string? ;
+    score:has_likelihood    score:Likelihood ;
+    skos:inScheme           score:CausalEntityScheme? ;
+    skos:broader            @scoresh:CausalEntityShape* ;
+    skos:broaderTransitive  @scoresh:CausalEntityShape* ;
+    skos:narrower           @scoresh:CausalEntityShape* ;
+    skos:narrowerTransitive @scoresh:CausalEntityShape* .
+}
+scoresh:AssetPropertyShape {
+    rdfs:label              xsd:string? ;
+    score:undermined_by     @scoresh:AssetBehaviourShape
+}
+scoresh:AssetBehaviourShape {
+    rdfs:label              xsd:string? ;
+    score:undermines        @scoresh:AssetPropertyShape .
+}
+scoresh:ThreatShape {
+    rdfs:label              xsd:string? ;
+    score:caused_by         @scoresh:ThreatCauseShape? ;
+    score:introduces        @scoresh:PatternShape? ;
+    score:exploits          @scoresh:AssetBehaviourShape? .
+}
+scoresh:ControlStrategyShape {
+    rdfs:label              xsd:string? ;
+    score:introduces        @scoresh:PatternShape? ;
+    score:has_property      @scoresh:AssetPropertyShape* .
+}
