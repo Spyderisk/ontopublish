@@ -20,27 +20,26 @@ my:Symbolics3600 a score:Asset ;
 my:VT100 a score:Asset ;
     rdfs:label "example asset: VT100 serial terminal asset"@en ;
     my:RS232_from my:Symbolics3600 .
-        
+
 my:MaliciousMacroAuthor a score:Threat ;
     rdfs:label "example instantiation of Threat: malicious macro author"@en ;
     score:introduces my:MaliciousMacroPattern .
 
-_:b0 a rdf:Statement ;
-    score:pattern_asset_role score:role_unique ;
-    rdf:subject   my:MaliciousMacroPattern ;
-    rdf:predicate my:pattern_asset ;
-    rdf:domain    my:Symbolics3600 .
-_:b1 a rdf:Statement ;
-    score:pattern_asset_role score:role_unique ;
-    rdf:subject   my:MaliciousMacroPattern ;
-    rdf:predicate my:pattern_asset ;
-    rdf:domain    my:VT100 .
+# Reification statements are difficult to query, as they aren't asserted.
+# https://stackoverflow.com/questions/24064643/making-statements-about-statements-which-are-no-reified#26938649
+# This points to a couple of alternatives:
+# - RDF-star (RDF*): https://www.w3.org/2021/12/rdf-star.html
+# - rdf:singletonProperty (Nguyen et al. 2014 - https://doi.org/10.1145/2566486.2567973)
+# - Something like the below, where we declare that there exists a thing which is
+#   a pattern_asset property, which itself has a statement made about it, that it
+#   occupies a role, attributing the role to it:
 
-_:b2 a rdf:Statement ;
-    my:baud_rate  "134.5"^^xsd:float ;
-    rdf:subject   my:Symbolics3600 ;
-    rdf:predicate my:asset_relation ;
-    rdf:domain    my:VT100 .
+_:b0 a score:pattern_asset ;
+    score:pattern_asset_role score:role_unique .
+_:b1 a score:pattern_asset ;
+    score:pattern_asset_role score:role_unique .
+_:b2 a my:RS232_from ;
+    my:baud_rate "134.5"^^xsd:float .
 
 my:MaliciousMacroPattern a score:Pattern ;
     score:pattern_asset my:VT100, my:Symbolics3600 .
