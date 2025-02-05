@@ -16,13 +16,13 @@ my:baud_rate a rdf:Property ;
     rdfs:range  xsd:float .
 
 my:Symbolics3600 a score:Asset ;
-    rdfs:label "example asset: Symbolics 3600 series Lisp Machine"@en .
+    rdfs:label "example asset type instantiation: these are Symbolics 3600 series Lisp Machines"@en .
 my:VT100 a score:Asset ;
-    rdfs:label "example asset: VT100 serial terminal asset"@en ;
+    rdfs:label "example asset type instantiation: these are VT100 serial terminals"@en ;
     my:RS232_from my:Symbolics3600 .
 
 my:MaliciousMacroAuthor a score:Threat ;
-    rdfs:label "example instantiation of Threat: malicious macro author"@en ;
+    rdfs:label "example instantiation of a threat: malicious Lisp macro/function author"@en ;
     score:introduces my:MaliciousMacroPattern .
 
 # Reification statements are difficult to query, as they aren't asserted.
@@ -34,15 +34,16 @@ my:MaliciousMacroAuthor a score:Threat ;
 #   a pattern_asset property, which itself has a statement made about it, that it
 #   occupies a role, attributing the role to it:
 
-_:b0 a score:pattern_asset ;
+my:pattern_asset_role_Symbolics3600 a score:pattern_asset ;
     score:pattern_asset_role score:role_unique .
-_:b1 a score:pattern_asset ;
+my:pattern_asset_role_VT100 a score:pattern_asset ;
     score:pattern_asset_role score:role_unique .
-_:b2 a my:RS232_from ;
-    my:baud_rate "134.5"^^xsd:float .
 
 my:MaliciousMacroPattern a score:Pattern ;
-    score:pattern_asset my:VT100, my:Symbolics3600 .
+    score:pattern_asset_roleVT100 my:VT100 ;
+    score:pattern_asset_roleSymbolics3600 my:Symbolics3600 .
+#my:MaliciousMacroPattern a score:Pattern ;
+#    score:pattern_asset my:VT100, my:Symbolics3600 .
     
 ## Sample likelihood scheme
 
