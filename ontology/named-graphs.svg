@@ -36,8 +36,8 @@
 <!-- threat0&#45;&gt;pattern0 -->
 <g id="edge2" class="edge">
 <title>threat0&#45;&gt;pattern0</title>
-<path fill="none" stroke="black" d="M100.55,-85.9C116.96,-76.03 138.16,-63.77 157.62,-54 166.52,-49.53 176.13,-45.09 185.51,-40.94"/>
-<polygon fill="black" stroke="black" points="186.8,-44.2 194.58,-37 184.01,-37.78 186.8,-44.2"/>
+<path fill="none" stroke="black" d="M100.55,-85.9C116.96,-76.03 138.16,-63.77 157.62,-54 166.62,-49.48 176.33,-44.99 185.81,-40.81"/>
+<polygon fill="black" stroke="black" points="194.85,-36.89 187.47,-45 191.38,-38.39 185.67,-40.87 185.67,-40.87 185.67,-40.87 191.38,-38.39 183.88,-36.74 194.85,-36.89"/>
 <text text-anchor="middle" x="201.88" y="-54.95" font-family="Times,serif" font-size="14.00">score:introduces</text>
 </g>
 <!-- threat1 -->
@@ -51,21 +51,21 @@
 <g id="edge5" class="edge">
 <title>threat1&#45;&gt;pattern0</title>
 <path fill="none" stroke="black" d="M496.13,-87.51C444.89,-73.85 370.89,-54.12 315.44,-39.34"/>
-<polygon fill="black" stroke="black" points="316.64,-36.04 306.08,-36.85 314.84,-42.8 316.64,-36.04"/>
+<polygon fill="black" stroke="black" points="305.79,-36.77 316.61,-35 309.45,-37.74 315.45,-39.35 315.45,-39.35 315.45,-39.35 309.45,-37.74 314.3,-43.69 305.79,-36.77"/>
 <text text-anchor="middle" x="460.85" y="-54.95" font-family="Times,serif" font-size="14.00">score:introduces</text>
 </g>
 <!-- threat1&#45;&gt;pattern1 -->
 <g id="edge3" class="edge">
 <title>threat1&#45;&gt;pattern1</title>
-<path fill="none" stroke="black" d="M616.09,-88.1C669.37,-74.42 747.63,-54.31 806.03,-39.32"/>
-<polygon fill="black" stroke="black" points="806.78,-42.74 815.59,-36.86 805.04,-35.96 806.78,-42.74"/>
+<path fill="none" stroke="black" d="M616.09,-88.1C669.48,-74.39 747.96,-54.23 806.39,-39.22"/>
+<polygon fill="black" stroke="black" points="815.88,-36.79 807.31,-43.63 812.21,-37.73 806.19,-39.27 806.19,-39.27 806.19,-39.27 812.21,-37.73 805.07,-34.91 815.88,-36.79"/>
 <text text-anchor="middle" x="784.57" y="-54.95" font-family="Times,serif" font-size="14.00">score:introduces</text>
 </g>
 <!-- threat1&#45;&gt;pattern2 -->
 <g id="edge4" class="edge">
 <title>threat1&#45;&gt;pattern2</title>
-<path fill="none" stroke="black" d="M556.12,-85.99C556.12,-75 556.12,-60.56 556.12,-47.91"/>
-<polygon fill="black" stroke="black" points="559.63,-48 556.13,-38 552.63,-48 559.63,-48"/>
+<path fill="none" stroke="black" d="M556.12,-85.99C556.12,-74.89 556.12,-60.26 556.12,-47.51"/>
+<polygon fill="black" stroke="black" points="556.13,-37.7 560.63,-47.7 556.13,-41.49 556.13,-47.7 556.13,-47.7 556.13,-47.7 556.13,-41.49 551.63,-47.7 556.13,-37.7"/>
 <text text-anchor="middle" x="600.38" y="-54.95" font-family="Times,serif" font-size="14.00">score:introduces</text>
 </g>
 <!-- cs0 -->
@@ -78,8 +78,8 @@
 <!-- cs0&#45;&gt;pattern0 -->
 <g id="edge1" class="edge">
 <title>cs0&#45;&gt;pattern0</title>
-<path fill="none" stroke="black" d="M258.15,-85.99C255,-74.89 250.85,-60.26 247.22,-47.51"/>
-<polygon fill="black" stroke="black" points="250.6,-46.61 244.5,-37.94 243.87,-48.52 250.6,-46.61"/>
+<path fill="none" stroke="black" d="M258.15,-85.99C254.97,-74.77 250.76,-59.97 247.11,-47.12"/>
+<polygon fill="black" stroke="black" points="244.42,-37.66 251.49,-46.05 245.46,-41.3 247.16,-47.28 247.16,-47.28 247.16,-47.28 245.46,-41.3 242.83,-48.51 244.42,-37.66"/>
 <text text-anchor="middle" x="296.81" y="-54.95" font-family="Times,serif" font-size="14.00">score:introduces</text>
 </g>
 </g>

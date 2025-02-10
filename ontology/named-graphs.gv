@@ -1,20 +1,21 @@
 digraph
 {
-    compound=true;
+    compound=true
 
-    node [shape="box"];
+    node [shape="box"]
+    edge[arrowhead=open]
 
-    pattern0 [label="my:NFSSharePattern a score:Pattern, rdfg:Graph"];
-    pattern1 [label="my:BusinessLogicPattern a score:Pattern, rdfg:Graph"];
-    pattern2 [label="my:Solaris10SmtpdPattern a score:Pattern, rdfg:Graph"];
+    pattern0 [label="my:NFSSharePattern a score:Pattern, rdfg:Graph"]
+    pattern1 [label="my:BusinessLogicPattern a score:Pattern, rdfg:Graph"]
+    pattern2 [label="my:Solaris10SmtpdPattern a score:Pattern, rdfg:Graph"]
 
-    threat0 [label="my:SunRPCbindBotnet\na score:Threat"];
-    threat1 [label="my:SunSSHBotnet\na score:Threat"];
-    cs0 [label="my:SunRPCbindMisconfiguration\na score:ControlStrategy"];
+    threat0 [label="my:SunRPCbindBotnet\na score:Threat"]
+    threat1 [label="my:SunSSHBotnet\na score:Threat"]
+    cs0 [label="my:SunRPCbindMisconfiguration\na score:ControlStrategy"]
 
-    cs0 -> pattern0 [label="score:introduces"];
-    threat0 -> pattern0 [label="score:introduces"];
-    threat1 -> pattern1 [label="score:introduces"];
-    threat1 -> pattern2 [label="score:introduces"];
-    threat1 -> pattern0 [label="score:introduces"];
+    cs0 -> pattern0 [label="score:introduces"]
+    threat0 -> pattern0 [label="score:introduces"]
+    threat1 -> pattern1 [label="score:introduces"]
+    threat1 -> pattern2 [label="score:introduces"]
+    threat1 -> pattern0 [label="score:introduces"]
 }

@@ -20,6 +20,7 @@ This document uses the following prefixes (`score` is this V1 core model RDF rep
 ```turtle
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdfg: <http://www.w3.org/2004/03/trix/rdfg-1/> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix score: <http://ontology.spyderisk.org/ns/core#> .
@@ -48,7 +49,7 @@ Class inheritance means that `score:Threat` inherits a `score:Likelihood` proper
 ```turtle
 my:PersistentThreat rdf:type score:Threat .
 ```
-In the RDF world, this kind of pattern is key to incremental re-use and elaboration of concepts. This statement is straightforward, saying that `my:PersistentThreat` has type `score:Threat`. Support for these statements is also implicit to our use of RDF. We don't need to define a 'type' edge for each element of our core model. 
+In the RDF world, this kind of usage is key to incremental re-use and elaboration of concepts. This statement is straightforward, saying that `my:PersistentThreat` has type `score:Threat`. Support for these statements is also implicit to our use of RDF. We don't need to define a 'type' edge for each element of our core model. 
 
 (Note that in RDF graphs, simple `a` is syntactic sugar for an `rdf:type` triple predicate, and is used as it is terser than writing out `rdf:type` all the time.)
 
@@ -77,7 +78,7 @@ Threat patterns are related to control strategies and threats, in that both can 
 
 ![pattern-post](https://raw.githubusercontent.com/Spyderisk/ontopublish/main/ontology/named-graphs-replacement.svg)
 
-In this diagram, the identifiers are replaced with the graph they stand for. 
+In this diagram, the identifiers are replaced with the graph they stand for. These graphs serve as the patterns of assets, and relations between them, which will be matched by the pattern-matching implementation.
 
 In terms of restricting these to instances of assets and relations, since named graphs' identifiers stand in for the named RDF graph, standard techniques should be feasible for defining constraints. (See the "Vocabularies" section above.)
 

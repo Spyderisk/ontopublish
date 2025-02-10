@@ -1,6 +1,7 @@
 digraph DemoBehaviours {
   rankdir="LR"
   node [shape=box]
+  edge[arrowhead=open]
 
   // define nodes
   NetworkInterfaceUnderLoad [label="my:NetworkInterfaceUnderLoad\na score:AssetBehaviour"]
@@ -17,7 +18,7 @@ digraph DemoBehaviours {
   NetworkInterfaceUnderLoad -> invis2 [headclip=false]
 
   // join up virtual nodes
-  edge [arrowhead=open dir=forward]
+  edge [dir=forward]
   invis1 -> CoreVPNReachability [label="score:undermines" tailclip=false]
   invis2 -> SSHBastionReachability [label="score:undermines" tailclip=false]
 

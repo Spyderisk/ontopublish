@@ -46,8 +46,8 @@
 <!-- asset00&#45;&gt;asset01 -->
 <g id="edge1" class="edge">
 <title>asset00&#45;&gt;asset01</title>
-<path fill="none" stroke="black" d="M170.79,-116.55C171.23,-102.05 171.86,-81.24 172.37,-64.3"/>
-<polygon fill="black" stroke="black" points="175.87,-64.41 172.67,-54.31 168.87,-64.2 175.87,-64.41"/>
+<path fill="none" stroke="black" d="M170.79,-116.55C171.23,-101.91 171.87,-80.83 172.38,-63.81"/>
+<polygon fill="black" stroke="black" points="172.68,-54.01 176.88,-64.15 172.57,-57.79 172.38,-64.01 172.38,-64.01 172.38,-64.01 172.57,-57.79 167.88,-63.87 172.68,-54.01"/>
 <text text-anchor="middle" x="230.23" y="-85.7" font-family="Times,serif" font-size="14.00">my:in_front_of</text>
 <text text-anchor="middle" x="230.23" y="-71.45" font-family="Times,serif" font-size="14.00">a score:asset_relation</text>
 </g>
@@ -61,8 +61,8 @@
 <!-- asset01&#45;&gt;asset02 -->
 <g id="edge2" class="edge">
 <title>asset01&#45;&gt;asset02</title>
-<path fill="none" stroke="black" d="M256.02,-34.25C298.76,-34.25 350.67,-34.25 393.03,-34.25"/>
-<polygon fill="black" stroke="black" points="392.91,-37.75 402.91,-34.25 392.91,-30.75 392.91,-37.75"/>
+<path fill="none" stroke="black" d="M256.02,-34.25C298.85,-34.25 350.89,-34.25 393.3,-34.25"/>
+<polygon fill="black" stroke="black" points="403.21,-34.25 393.21,-38.75 399.43,-34.25 393.21,-34.25 393.21,-34.25 393.21,-34.25 399.43,-34.25 393.21,-29.75 403.21,-34.25"/>
 <text text-anchor="middle" x="330.38" y="-52.45" font-family="Times,serif" font-size="14.00">my:shares_mounted_by</text>
 <text text-anchor="middle" x="330.38" y="-38.2" font-family="Times,serif" font-size="14.00">a score:asset_relation</text>
 </g>
@@ -76,8 +76,8 @@
 <!-- asset03&#45;&gt;asset00 -->
 <g id="edge4" class="edge">
 <title>asset03&#45;&gt;asset00</title>
-<path fill="none" stroke="black" d="M369.14,-135.25C327.29,-135.25 277.71,-135.25 238.52,-135.25"/>
-<polygon fill="black" stroke="black" points="238.75,-131.75 228.75,-135.25 238.75,-138.75 238.75,-131.75"/>
+<path fill="none" stroke="black" d="M369.14,-135.25C327.2,-135.25 277.5,-135.25 238.27,-135.25"/>
+<polygon fill="black" stroke="black" points="228.46,-135.25 238.46,-130.75 232.24,-135.25 238.46,-135.25 238.46,-135.25 238.46,-135.25 232.24,-135.25 238.46,-139.75 228.46,-135.25"/>
 <text text-anchor="middle" x="298.31" y="-153.45" font-family="Times,serif" font-size="14.00">my:remotely_manages</text>
 <text text-anchor="middle" x="298.31" y="-139.2" font-family="Times,serif" font-size="14.00">a score:asset_relation</text>
 </g>
@@ -129,8 +129,8 @@
 <!-- asset11&#45;&gt;asset12 -->
 <g id="edge6" class="edge">
 <title>asset11&#45;&gt;asset12</title>
-<path fill="none" stroke="black" d="M1064.87,-34.25C1100.89,-34.25 1146.66,-34.25 1186.03,-34.25"/>
-<polygon fill="black" stroke="black" points="1185.97,-37.75 1195.97,-34.25 1185.97,-30.75 1185.97,-37.75"/>
+<path fill="none" stroke="black" d="M1064.87,-34.25C1100.96,-34.25 1146.85,-34.25 1186.28,-34.25"/>
+<polygon fill="black" stroke="black" points="1196.27,-34.25 1186.27,-38.75 1192.49,-34.25 1186.27,-34.25 1186.27,-34.25 1186.27,-34.25 1192.49,-34.25 1186.27,-29.75 1196.27,-34.25"/>
 <text text-anchor="middle" x="1131.25" y="-52.45" font-family="Times,serif" font-size="14.00">my:provisioned_by</text>
 <text text-anchor="middle" x="1131.25" y="-38.2" font-family="Times,serif" font-size="14.00">a score:asset_relation</text>
 </g>
@@ -151,8 +151,8 @@
 <!-- asset20&#45;&gt;asset21 -->
 <g id="edge8" class="edge">
 <title>asset20&#45;&gt;asset21</title>
-<path fill="none" stroke="black" d="M679.29,-135.25C715.77,-135.25 763.12,-135.25 800.78,-135.25"/>
-<polygon fill="black" stroke="black" points="800.62,-138.75 810.62,-135.25 800.62,-131.75 800.62,-138.75"/>
+<path fill="none" stroke="black" d="M679.29,-135.25C715.92,-135.25 763.52,-135.25 801.26,-135.25"/>
+<polygon fill="black" stroke="black" points="810.91,-135.25 800.91,-139.75 807.13,-135.25 800.91,-135.25 800.91,-135.25 800.91,-135.25 807.13,-135.25 800.91,-130.75 810.91,-135.25"/>
 <text text-anchor="middle" x="745.69" y="-153.45" font-family="Times,serif" font-size="14.00">my:in_front_of</text>
 <text text-anchor="middle" x="745.69" y="-139.2" font-family="Times,serif" font-size="14.00">a score:asset_relation</text>
 </g>
@@ -166,8 +166,8 @@
 <!-- asset20&#45;&gt;asset22 -->
 <g id="edge9" class="edge">
 <title>asset20&#45;&gt;asset22</title>
-<path fill="none" stroke="black" d="M622.25,-116.55C622.25,-102.05 622.25,-81.24 622.25,-64.3"/>
-<polygon fill="black" stroke="black" points="625.75,-64.31 622.25,-54.31 618.75,-64.31 625.75,-64.31"/>
+<path fill="none" stroke="black" d="M622.25,-116.55C622.25,-101.91 622.25,-80.83 622.25,-63.81"/>
+<polygon fill="black" stroke="black" points="622.25,-54.01 626.75,-64.01 622.25,-57.8 622.25,-64.01 622.25,-64.01 622.25,-64.01 622.25,-57.8 617.75,-64.01 622.25,-54.01"/>
 <text text-anchor="middle" x="680.38" y="-85.7" font-family="Times,serif" font-size="14.00">my:in_front_of</text>
 <text text-anchor="middle" x="680.38" y="-71.45" font-family="Times,serif" font-size="14.00">a score:asset_relation</text>
 </g>
@@ -181,8 +181,8 @@
 <!-- threat0&#45;&gt;asset00 -->
 <g id="edge11" class="edge">
 <title>threat0&#45;&gt;asset00</title>
-<path fill="none" stroke="black" d="M89.27,-223.91C97.45,-215.05 107.92,-203.72 118.59,-192.17"/>
-<polygon fill="black" stroke="black" points="121.13,-194.58 125.34,-184.86 115.99,-189.83 121.13,-194.58"/>
+<path fill="none" stroke="black" d="M89.27,-223.91C97.53,-214.97 108.12,-203.5 118.9,-191.83"/>
+<polygon fill="black" stroke="black" points="125.54,-184.64 122.06,-195.04 122.98,-187.42 118.76,-191.99 118.76,-191.99 118.76,-191.99 122.98,-187.42 115.45,-188.93 125.54,-184.64"/>
 <text text-anchor="middle" x="163.09" y="-192.7" font-family="Times,serif" font-size="14.00">score:introduces</text>
 </g>
 <!-- threat1 -->
@@ -195,22 +195,22 @@
 <!-- threat1&#45;&gt;asset00 -->
 <g id="edge14" class="edge">
 <title>threat1&#45;&gt;asset00</title>
-<path fill="none" stroke="black" d="M804.14,-236.96C711.49,-229.79 528.12,-213.36 371.48,-185.76"/>
-<polygon fill="black" stroke="black" points="372.2,-182.33 361.74,-184.02 370.97,-189.22 372.2,-182.33"/>
+<path fill="none" stroke="black" d="M804.14,-236.96C711.4,-229.78 527.75,-213.33 371.01,-185.67"/>
+<polygon fill="black" stroke="black" points="361.45,-183.96 372.09,-181.3 365.17,-184.63 371.29,-185.72 371.29,-185.72 371.29,-185.72 365.17,-184.63 370.5,-190.15 361.45,-183.96"/>
 <text text-anchor="middle" x="542.1" y="-192.7" font-family="Times,serif" font-size="14.00">score:introduces</text>
 </g>
 <!-- threat1&#45;&gt;asset10 -->
 <g id="edge12" class="edge">
 <title>threat1&#45;&gt;asset10</title>
-<path fill="none" stroke="black" d="M924.34,-224.91C936,-220.03 947.58,-213.82 957.25,-206 962.04,-202.13 966.48,-197.6 970.56,-192.76"/>
-<polygon fill="black" stroke="black" points="973.25,-195 976.59,-184.95 967.71,-190.73 973.25,-195"/>
+<path fill="none" stroke="black" d="M924.34,-224.91C936,-220.03 947.58,-213.82 957.25,-206 962.16,-202.03 966.7,-197.38 970.87,-192.39"/>
+<polygon fill="black" stroke="black" points="976.77,-184.71 974.24,-195.38 974.46,-187.71 970.68,-192.64 970.68,-192.64 970.68,-192.64 974.46,-187.71 967.11,-189.9 976.77,-184.71"/>
 <text text-anchor="middle" x="1014.3" y="-192.7" font-family="Times,serif" font-size="14.00">score:introduces</text>
 </g>
 <!-- threat1&#45;&gt;asset21 -->
 <g id="edge13" class="edge">
 <title>threat1&#45;&gt;asset21</title>
-<path fill="none" stroke="black" d="M864.25,-223.91C864.25,-215.83 864.25,-205.68 864.25,-195.19"/>
-<polygon fill="black" stroke="black" points="867.75,-195.26 864.25,-185.26 860.75,-195.26 867.75,-195.26"/>
+<path fill="none" stroke="black" d="M864.25,-223.91C864.25,-215.74 864.25,-205.47 864.25,-194.85"/>
+<polygon fill="black" stroke="black" points="864.25,-184.96 868.75,-194.96 864.25,-188.75 864.25,-194.96 864.25,-194.96 864.25,-194.96 864.25,-188.75 859.75,-194.96 864.25,-184.96"/>
 <text text-anchor="middle" x="908.5" y="-192.7" font-family="Times,serif" font-size="14.00">score:introduces</text>
 </g>
 <!-- cs0 -->
@@ -223,8 +223,8 @@
 <!-- cs0&#45;&gt;asset00 -->
 <g id="edge10" class="edge">
 <title>cs0&#45;&gt;asset00</title>
-<path fill="none" stroke="black" d="M250.4,-223.91C242.3,-215.05 231.94,-203.72 221.38,-192.17"/>
-<polygon fill="black" stroke="black" points="224.03,-189.88 214.7,-184.87 218.86,-194.61 224.03,-189.88"/>
+<path fill="none" stroke="black" d="M250.4,-223.91C242.22,-214.97 231.74,-203.5 221.07,-191.83"/>
+<polygon fill="black" stroke="black" points="214.5,-184.65 224.57,-188.99 217.05,-187.44 221.25,-192.03 221.25,-192.03 221.25,-192.03 217.05,-187.44 217.93,-195.06 214.5,-184.65"/>
 <text text-anchor="middle" x="276.71" y="-192.7" font-family="Times,serif" font-size="14.00">score:introduces</text>
 </g>
 </g>
