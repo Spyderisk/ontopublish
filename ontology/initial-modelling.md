@@ -80,7 +80,7 @@ Threat patterns are related to control strategies and threats, in that both can 
 
 In this diagram, the identifiers are replaced with the graph they stand for. These graphs serve as the patterns of assets, and relations between them, which will be matched by the pattern-matching implementation. 
 
-In terms of restricting these to instances of assets and relations, since named graphs' identifiers stand in for the named RDF graph, standard techniques should be feasible for defining constraints. (See the "Vocabularies" section above.)
+In terms of restricting these to instances of assets and relations, since named graphs' identifiers stand in for the named RDF graph, standard techniques should be feasible for defining constraints over these very graphs. (See the "Vocabularies" section above.)
 
 ## Causal entities and likelihoods
 

@@ -38,9 +38,9 @@
 <!-- SSHBastionReachability -->
 <g id="node3" class="node">
 <title>SSHBastionReachability</title>
-<polygon fill="none" stroke="black" points="849.77,-107.06 657.52,-107.06 657.52,-70.56 849.77,-70.56 849.77,-107.06"/>
+<polygon fill="none" stroke="black" points="865.52,-107.06 641.77,-107.06 641.77,-70.56 865.52,-70.56 865.52,-107.06"/>
 <text text-anchor="middle" x="753.64" y="-89.76" font-family="Times,serif" font-size="14.00">my:SSHBastionReachability</text>
-<text text-anchor="middle" x="753.64" y="-75.51" font-family="Times,serif" font-size="14.00">a score:SSHBastionReachability</text>
+<text text-anchor="middle" x="753.64" y="-75.51" font-family="Times,serif" font-size="14.00">a score:AssetTrustworthinessAttribute</text>
 </g>
 <!-- invis1&#45;&gt;CoreVPNReachability -->
 <g id="edge3" class="edge">
@@ -80,8 +80,8 @@
 <!-- invis2&#45;&gt;SSHBastionReachability -->
 <g id="edge4" class="edge">
 <title>invis2&#45;&gt;SSHBastionReachability</title>
-<path fill="none" stroke="black" d="M395.51,-88.81C395.51,-88.81 541.12,-88.81 646.39,-88.81"/>
-<polygon fill="black" stroke="black" points="656.19,-88.81 646.19,-93.31 652.41,-88.81 646.19,-88.81 646.19,-88.81 646.19,-88.81 652.41,-88.81 646.19,-84.31 656.19,-88.81"/>
+<path fill="none" stroke="black" d="M395.51,-88.81C395.51,-88.81 527.01,-88.81 630.42,-88.81"/>
+<polygon fill="black" stroke="black" points="640.38,-88.81 630.38,-93.31 636.6,-88.81 630.38,-88.81 630.38,-88.81 630.38,-88.81 636.6,-88.81 630.38,-84.31 640.38,-88.81"/>
 <text text-anchor="middle" x="575.77" y="-89.76" font-family="Times,serif" font-size="14.00">score:undermines</text>
 </g>
 <!-- if_flap -->
