@@ -1,0 +1,56 @@
+digraph
+{
+    compound=true;
+    node [shape="box"];
+
+    subgraph cluster0 {
+      label=< <B>my:NFSSharePattern a score:Pattern, rdfg:Graph</B> >
+      // A0--A1
+      // |   |
+      // A3--A2
+      asset00 [label="my:LoadBalancer\na score:Asset"];
+      asset01 [label="my:Solaris10StorageServer\na score:Asset"];
+      asset02 [label="my:LinuxWorkstation\na score:Asset"];
+      asset03 [label="my:OpenSolarisWorkstation\na score:Asset"];
+
+      asset00 -> asset01 [label="my:in_front_of\na score:asset_relation"];
+      asset01 -> asset02 [constraint="false" label="my:shares_mounted_by\na score:asset_relation"];
+      asset03 -> asset02 [dir="back" label="my:remotely_accesses\na score:asset_relation"];
+      asset03 -> asset00 [constraint="false" label="my:remotely_manages\na score:asset_relation"];
+    }
+    subgraph cluster1 {
+      label=< <B>my:BusinessLogicPattern a score:Pattern, rdfg:Graph</B> >
+      // A0--A1
+      //  \  /
+      //   A2
+      asset10 [label="my:smptd\na score:Asset"];
+      asset11 [label="my:CompanyPhone\na score:Asset"];
+      asset12 [label="my:VideoCallingLaptop\na score:Asset"];
+
+      asset10 -> asset11 [dir="back" label="score:syncs_with\na score:asset_relation"];
+      asset11 -> asset12 [constraint="false" label="my:provisioned_by\na score:asset_relation"];
+      asset10 -> asset12 [dir="back" label="score:syncs_with\na score:asset_relation"];
+    }
+    subgraph cluster2 {
+      label=< <B>my:Solaris10SMTPDPattern a score:Pattern, rdfg:Graph</B> >
+      // A0--A1
+      // |
+      // A2
+      asset20 [label="my:LoadBalancer\na score:Asset"];
+      asset21 [label="my:SSHBastion\na score:Asset"];
+      asset22 [label="my:smptd\na score:Asset"];
+
+      asset20 -> asset21 [constraint="false" label="my:in_front_of\na score:asset_relation"];
+      asset20 -> asset22 [label="my:in_front_of\na score:asset_relation"];
+    }
+    threat0 [label="my:SunRPCBindBotnet\na score:Threat"];
+    threat1 [label="my:SunSSHBotnet\na score:Threat"];
+    cs0 [label="my:SunRPCBindMisconfiguration\na score:ControlStrategy"];
+    //cs1 [label="my:SunSSHDefaultConfiguration\na score:ControlStrategy"];
+
+    cs0 -> asset00 [lhead=cluster0 label="score:introduces"];
+    threat0 -> asset00 [lhead=cluster0 label="score:introduces"];
+    threat1 -> asset10 [lhead=cluster1 label="score:introduces"];
+    threat1 -> asset21 [lhead=cluster2 label="score:introduces"];
+    threat1 -> asset00 [lhead=cluster0 label="score:introduces"];
+}

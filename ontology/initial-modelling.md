@@ -67,23 +67,19 @@ The main argument to model this in this manner is that, while it is possible to 
 
 ## Patterns
 
-**(Note that this has been revised, so this portion of the document reflects the first iteration, and will be updated accordingly later.)**
+Patterns can modelled structurally using named graphs. Named graphs are collections of RDF statements, which are associated with an identifier. The reasoning behind named graphs' conception is essentially that RDF documents often already have a name associated with them, and it should be something that can be referenced or interrogated. See (here)[https://sven-lieber.org/en/2023/06/26/rdf-named-graphs/] for an introduction to named graphs, and (here)[https://www.w3.org/2009/12/rdf-ws/p613.pdf] for a discussion of their semantics.
 
-This was the most difficult part of the modelling exercise. It is not clear how best to model this. A pattern has a 'node' and a 'link' component. There are a several ways in which we might approach this:
-1. Model a pattern using simple classes and properties. Comprising a parent class with sub-properties source node and link, sub-properties should be classes with additional properties. First, node should have a role type: 'unique', 'redundant' &c. Second, the link should connect a source and a target asset, and similarly there should be a link type: 'mandatory' or 'prohibited'. 
-2. Model this at a different level of abstraction. Consider the pattern as made up of a source node, a target node, and the type of the directed edge spanning these. These three sub-properties can be considered as:
-   1. an edge from the pattern to the source node's type (e.g. `my:SerialTerminal`)
-   2. an edge from the pattern to the target node's type (e.g. `my:DesktopWorkstation`
-   3. an edge from the pattern to the spanning edge's type (e.g. `my:RS232`). 
+The point here is that we're matching on collections of assets, and relationships between them, notwithstanding the *role* of a node. Named graphs allow us to describe the structure of a pattern, and patterns' association with threats and control strategies, while describing the logic layer acting on the structure of the pattern elsewhere.
 
-The trick here is to further *attribute* these edges. These would be the role of the source node (e.g. 'unique'), role of the target node, and relationship type of the spanning edge (e.g. 'prohibited'). Although the link type may only appear in the system model, it is useful to define them in the core model as it supports re-use and elaboration downstream.
+![pattern-pre](https://raw.githubusercontent.com/Spyderisk/ontopublish/main/ontology/named-graphs.svg)
 
-The former approach is significantly cumbersome. It involves defining a number of classes and sub-classes. In contrast, the second approach associates a pattern with much fewer properties, albeit attributes on edges in RDF can be difficult to reason about (essentially an edge which spans an edge and a node).
+Threat patterns are related to control strategies and threats, in that both can introduce them. In this diagram, patterns have an RDF identifier/IRI (e.g. `my:my:NFSSharePattern`).
 
-Selecting the second approach, this involves a couple of things:
-1. Defining a general `score:asset_relation` property for spanning edges between causal entities, which can be elaborated by downstream vocabularies or instances. Defining this is necessary because the `score:match_via` links a pattern to this spanning edge type.
-2. Complementing `score:match_via` with `score:match_on_source` and `score:match_on_target`, which associate pattern with a source and target asset node respectively. These can then be attributed by downstream vocabularies or instances using the `score:conditioned_via` and `score:conditioned_on` properties, which associate a link with a `score:SpanningAttribute` and `score:RoleAttribute` respectively.
-3. Role attributes are defined as sub-classes of `score:RoleAttribute`, which is also a SKOS concept scheme. Likewise, spanning attributes are defined similarly.
+![pattern-post](https://raw.githubusercontent.com/Spyderisk/ontopublish/main/ontology/named-graphs-replacement.svg)
+
+In this diagram, the identifiers are replaced with the graph they stand for. 
+
+In terms of restricting these to instances of assets and relations, since named graphs' identifiers stand in for the named RDF graph, standard techniques should be feasible for defining constraints. (See the "Vocabularies" section above.)
 
 ## Causal entities and likelihoods
 
