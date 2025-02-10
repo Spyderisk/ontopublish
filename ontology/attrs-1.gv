@@ -1,0 +1,20 @@
+digraph DemoBehaviours {
+  node [shape=box]
+  NetworkInterfaceUnderLoad [label="my:NetworkInterfaceUnderLoad\na score:AssetBehaviour"]
+  CoreVPNReachability [label="my:CoreVPNReachability\na score:AssetTrustworthinessAttribute"]
+
+  node [shape=oval] {
+    rank=same
+    edge [dir=none]
+    invis1 [shape=point style=invis]
+    NetworkInterfaceUnderLoad -> invis1 [headclip=false minlen=4]
+    invis1 -> CoreVPNReachability [tailclip=false dir=forward minlen=4 label="score:undermines"]
+  }
+  edge[arrowhead=open]
+  high_CPU_load [label="my:high_CPU_load\na score:BehaviourAttribute"]
+  interface_flapping [label="my:interface_flapping\na score:BehaviourAttribute"]
+  disk_poor_IO [label="my:disk_poor_IO\na score:BehaviourAttribute"]
+  invis1 -> high_CPU_load [tailclip=false label="score:via"]
+  invis1 -> interface_flapping [tailclip=false label="score:via"]
+  invis1 -> disk_poor_IO [tailclip=false label="score:via"]
+} 

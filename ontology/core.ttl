@@ -107,7 +107,7 @@ score:undermines a rdf:Property ;
     rdfs:domain score:AssetBehaviour ;
     rdfs:range  score:AssetTrustworthiness .
 
-score:exhibits a rdf:Property ;
+score:via a rdf:Property ;
     rdfs:label "undermines trust by behaving in manner"@en ;
     rdfs:description "This characterises the way in which an asset behaviour (a somewhat general
 notion) undermines trustworthiness of an asset, capturing the complexity of

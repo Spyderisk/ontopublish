@@ -33,8 +33,9 @@ Not everything can be modelled effectively with RDF and RDF/S properties and cla
 
 What SKOS does not get us is things like constraints, such as on cardinality. For this, one would need to use something like OWL, or one of the newer shape constraints languages like [ShEx](https://shex.io/) or [SHACL](https://www.w3.org/TR/shacl/).
 
-
 ## Shaded items
+
+### Implicit `rdf:type`
 
 Excepting the shaded items relating to asset behaviours, shaded items are 'types' of certain classes, which are concepts elaborated in the domain model. In fact, the first decision I made during modelling was that these should not be explicitly part of the core model. Instead, these should be instantiated by the domain model. We get this for free from using RDF and RDF/S.
 
@@ -50,6 +51,19 @@ my:PersistentThreat rdf:type score:Threat .
 In the RDF world, this kind of pattern is key to incremental re-use and elaboration of concepts. This statement is straightforward, saying that `my:PersistentThreat` has type `score:Threat`. Support for these statements is also implicit to our use of RDF. We don't need to define a 'type' edge for each element of our core model. 
 
 (Note that in RDF graphs, simple `a` is syntactic sugar for an `rdf:type` triple predicate, and is used as it is terser than writing out `rdf:type` all the time.)
+
+### Asset behaviours / threat effects
+
+Asset behaviours are modelled slightly differently to the other shaded items. Following meeting last week, I modelled it as follows:
+
+1. Broadly speaking, there is an asset behaviour triggered by a threat pattern. This is a sub-class of Asset Property. For example, a threat might produce a large amount of traffic targeted at a network interface, and so the asset behaviour might be modelled with the name `my:NetworkInterfaceUnderLoad`.
+2. This behaviour then undermines asset trustworthiness. This is an edge between `my:NetworkInterfaceUnderLoad` and an asset trustworthiness attribute, for example `my:CoreVPNReachability`. This edge can then be *attributed* with one or more behaviour *types* proper, for example `my:high_CPU_load`, `my:disk_poor_IO`, `my:interface_flapping`.
+
+![behaviour-attrs-single](https://raw.githubusercontent.com/Spyderisk/ontopublish/main/ontology/attrs-1.svg)
+
+The main argument to model this in this manner is that, while it is possible to model this using sub-classes (adding a 'behaviour type'), this would create an edge per 'behaviour type undermines trustworthiness attribute', which is unwieldy. This approach instead elaborates on the general behaviour, and it is feasible that it allows more granular groupings. For example, `my:NetworkInterfaceUnderLoad` might undermine more than one behaviours, in different ways, like the following:
+
+![behaviour-attrs-multi](https://raw.githubusercontent.com/Spyderisk/ontopublish/main/ontology/attrs-2.svg)
 
 ## Patterns
 
