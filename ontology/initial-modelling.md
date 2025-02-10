@@ -74,11 +74,11 @@ The point here is that we're matching on collections of assets, and relationship
 
 ![pattern-pre](https://raw.githubusercontent.com/Spyderisk/ontopublish/main/ontology/named-graphs.svg)
 
-Threat patterns are related to control strategies and threats, in that both can introduce them. In this diagram, patterns have an RDF identifier/IRI (e.g. `my:my:NFSSharePattern`).
+Threat patterns are related to control strategies and threats, in that both can introduce them. In this diagram, patterns have an RDF identifier/IRI (e.g. `my:my:NFSSharePattern`). Note that in principle, there is no reason why a pattern cannot be worked on by multiple threats or control strategies. It could be a common pattern, or both patterns of assets could be similarly threatened. This is expressed in the diagram where we see that the pattern structure `my:NFSSharePattern` is introduced by all three threats + control strategies.
 
 ![pattern-post](https://raw.githubusercontent.com/Spyderisk/ontopublish/main/ontology/named-graphs-replacement.svg)
 
-In this diagram, the identifiers are replaced with the graph they stand for. These graphs serve as the patterns of assets, and relations between them, which will be matched by the pattern-matching implementation.
+In this diagram, the identifiers are replaced with the graph they stand for. These graphs serve as the patterns of assets, and relations between them, which will be matched by the pattern-matching implementation. 
 
 In terms of restricting these to instances of assets and relations, since named graphs' identifiers stand in for the named RDF graph, standard techniques should be feasible for defining constraints. (See the "Vocabularies" section above.)
 
