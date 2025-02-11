@@ -119,44 +119,6 @@ score:BehaviourAttribute a rdfs:Class, skos:ConceptScheme ;
     dct:title "Behaviour attribute scheme. Attributes the way in which an asset behaviour
 undermines trustworthiness."@en .
     
-####
-
-score:asset_relation a rdf:Property, skos:Concept ;
-    rdfs:label "relation between two assets"@en ;
-    rdfs:domain score:Asset ;
-    rdfs:range  score:Asset .
-
-score:Pattern a rdfg:Graph ;
-    rdfs:label "pattern"@en ;
-    rdfs:description "Patterns are collections of assets (nodes) and relations between them (edges). In other words, they can be represented in RDF, as named graphs."@en .
-
-score:introduces a rdf:Property ;
-    rdfs:label "introduces threat pattern"@en ;
-    rdfs:description "Threat or control strategy introduces threat pattern"@en ;
-    rdfs:domain score:Threat, score:ControlStrategy  ;
-    rdfs:range  score:Pattern .
-    
-score:RoleAttribute a skos:ConceptScheme, rdfs:Class ;
-    dct:title "Role attribute"@en .
-    
-score:role_unique a skos:Concept, score:RoleAttribute ;
-    skos:inScheme   score:RoleAttribute ;
-    skos:prefLabel  "unique"@en ;
-    rdfs:label      "'unique' role"@en .
-score:role_necessary a skos:Concept, score:RoleAttribute ;
-    skos:inScheme   score:RoleAttribute ;
-    skos:prefLabel  "necessary"@en ;
-    skos:altLabel   "redundant"@en ;
-    rdfs:label      "'redundant' role"@en .
-score:role_sufficient a skos:Concept, score:RoleAttribute ;
-    skos:inScheme   score:RoleAttribute ;
-    skos:prefLabel  "sufficient"@en ;
-    rdfs:label      "'sufficient' role"@en .
-score:role_prohibited a skos:Concept, score:RoleAttribute ;
-    skos:inScheme   score:RoleAttribute ;
-    skos:prefLabel  "prohibited"@en ;
-    rdfs:label      "'prohibited' role"@en .
-    
 score:Likelihood a rdfs:Class ;
     rdfs:label "likelihood"@en ;
     rdfs:description "Likelihood property taken by causal (non-structural) entities. Definition of the scheme, including any applicable order, is specific to the domain model."@en .
