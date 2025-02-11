@@ -55,16 +55,15 @@ In the RDF world, this kind of usage is key to incremental re-use and elaboratio
 
 ### Asset behaviours / threat effects
 
-Asset behaviours are modelled slightly differently to the other shaded items. Following meeting last week, I modelled it as follows:
+Asset behaviours are modelled slightly differently to the other shaded items. Following meeting last week, I modelled it as follows.
 
-1. Broadly speaking, there is an asset behaviour triggered by a threat pattern. This is a sub-class of Asset Property. For example, a threat might produce a large amount of traffic targeted at a network interface, and so the asset behaviour might be modelled with the name `my:NetworkInterfaceUnderLoad`.
-2. This behaviour then undermines asset trustworthiness. This is an edge between `my:NetworkInterfaceUnderLoad` and an asset trustworthiness attribute, for example `my:CoreVPNReachability`. This edge can then be *attributed* with one or more behaviour *types* proper, for example `my:high_CPU_load`, `my:disk_poor_IO`, `my:interface_flapping`.
+Broadly speaking, an asset behaviour is caused by a threat. This is a sub-class of Asset Property. For example, a threat might produce a large amount of traffic targeted at a network interface, and so the asset behaviour might be modelled with the name `my:NetworkInterfaceUnderLoad`.
 
-![behaviour-attrs-single](https://raw.githubusercontent.com/Spyderisk/ontopublish/main/ontology/attrs-1.svg)
+![behaviour-attrs](https://raw.githubusercontent.com/Spyderisk/ontopublish/main/ontology/attrs-singleton.svg)
 
-The main argument to model this in this manner is that, while it is possible to model this using sub-classes (adding a 'behaviour type'), this would create an edge per 'behaviour type undermines trustworthiness attribute', which is unwieldy. This approach instead elaborates on the general behaviour, and it is feasible that it allows more granular groupings. For example, `my:NetworkInterfaceUnderLoad` might undermine more than one behaviours, in different ways, like the following:
+This behaviour then undermines trustworthiness of an asset. In the above diagram, there are two asset behaviours, `my:NetworkInterfaceUnderLoad` and `my:NetworkInterfaceRaceCondition`. It can be observed that the network interface under load undermines the reachability of an SSH 'bastion' host, by making the interface flat (the interface is unreliable, and SSH responds poorly to this). The other case involves some kind of race condition around network interfaces, with high CPU load undermining the protection of certain ports by a firewall (for example, a poorly-configured firewall may not come up until after a delay, exposing ports).
 
-![behaviour-attrs-multi](https://raw.githubusercontent.com/Spyderisk/ontopublish/main/ontology/attrs-2.svg)
+In terms of the modelling strategy, note how edges are attributed with behaviour *types*. In the diagram, the attributes are `my:high_CPU_load` and `my:interface_flapping`. Modelling in this manner avoids creating a class per behaviour type, which is unwieldy, with an edge between the general asset behaviour and the behaviour type, and then between the behaviour type and the asset trustworthiness attribute.
 
 ## Patterns
 

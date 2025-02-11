@@ -1,0 +1,40 @@
+digraph DemoBehaviours {
+  rankdir="LR"
+  node [shape=box]
+  edge[arrowhead=open]
+
+  // define nodes
+  NetIfLoad [label="my:NetworkInterfaceUnderLoad\na score:AssetBehaviour"]  
+  SSHAccess [label="my:SSHBastionReachability\na score:AssetTrustworthinessAttribute"]
+  NetIfRace [label="my:NetworkInterfaceRaceCondition\na score:AssetBehaviour"]
+  PortsExpo [label="my:PortsProtection\na a score:AssetTrustworthinessAttribute"]
+
+  // define initial virtual node (point to attribute the edge)
+  edge [dir=none]
+  invis1 [shape=point style=invis]
+  invis2 [shape=point style=invis]
+
+  // create edges pointing to the virtual points 
+  NetIfLoad -> invis1 [headclip=false label="score:undermines"]
+  NetIfRace -> invis2 [headclip=false label="score:undermines"]
+
+  // join up virtual nodes
+  edge [dir=forward]
+  invis1 -> SSHAccess [tailclip=false]
+  invis2 -> PortsExpo [tailclip=false]
+
+  // add attributes
+  node [shape=oval] {
+    rank=same
+    
+    if_flap [label="my:interface_flapping\na score:BehaviourAttribute"]
+    //disk_poor_IO [label="my:disk_poor_IO\na score:BehaviourAttribute"]
+    invis1 -> if_flap [label="score:via" tailclip=false]
+    //invis1 -> disk_poor_IO [label="score:via" tailclip=false]
+  }
+  node [shape=oval] {
+    rank=same
+    high_CPU_load [label="my:high_CPU_load\na score:BehaviourAttribute"]
+    invis2 -> high_CPU_load [label="score:via" tailclip=false]
+  }
+}
