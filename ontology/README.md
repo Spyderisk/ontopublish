@@ -2,7 +2,7 @@
 
 ## Preamble
 
-![pre-transcription](https://raw.githubusercontent.com/Spyderisk/ontopublish/main/ontology/pre-transcription.svg)
+<img align="right" src="https://raw.githubusercontent.com/Spyderisk/ontopublish/main/ontology/pre-transcription.svg" height="600" />
 
 This is a UML-like diagram with the following considerations:
 - Arrows with a white triangle at head: these indicate that a child class is member of a parent class
@@ -62,7 +62,7 @@ Broadly speaking, an asset behaviour is caused by a threat. This is a sub-class 
 
 ![behaviour-attrs](https://raw.githubusercontent.com/Spyderisk/ontopublish/main/ontology/attrs-singleton.svg)
 
-This behaviour then undermines trustworthiness of an asset. In the above diagram, there are two asset behaviours, `my:NetworkInterfaceUnderLoad` and `my:NetworkInterfaceRaceCondition`. It can be observed that the network interface under load undermines the reachability of an SSH 'bastion' host, by making the interface flat (the interface is unreliable, and SSH responds poorly to this). The other case involves some kind of race condition around network interfaces, with high CPU load undermining the protection of certain ports by a firewall (for example, a poorly-configured firewall may not come up until after a delay, exposing ports).
+This behaviour then undermines trustworthiness of an asset. In the above diagram, there are two asset behaviours, `my:NetworkInterfaceUnderLoad` and `my:NetworkInterfaceRaceCondition`. It can be observed that the network interface under load undermines the reachability of an SSH 'bastion' host, by making the interface flap (the interface is unreliable, and SSH responds poorly to this). The other case involves some kind of race condition around network interfaces, with high CPU load undermining the protection of certain ports by a firewall (for example, a poorly-configured firewall may not come up until after a delay, exposing ports).
 
 In terms of the modelling strategy, note how edges are attributed with behaviour *types*. In the diagram, the attributes are `my:high_CPU_load` and `my:interface_flapping`. Modelling in this manner avoids creating a class per behaviour type, which is unwieldy, with an edge between the general asset behaviour and the behaviour type, and then between the behaviour type and the asset trustworthiness attribute.
 
