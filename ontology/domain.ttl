@@ -27,7 +27,7 @@ sdom:has_pattern_role a rdf:Property ;
 
 sdom:Pattern a rdfg:Graph ;
     rdfs:label "pattern"@en ;
-    rdfs:description "Patterns are collections of assets (nodes) and relations between them (edges). In other words, they can be represented in RDF, as named graphs."@en .
+    rdfs:description "Patterns are collections of assets (nodes) and relations between them (edges). In other words, they can be represented as RDF triples, as named graphs with identifiers."@en .
 
 sdom:introduces a rdf:Property ;
     rdfs:label "introduces threat pattern"@en ;
