@@ -65,21 +65,15 @@ This behaviour then undermines trustworthiness of an asset. In the above diagram
 
 In terms of the modelling strategy, note how edges are attributed with behaviour *types*. In the diagram, the attributes are `my:high_CPU_load` and `my:interface_flapping`. Modelling in this manner avoids creating a class per behaviour type, which is unwieldy, with an edge between the general asset behaviour and the behaviour type, and then between the behaviour type and the asset trustworthiness attribute.
 
-## Patterns
+## Threat role
+    
+Threat roles, formerly 'nodes', are primarily a general role (like attacker subnet), which can be additionally narrowed down to specific classes of asset.
 
-Patterns can modelled structurally using named graphs. Named graphs are collections of RDF statements, which are associated with an identifier. The reasoning behind named graphs' conception is essentially that RDF documents often already have a name associated with them, and it should be something that can be referenced or interrogated. See (here)[https://sven-lieber.org/en/2023/06/26/rdf-named-graphs/] for an introduction to named graphs, and (here)[https://www.w3.org/2009/12/rdf-ws/p613.pdf] for a discussion of their semantics.
+If they were just collections of assets, then there would be an argument to just model an edge between threat and asset, and to attribute that with a possible role. Indeed, modelling it in this way means that roles can be more easily re-used, even if it is relatively uncommon for a role to be meaningful outside of a threat.
 
-The point here is that we're matching on collections of assets, and relationships between them, notwithstanding the *role* of a node. Named graphs allow us to describe the structure of a pattern, and patterns' association with threats and control strategies, while describing the logic layer acting on the structure of the pattern elsewhere.
+On discussion, 'node' has been renamed to "threat role", as 'node' is vague and rather confusing when discussing what is notwork data. Further, these threat roles only apply to a certain type of structural entity, and rather capture the role within a threat.
 
-![pattern-pre](https://raw.githubusercontent.com/Spyderisk/ontopublish/main/ontology/named-graphs.svg)
-
-Threat patterns are related to control strategies and threats, in that both can introduce them. In this diagram, patterns have an RDF identifier/IRI (e.g. `my:my:NFSSharePattern`). Note that in principle, there is no reason why a pattern cannot be worked on by multiple threats or control strategies. It could be a common pattern, or both patterns of assets could be similarly threatened. This is expressed in the diagram where we see that the pattern structure `my:NFSSharePattern` is introduced by all three threats + control strategies.
-
-![pattern-post](https://raw.githubusercontent.com/Spyderisk/ontopublish/main/ontology/named-graphs-replacement.svg)
-
-In this diagram, the identifiers are replaced with the graph they stand for. These graphs serve as the patterns of assets, and relations between them, which will be matched by the pattern-matching implementation. 
-
-In terms of restricting these to instances of assets and relations, since named graphs' identifiers stand in for the named RDF graph, standard techniques should be feasible for defining constraints over these very graphs. (See the "Vocabularies" section above.)
+Part of this discussion also involved dispelling with patterns at this stage. We do not anticipate modelling these at all.
 
 ## Causal entities and likelihoods
 
