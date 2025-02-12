@@ -1,18 +1,20 @@
-# Initial modelling considerations
+# 'Core' ontology RDF modelling exercise
 
 ## Preamble
 
-I was working from a UML-like diagram with the following considerations.
-1. Arrows with a white triangle at head: these indicate that a child class is member of a parent class
-2. Arrows with a black diamond at head: these indicate that a parent entity is composed of a child entity
-3. Arrows with a white diamond at head: these indicate that an entity incorporates child entity, but former exists independently of latter.
-4. Arrows with a simple 'v' at head: these indicate a reference to the second, but not vice versa.
-5. Simple line: these indicate an association, with no specific properties.
+![pre-transcription](https://raw.githubusercontent.com/Spyderisk/ontopublish/main/ontology/pre-transcription.svg)
 
-Hence there are effectively three core sections to model:
+This is a UML-like diagram with the following considerations:
+- Arrows with a white triangle at head: these indicate that a child class is member of a parent class
+- Arrows with a black diamond at head: these indicate that a parent entity is composed of a child entity
+- Arrows with a white diamond at head: these indicate that an entity incorporates child entity, but former exists independently of latter.
+- Arrows with a simple 'v' at head: these indicate a reference to the second, but not vice versa.
+- Simple line: these indicate an association, with no specific properties.
+
+There are effectively three core sections to model:
 1. Causal entities. These form attributes of other model components (and each other) and they are organised in a class/sub-class hierarchy.
-2. Patterns, which are rules matching on (asset) nodes and their positional information. I think the nodes and edges are implicit in the structure of the data, but they depend on edge-level attributes, so I'm not sure how to model that in RDF yet.
-3. Assets, which form part of the target system.
+2. Threats and threat roles (originally patterns of assets and relations). Contextualise assets' roles within a threat.
+3. Structural entities. These comprise assets and relations between which, and form part of the target system.
 
 ## Vocabularies
 
@@ -20,7 +22,6 @@ This document uses the following prefixes (`score` is this V1 core model RDF rep
 ```turtle
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix rdfg: <http://www.w3.org/2004/03/trix/rdfg-1/> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix score: <http://ontology.spyderisk.org/ns/core#> .
@@ -67,13 +68,11 @@ In terms of the modelling strategy, note how edges are attributed with behaviour
 
 ## Threat role
     
-Threat roles, formerly 'nodes', are primarily a general role (like attacker subnet), which can be additionally narrowed down to specific classes of asset.
+Threat roles, formerly 'nodes', are primarily a general role (like attacker subnet), which can be additionally narrowed down to specific classes of asset. 
 
-If they were just collections of assets, then there would be an argument to just model an edge between threat and asset, and to attribute that with a possible role. Indeed, modelling it in this way means that roles can be more easily re-used, even if it is relatively uncommon for a role to be meaningful outside of a threat.
+If they were just collections of assets, then there would be an argument to just model an edge between threat and asset, and to attribute that with a possible role. Indeed, modelling it in this way means that roles can be more easily re-used, even if it is relatively uncommon for a role to be meaningful outside of a threat. 
 
-On discussion, 'node' has been renamed to "threat role", as 'node' is vague and rather confusing when discussing what is notwork data. Further, these threat roles only apply to a certain type of structural entity, and rather capture the role within a threat.
-
-Part of this discussion also involved dispelling with patterns at this stage. We do not anticipate modelling these at all.
+On discussion, 'node' has been renamed to "threat role", as 'node' is vague and rather confusing when discussing what is notwork data. Further, these threat roles only apply to a certain type of structural entity, and rather capture the role within a threat. Part of this discussion also involved dispelling with patterns at this stage. We do not anticipate modelling these at all.
 
 ## Causal entities and likelihoods
 

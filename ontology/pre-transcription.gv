@@ -1,0 +1,100 @@
+digraph spyderiskCoreSystem {
+	rankdir="TB";
+	ordering="out"
+	graph [margin=0]
+	
+#	Causal entities (system model entities associated with endogenous or exogenous likelihood variables).
+#
+	CausalEntity [shape=box style=filled fillcolor=white fontsize="18" label="Causal Entity"]
+	Threat [shape=box style=filled fillcolor=white fontsize="18" label="Threat\n[i]"]
+	ThreatCause [shape=box style=filled fillcolor=white fontsize="18" label="Threat Cause"]
+	ControlStrategy [shape=box style=filled fillcolor=white fontsize="18" label="Control Strategy\n(Addressing Weakness)\n[g]"]
+	AssetProperty [shape=box style=filled fillcolor=white fontsize="18" label="Asset Property"]
+	AssetTWA [shape=box style=filled fillcolor=white fontsize="18" label="Asset TW Attribute\n(External Cause)"]
+	AssetBehaviour [shape=box style=filled fillcolor=white fontsize="18" label="Asset Behaviour\n(Threat Effect)"]
+	AssetControl [shape=box style=filled fillcolor=white fontsize="18" label="Asset Control"]
+
+#	Structural entities (entities that define the system model or submodels within it).
+#
+	StructuralEntity [shape=box style=filled fillcolor=white fontsize="18" label="Structural Entity"]
+	Asset [shape=box style=filled fillcolor=white fontsize="18" label="Asset\n[a]"]
+	AssetRelationship [shape=box style=filled fillcolor=white fontsize="18" label="Asset\nRelationship"]
+	System [shape=box style=filled fillcolor=white fontsize="18" label="Target System"]
+
+#	Organisational entities (entities that assign roles in threats to assets).
+#	Note that Node is a keyword in Dotfile format, so ANode is used instead.
+	ANode [shape=box style=filled fillcolor=white  label="Threat Role"]
+	Role [shape=box style=filled fillcolor=yellow fontsize="18" label="Role Attribute"]
+
+#	Class hierarchy
+#
+	StructuralEntity -> Asset [dir=back arrowtail=onormal arrowsize="1.5"]				/* Class hierarchy */
+	StructuralEntity -> AssetRelationship [dir=back arrowtail=onormal arrowsize="1.5"]	/* Class hierarchy */
+
+	CausalEntity -> AssetProperty [dir=back arrowtail=onormal arrowsize="1.5"]			/* Class hierarchy */
+	CausalEntity -> Threat [dir=back arrowtail=onormal arrowsize="1.5"]					/* Class hierarchy */
+	CausalEntity -> ThreatCause [dir=back arrowtail=onormal arrowsize="1.5"]			/* Class hierarchy */
+
+	AssetProperty -> AssetTWA [dir=back arrowtail=onormal arrowsize="1.5"]				/* Class hierarchy */
+	AssetProperty -> AssetBehaviour [dir=back arrowtail=onormal arrowsize="1.5"]		/* Class hierarchy */
+	AssetControl -> AssetProperty [arrowhead=onormal arrowsize="1.5"]					/* Class hierarchy */
+
+	ThreatCause -> ControlStrategy [dir=back arrowtail=onormal arrowsize="1.5"]			/* Class hierarchy */
+	ThreatCause -> AssetTWA [dir=back arrowtail=onormal arrowsize="1.5"]				/* Class hierarchy */
+	ThreatCause -> AssetBehaviour [dir=back arrowtail=onormal arrowsize="1.5"]			/* Class hierarchy */
+
+#	Likelihood represented as a concept, just so we can say that causal entities have a likelihood (without saying
+#	how that is represented or interpreted or calculated)
+#
+	Likelihood [shape=box style=filled fillcolor=white fontsize="18" label="Likelihood"]
+	CausalEntity -> Likelihood [arrowhead=vee, arrowsize="0.75" label="hasLikelihood"]
+	
+#	Base types for the range of RDF properties whose possible values will be subtypes specified the domain or system model.
+#
+	BehaviourType [shape=box style=filled fillcolor=yellow fontsize="18" label="Behaviour\nType [b]"]
+	TrustworthinessAttribute [shape=box style=filled fillcolor=yellow fontsize="18" label="Trustworthiness\nAttribute [b]"]
+	ControlType [shape=box style=filled fillcolor=yellow fontsize="18" label="Control\nType [c]"]
+
+	BehaviourType -> AssetBehaviour [dir=back arrowtail=vee arrowsize="0.75" fontsize="14" taillabel="1 "]		/* RDF property */
+	AssetTWA -> TrustworthinessAttribute [arrowhead=vee arrowsize="0.75" headlabel="1 "]						/* RDF property */
+	ControlType -> AssetControl [dir=back arrowtail=vee arrowsize="0.75" fontsize="14" taillabel="1 "]			/* RDF property */
+
+#	Relationships, some defined backwards to get a better layout, and in an order that gives a decent layout.
+#
+	AssetProperty -> Asset [dir=back arrowtail=diamond arrowsize="1.5"]								/* Composition (same lifecycle) */
+
+	Asset -> AssetRelationship [dir=back arrowtail=vee arrowsize="0.75" fontsize="14" label="links\nFrom" taillabel="1"]	/* RDF property */
+	Asset -> AssetRelationship [dir=back arrowtail=vee arrowsize="0.75" fontsize="14" label="links\nTo" taillabel="1"]		/* RDF property */
+
+	System -> StructuralEntity [arrowhead=odiamond arrowsize="1.5"]									/* Aggregation (independent lifecycles) */
+
+	ControlStrategy -> AssetControl [arrowhead=odiamond arrowsize="1.5"]							/* Aggregation (independent lifecycles) */
+	
+	Threat -> AssetBehaviour [arrowhead=odiamond arrowsize="1.5"]									/* Aggregation (independent lifecycles) */
+	Threat -> ControlStrategy [arrowhead=vee arrowsize="0.75" fontsize="14" label="triggered    \nBy    " headlabel="0..n  "]	/* RDF property */
+	Threat -> ThreatCause [arrowhead=odiamond arrowsize="1.5"]										/* Aggregation (independent lifecycles) */
+
+	Threat -> ANode [arrowhead=diamond arrowsize="1.5"]														/* Composition (same lifecycle) */
+	Role -> ANode [dir=back arrowtail=vee arrowsize="0.75" fontsize="14" label="has\nRole", taillabel="1 "]		/* RDF property */
+	ANode -> Asset [arrowhead=vee arrowsize="0.75" fontsize="14" label="has\nAsset"]							/* RDF property */
+	
+	TrustworthinessAttribute -> BehaviourType [dir=back arrowtail=vee arrowsize="0.75" fontsize="14" label="undermines" headlabel="1 " taillabel="1 "]
+
+#	Invisible stuff added to improve the layout
+#
+	ThreatCause -> ANode [style=invis]
+	ANode -> System [style=invis]
+	ControlStrategy -> AssetTWA [style=invis]
+	{rank=same; ThreatCause; ANode; System; }
+	
+	#ThreatShadow [shape=box style=invis label=""]
+	#CSGShadow [shape=box style=invis label=""]
+	#ThreatShadow -> Threat [style=invis]
+	#ControlStrategy -> CSGShadow [style=invis]
+	#{rank=same; ThreatShadow; Threat; ThreatCause; StructuralEntity;}
+	{rank=same; ControlStrategy; StructuralEntity;}
+	{rank=same; Asset; AssetProperty; AssetRelationship}
+	{rank=same; Likelihood; CausalEntity;}
+	{rank=same; AssetControl; ControlType; }
+	
+}

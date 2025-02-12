@@ -27,7 +27,7 @@ score:has_structure a rdf:Property ;
     rdfs:domain score:TargetSystem ;
     rdfs:range  score:StructuralEntity .
 
-sdom:asset_relation a rdf:Property, score:StructuralEntity ;
+score:asset_relation a rdf:Property, score:StructuralEntity ;
     rdfs:label "relation between two assets"@en ;
     rdfs:domain score:Asset ;
     rdfs:range  score:Asset .
@@ -45,8 +45,8 @@ score:incorporates_role a rdf:Property ;
     
 score:ThreatRole a rdfs:Class ;
     rdfs:label "threat role"@en ;
-    rdfs:description "Threat roles give context to the role of assets within threats.
-In principle, they could exist independently, so they are defined as a
+    rdfs:description "Give context to the role of assets within threats.
+In principle, roles could exist independently, so they are defined as a
 distinct class, to support re-use."@en .
 
 score:takes_attribute a rdf:Property ;
