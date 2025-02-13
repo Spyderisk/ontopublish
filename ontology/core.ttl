@@ -14,8 +14,8 @@ score:CausalEntity a rdfs:Class, skos:Concept ;
     skos:prefLabel "causal entity"@en ;
     skos:inScheme score:CausalEntityScheme .
 
-score:StructuralEntity a rdfs:Class ;
-    rdfs:label "structural entity"@en .
+score:StructuralEntity a rdfs:Class, skos:Concept ;
+    skos:prefLabel "structural entity"@en .
     
 score:TargetSystem a rdfs:Class ;
     rdfs:label "target system"@en ;
@@ -43,20 +43,21 @@ score:incorporates_role a rdf:Property ;
     rdfs:domain score:Threat ;
     rdfs:range  score:ThreatRole .
     
-score:ThreatRole a rdfs:Class ;
-    rdfs:label "threat role"@en ;
-    rdfs:description "Give context to the role of assets within threats.
-In principle, roles could exist independently, so they are defined as a
-distinct class, to support re-use."@en .
+score:OrganisationalEntity a rdfs:Class, skos:Concept ;
+    skos:prefLabel "organisational entity"@en ;
+    skos:altLabel "threat role"@en ;
+    rdfs:description "Organisational entity, or threat role. These give context to the role of
+assets within threats. In principle, roles could exist independently, so they
+are defined as a distinct class, to support re-use."@en .
 
 score:takes_attribute a rdf:Property ;
     rdfs:label "threat role takes primary role attribute"@en ;
-    rdfs:domain score:ThreatRole ;
+    rdfs:domain score:OrganisationalEntity ;
     rdfs:range  score:RoleAttribute .
 
 score:restricted_to a rdf:Property ;
     rdfs:label "threat role further restricted to assets of type"@en ;
-    rdfs:domain score:StructuralCategory ;
+    rdfs:domain score:OrganisationalEntity ;
     rdfs:range  score:StructuralEntity .
 
 score:RoleAttribute a rdfs:Class, skos:ConceptScheme ;
