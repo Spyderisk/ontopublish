@@ -16,7 +16,7 @@ digraph SemiFinal {
 	    rank=same
 	    AssetTrustworthiness [label="Asset trustworthiness"]
 	    virtual [shape=point style=invis]
-	    AssetBehaviour [label="Asset behaviour"]
+	    AssetBehaviour [label="Asset behaviour /\nthreat effect"]
 	}
 	AssetBehaviour -> virtual [headclip=false label="undermines" dir=none]
 	virtual -> AssetTrustworthiness [tailclip=false dir=forward headlabel="    card = 1"]
@@ -34,7 +34,7 @@ digraph SemiFinal {
 	CausalEntity -> Likelihood [label="has"]
 	Threat -> ThreatCause [label="caused by"]
 	ControlStrategy -> Control [label="has"]
-	Threat -> ControlStrategy [label="triggered by" headlabel="    card = 0..n"]
+	Threat -> ControlStrategy [label="triggered by" headlabel="card = 0..n    "]
 	Threat -> AssetBehaviour [label="induces"]
 
 	// 'External' relations which should be declared here so that the nodes don't get put in the other subgraphs.
@@ -50,6 +50,8 @@ digraph SemiFinal {
 	StructuralEntity [label="Structural entity"]
 	Asset [label="Asset"]
 	AssetRelation [label="Asset relationship"]
+	TargetSystem [label="Target system"]
+	TargetSystem -> StructuralEntity [label="has structure"]
 	Asset -> StructuralEntity [label="sub-class of"]
 	AssetRelation -> StructuralEntity [label="sub-class of"]
 	AssetRelation -> Asset [label="domain" constraint="false"]

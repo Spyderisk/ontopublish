@@ -58,7 +58,7 @@ score:takes_attribute a rdf:Property ;
 score:restricted_to a rdf:Property ;
     rdfs:label "threat role further restricted to assets of type"@en ;
     rdfs:domain score:OrganisationalEntity ;
-    rdfs:range  score:StructuralEntity .
+    rdfs:range  score:Asset .
 
 score:RoleAttribute a rdfs:Class, skos:ConceptScheme ;
     dct:title "Primary role attribute"@en .
@@ -113,7 +113,7 @@ score:asset_property a rdf:Property ;
     rdfs:domain score:Asset ;
     rdfs:range  score:AssetProperty .
 
-score:AssetControlProperty a rdfs:Class, skos:Concept ;
+score:Control a rdfs:Class, skos:Concept ;
     skos:prefLabel "asset control property"@en ;
     rdfs:description "Asset control property. Distinguished from other asset properties by being
 unaffected by threats."@en ;
@@ -132,7 +132,7 @@ by not being caused by threats." @en ;
 score:induces a rdf:Property ;
     rdfs:label "threat induces behaviour"@en ;
     rdfs:domain score:Threat ;
-    rdfs:range  score:ThreatEffect .
+    rdfs:range  score:AssetBehaviour .
 
 score:AssetBehaviour a rdfs:Class, skos:Concept ;
     skos:prefLabel  "asset behaviour"@en ;
