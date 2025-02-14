@@ -1,10 +1,12 @@
 # 'Core' ontology RDF modelling exercise
 
+<img src="https://raw.githubusercontent.com/Spyderisk/ontopublish/main/ontology/semifinal.svg" />
+
 ## Preamble
 
 <img align="right" src="https://raw.githubusercontent.com/Spyderisk/ontopublish/main/ontology/pre-transcription.svg" height="600" />
 
-This is a UML-like diagram with the following considerations:
+I was working from the UML-like diagram to the right, with the following considerations:
 - Arrows with a white triangle at head: these indicate that a child class is member of a parent class
 - Arrows with a black diamond at head: these indicate that a parent entity is composed of a child entity
 - Arrows with a white diamond at head: these indicate that an entity incorporates child entity, but former exists independently of latter.
@@ -50,7 +52,7 @@ Class inheritance means that `score:Threat` inherits a `score:Likelihood` proper
 ```turtle
 my:PersistentThreat rdf:type score:Threat .
 ```
-In the RDF world, this kind of usage is key to incremental re-use and elaboration of concepts. This statement is straightforward, saying that `my:PersistentThreat` has type `score:Threat`. Support for these statements is also implicit to our use of RDF. We don't need to define a 'type' edge for each element of our core model. 
+In the RDF world, this kind of usage is key to incremental re-use and elaboration of concepts. This statement is straightforward, saying that `my:PersistentThreat` has type `score:Threat`. Support for these statements is also implicit to our use of RDF. We don't need to define a 'type' edge for each element of our core model. The RDF model shown at the very start of the document consequently omits almost all of the shaded types.
 
 (Note that in RDF graphs, simple `a` is syntactic sugar for an `rdf:type` triple predicate, and is used as it is terser than writing out `rdf:type` all the time.)
 
@@ -60,7 +62,7 @@ Asset behaviours are modelled slightly differently to the other shaded items. Fo
 
 Broadly speaking, an asset behaviour is caused by a threat. This is a sub-class of Asset Property. For example, a threat might produce a large amount of traffic targeted at a network interface, and so the asset behaviour might be modelled with the name `my:NetworkInterfaceUnderLoad`.
 
-![behaviour-attrs](https://raw.githubusercontent.com/Spyderisk/ontopublish/main/ontology/attrs-singleton.svg)
+<img src="https://raw.githubusercontent.com/Spyderisk/ontopublish/main/ontology/attrs-singleton.svg" />
 
 This behaviour then undermines trustworthiness of an asset. In the above diagram, there are two asset behaviours, `my:NetworkInterfaceUnderLoad` and `my:NetworkInterfaceRaceCondition`. It can be observed that the network interface under load undermines the reachability of an SSH 'bastion' host, by making the interface flap (the interface is unreliable, and SSH responds poorly to this). The other case involves some kind of race condition around network interfaces, with high CPU load undermining the protection of certain ports by a firewall (for example, a poorly-configured firewall may not come up until after a delay, exposing ports).
 
