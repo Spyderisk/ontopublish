@@ -25,10 +25,10 @@
 </g>
 <g id="clust5" class="cluster">
 <title>cluster2</title>
-<polygon fill="none" stroke="black" points="680,-460 680,-534.75 1000,-534.75 1000,-460 680,-460"/>
-<text text-anchor="start" x="770.25" y="-518.45" font-family="Times,serif" font-size="14.00"> </text>
-<text text-anchor="start" x="774" y="-518.45" font-family="Times,serif" font-weight="bold" font-size="14.00">Organisational entities</text>
-<text text-anchor="start" x="906" y="-518.45" font-family="Times,serif" font-size="14.00"> </text>
+<polygon fill="none" stroke="black" points="699,-460 699,-534.75 982,-534.75 982,-460 699,-460"/>
+<text text-anchor="start" x="770.75" y="-518.45" font-family="Times,serif" font-size="14.00"> </text>
+<text text-anchor="start" x="774.5" y="-518.45" font-family="Times,serif" font-weight="bold" font-size="14.00">Organisational entities</text>
+<text text-anchor="start" x="906.5" y="-518.45" font-family="Times,serif" font-size="14.00"> </text>
 </g>
 <!-- CausalEntity -->
 <g id="node1" class="node">
@@ -45,8 +45,8 @@
 <!-- CausalEntity&#45;&gt;Likelihood -->
 <g id="edge10" class="edge">
 <title>CausalEntity&#45;&gt;Likelihood</title>
-<path fill="none" stroke="black" d="M159,-101.79C159,-90.84 159,-76.44 159,-63.82"/>
-<polygon fill="black" stroke="black" points="162.5,-63.95 159,-53.95 155.5,-63.95 162.5,-63.95"/>
+<path fill="none" stroke="black" d="M159,-101.79C159,-90.72 159,-76.14 159,-63.43"/>
+<polygon fill="black" stroke="black" points="159,-53.65 163.5,-63.65 159,-57.43 159,-63.65 159,-63.65 159,-63.65 159,-57.43 154.5,-63.65 159,-53.65"/>
 <text text-anchor="middle" x="168" y="-70.95" font-family="Times,serif" font-size="14.00">has</text>
 </g>
 <!-- Threat -->
@@ -58,8 +58,8 @@
 <!-- Threat&#45;&gt;CausalEntity -->
 <g id="edge3" class="edge">
 <title>Threat&#45;&gt;CausalEntity</title>
-<path fill="none" stroke="black" d="M74.8,-468C56.32,-452.63 34,-428.31 34,-400.5 34,-400.5 34,-400.5 34,-205.5 34,-169.25 70.59,-147.56 104.18,-135.29"/>
-<polygon fill="black" stroke="black" points="105.16,-138.66 113.5,-132.12 102.9,-132.03 105.16,-138.66"/>
+<path fill="none" stroke="black" d="M74.8,-468C56.32,-452.63 34,-428.31 34,-400.5 34,-400.5 34,-400.5 34,-205.5 34,-169.09 70.91,-147.38 104.62,-135.13"/>
+<polygon fill="black" stroke="black" points="113.78,-132.03 105.75,-139.5 110.2,-133.24 104.31,-135.24 104.31,-135.24 104.31,-135.24 110.2,-133.24 102.86,-130.98 113.78,-132.03"/>
 <text text-anchor="middle" x="66.25" y="-286.57" font-family="Times,serif" font-size="14.00">sub&#45;class of</text>
 </g>
 <!-- ThreatCause -->
@@ -71,8 +71,8 @@
 <!-- Threat&#45;&gt;ThreatCause -->
 <g id="edge11" class="edge">
 <title>Threat&#45;&gt;ThreatCause</title>
-<path fill="none" stroke="black" d="M95.02,-467.82C90.99,-446.75 86.57,-410.47 96,-381.25 103.51,-357.95 119.79,-335.62 133.92,-319.35"/>
-<polygon fill="black" stroke="black" points="136.37,-321.86 140.46,-312.09 131.17,-317.18 136.37,-321.86"/>
+<path fill="none" stroke="black" d="M95.02,-467.82C90.99,-446.75 86.57,-410.47 96,-381.25 103.58,-357.74 120.1,-335.21 134.31,-318.9"/>
+<polygon fill="black" stroke="black" points="140.66,-311.87 137.3,-322.31 138.13,-314.68 133.96,-319.29 133.96,-319.29 133.96,-319.29 138.13,-314.68 130.62,-316.28 140.66,-311.87"/>
 <text text-anchor="middle" x="123" y="-393.32" font-family="Times,serif" font-size="14.00">caused by</text>
 </g>
 <!-- ControlStrategy -->
@@ -84,10 +84,10 @@
 <!-- Threat&#45;&gt;ControlStrategy -->
 <g id="edge13" class="edge">
 <title>Threat&#45;&gt;ControlStrategy</title>
-<path fill="none" stroke="black" d="M121.94,-467.9C138.39,-455.44 160.79,-438.49 179,-424.71"/>
-<polygon fill="black" stroke="black" points="181.03,-427.57 186.89,-418.75 176.8,-421.99 181.03,-427.57"/>
+<path fill="none" stroke="black" d="M121.94,-467.9C138.47,-455.38 160.99,-438.34 179.25,-424.52"/>
+<polygon fill="black" stroke="black" points="187.12,-418.57 181.86,-428.19 184.11,-420.85 179.15,-424.6 179.15,-424.6 179.15,-424.6 184.11,-420.85 176.43,-421.01 187.12,-418.57"/>
 <text text-anchor="middle" x="194.71" y="-436.7" font-family="Times,serif" font-size="14.00">triggered by</text>
-<text text-anchor="middle" x="150.6" y="-418.78" font-family="Times,serif" font-size="14.00">card = 0..n &#160;&#160;&#160;</text>
+<text text-anchor="middle" x="154.35" y="-418.78" font-family="Times,serif" font-size="14.00">card.= 0..n &#160;</text>
 </g>
 <!-- AssetBehaviour -->
 <g id="node10" class="node">
@@ -99,36 +99,36 @@
 <!-- Threat&#45;&gt;AssetBehaviour -->
 <g id="edge14" class="edge">
 <title>Threat&#45;&gt;AssetBehaviour</title>
-<path fill="none" stroke="black" d="M126.45,-479.51C153.65,-473.46 196.32,-463.02 232,-450 252.67,-442.46 274.81,-432.35 293.4,-423.23"/>
-<polygon fill="black" stroke="black" points="294.87,-426.41 302.26,-418.82 291.75,-420.14 294.87,-426.41"/>
+<path fill="none" stroke="black" d="M126.45,-479.51C153.65,-473.46 196.32,-463.02 232,-450 252.77,-442.42 275.01,-432.25 293.66,-423.1"/>
+<polygon fill="black" stroke="black" points="302.53,-418.69 295.58,-427.17 299.14,-420.37 293.57,-423.14 293.57,-423.14 293.57,-423.14 299.14,-420.37 291.57,-419.12 302.53,-418.69"/>
 <text text-anchor="middle" x="285.1" y="-436.7" font-family="Times,serif" font-size="14.00">induces</text>
 </g>
 <!-- OrganisationalEntity -->
 <g id="node16" class="node">
 <title>OrganisationalEntity</title>
-<polygon fill="none" stroke="black" points="821.88,-504.5 688.12,-504.5 688.12,-468 821.88,-468 821.88,-504.5"/>
-<text text-anchor="middle" x="755" y="-487.2" font-family="Times,serif" font-size="14.00">Organisational entity/</text>
-<text text-anchor="middle" x="755" y="-472.95" font-family="Times,serif" font-size="14.00">threat role</text>
+<polygon fill="none" stroke="black" points="840.88,-504.5 707.12,-504.5 707.12,-468 840.88,-468 840.88,-504.5"/>
+<text text-anchor="middle" x="774" y="-487.2" font-family="Times,serif" font-size="14.00">Organisational entity/</text>
+<text text-anchor="middle" x="774" y="-472.95" font-family="Times,serif" font-size="14.00">threat role</text>
 </g>
 <!-- Threat&#45;&gt;OrganisationalEntity -->
 <g id="edge24" class="edge">
 <title>Threat&#45;&gt;OrganisationalEntity</title>
-<path fill="none" stroke="black" d="M126.35,-486.25C220,-486.25 530.03,-486.25 676.74,-486.25"/>
-<polygon fill="black" stroke="black" points="676.36,-489.75 686.36,-486.25 676.36,-482.75 676.36,-489.75"/>
-<text text-anchor="middle" x="407.06" y="-490.2" font-family="Times,serif" font-size="14.00">organised with</text>
+<path fill="none" stroke="black" d="M126.3,-486.25C222.12,-486.25 545.49,-486.25 695.88,-486.25"/>
+<polygon fill="black" stroke="black" points="705.62,-486.25 695.62,-490.75 701.84,-486.25 695.62,-486.25 695.62,-486.25 695.62,-486.25 701.84,-486.25 695.62,-481.75 705.62,-486.25"/>
+<text text-anchor="middle" x="416.56" y="-490.2" font-family="Times,serif" font-size="14.00">organised with</text>
 </g>
 <!-- ThreatCause&#45;&gt;CausalEntity -->
 <g id="edge4" class="edge">
 <title>ThreatCause&#45;&gt;CausalEntity</title>
 <path fill="none" stroke="black" d="M159,-274.46C159,-245.1 159,-185.22 159,-149.64"/>
-<polygon fill="black" stroke="black" points="162.5,-150.1 159,-140.1 155.5,-150.1 162.5,-150.1"/>
+<polygon fill="black" stroke="black" points="159,-139.8 163.5,-149.8 159,-143.58 159,-149.8 159,-149.8 159,-149.8 159,-143.58 154.5,-149.8 159,-139.8"/>
 <text text-anchor="middle" x="191.25" y="-200.32" font-family="Times,serif" font-size="14.00">sub&#45;class of</text>
 </g>
 <!-- ControlStrategy&#45;&gt;ThreatCause -->
 <g id="edge6" class="edge">
 <title>ControlStrategy&#45;&gt;ThreatCause</title>
-<path fill="none" stroke="black" d="M173.97,-381.17C167.36,-376.34 161.35,-370.4 157.5,-363.25 150.88,-350.97 150.55,-335.6 152.17,-322.45"/>
-<polygon fill="black" stroke="black" points="155.62,-323.07 153.84,-312.63 148.71,-321.9 155.62,-323.07"/>
+<path fill="none" stroke="black" d="M173.97,-381.17C167.36,-376.34 161.35,-370.4 157.5,-363.25 150.82,-350.84 150.54,-335.29 152.22,-322.05"/>
+<polygon fill="black" stroke="black" points="153.88,-312.34 156.63,-322.95 153.24,-316.07 152.2,-322.2 152.2,-322.2 152.2,-322.2 153.24,-316.07 147.76,-321.44 153.88,-312.34"/>
 <text text-anchor="middle" x="189.75" y="-349.95" font-family="Times,serif" font-size="14.00">sub&#45;class of</text>
 </g>
 <!-- Control -->
@@ -140,8 +140,8 @@
 <!-- ControlStrategy&#45;&gt;Control -->
 <g id="edge12" class="edge">
 <title>ControlStrategy&#45;&gt;Control</title>
-<path fill="none" stroke="black" d="M218.81,-381.06C221.23,-375.42 223.83,-369.11 226,-363.25 230.98,-349.8 235.86,-334.64 239.75,-321.92"/>
-<polygon fill="black" stroke="black" points="243.06,-323.08 242.59,-312.49 236.36,-321.06 243.06,-323.08"/>
+<path fill="none" stroke="black" d="M218.81,-381.06C221.23,-375.42 223.83,-369.11 226,-363.25 231.03,-349.66 235.96,-334.33 239.87,-321.53"/>
+<polygon fill="black" stroke="black" points="242.68,-312.21 244.11,-323.08 241.59,-315.83 239.8,-321.79 239.8,-321.79 239.8,-321.79 241.59,-315.83 235.49,-320.49 242.68,-312.21"/>
 <text text-anchor="middle" x="239.67" y="-349.95" font-family="Times,serif" font-size="14.00">has</text>
 </g>
 <!-- AssetProperty -->
@@ -153,15 +153,15 @@
 <!-- AssetProperty&#45;&gt;CausalEntity -->
 <g id="edge5" class="edge">
 <title>AssetProperty&#45;&gt;CausalEntity</title>
-<path fill="none" stroke="black" d="M467.85,-194.14C401.87,-178.57 283.63,-150.66 214.16,-134.27"/>
-<polygon fill="black" stroke="black" points="215.04,-130.88 204.5,-131.99 213.43,-137.69 215.04,-130.88"/>
+<path fill="none" stroke="black" d="M467.85,-194.14C401.73,-178.53 283.14,-150.55 213.73,-134.17"/>
+<polygon fill="black" stroke="black" points="204.21,-131.92 214.98,-129.84 207.89,-132.79 213.95,-134.22 213.95,-134.22 213.95,-134.22 207.89,-132.79 212.91,-138.6 204.21,-131.92"/>
 <text text-anchor="middle" x="391.12" y="-157.2" font-family="Times,serif" font-size="14.00">sub&#45;class of</text>
 </g>
 <!-- Control&#45;&gt;AssetProperty -->
 <g id="edge7" class="edge">
 <title>Control&#45;&gt;AssetProperty</title>
-<path fill="none" stroke="black" d="M277.11,-280.14C281.75,-278.32 286.5,-276.47 291,-274.75 329.72,-259.96 338.92,-254.8 378.5,-242.5 404,-234.58 432.56,-227.09 457.01,-221.09"/>
-<polygon fill="black" stroke="black" points="457.57,-224.56 466.46,-218.8 455.92,-217.75 457.57,-224.56"/>
+<path fill="none" stroke="black" d="M277.11,-280.14C281.75,-278.32 286.5,-276.47 291,-274.75 329.72,-259.96 338.92,-254.8 378.5,-242.5 404.11,-234.54 432.81,-227.02 457.34,-221.01"/>
+<polygon fill="black" stroke="black" points="466.75,-218.73 458.09,-225.46 463.07,-219.62 457.03,-221.08 457.03,-221.08 457.03,-221.08 463.07,-219.62 455.97,-216.71 466.75,-218.73"/>
 <text text-anchor="middle" x="410.75" y="-243.45" font-family="Times,serif" font-size="14.00">sub&#45;class of</text>
 </g>
 <!-- AssetTrustworthiness -->
@@ -174,16 +174,16 @@
 <g id="edge8" class="edge">
 <title>AssetTrustworthiness&#45;&gt;AssetProperty</title>
 <path fill="none" stroke="black" d="M579.36,-381.17C576.64,-356.76 570.03,-311.15 556,-274.75 550.58,-260.69 542.34,-246.19 534.75,-234.26"/>
-<polygon fill="black" stroke="black" points="537.86,-232.61 529.44,-226.19 532.01,-236.46 537.86,-232.61"/>
+<polygon fill="black" stroke="black" points="529.27,-225.94 538.53,-231.82 531.35,-229.1 534.77,-234.29 534.77,-234.29 534.77,-234.29 531.35,-229.1 531.01,-236.77 529.27,-225.94"/>
 <text text-anchor="middle" x="605.77" y="-286.57" font-family="Times,serif" font-size="14.00">sub&#45;class of</text>
 </g>
 <!-- virtual -->
 <!-- virtual&#45;&gt;AssetTrustworthiness -->
 <g id="edge2" class="edge">
 <title>virtual&#45;&gt;AssetTrustworthiness</title>
-<path fill="none" stroke="black" d="M476,-399.5C485.04,-399.5 494.07,-399.5 503.11,-399.5"/>
-<polygon fill="black" stroke="black" points="503.04,-403 513.04,-399.5 503.04,-396 503.04,-403"/>
-<text text-anchor="middle" x="484.18" y="-386.2" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;card = 1</text>
+<path fill="none" stroke="black" d="M476,-399.5C485.14,-399.5 494.27,-399.5 503.41,-399.5"/>
+<polygon fill="black" stroke="black" points="513.34,-399.5 503.34,-404 509.55,-399.5 503.34,-399.5 503.34,-399.5 503.34,-399.5 509.55,-399.5 503.34,-395 513.34,-399.5"/>
+<text text-anchor="middle" x="484.18" y="-386.2" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;card.= 1</text>
 </g>
 <!-- BehaviourAttribute -->
 <g id="node11" class="node">
@@ -194,16 +194,16 @@
 <!-- virtual&#45;&gt;BehaviourAttribute -->
 <g id="edge15" class="edge">
 <title>virtual&#45;&gt;BehaviourAttribute</title>
-<path fill="none" stroke="black" d="M476,-398.5C476,-398.5 473.85,-353.53 472.37,-322.52"/>
-<polygon fill="black" stroke="black" points="475.87,-322.38 471.9,-312.56 468.88,-322.71 475.87,-322.38"/>
+<path fill="none" stroke="black" d="M476,-398.5C476,-398.5 473.83,-353.13 472.35,-322.11"/>
+<polygon fill="black" stroke="black" points="471.88,-312.26 476.86,-322.04 472.06,-316.04 472.36,-322.25 472.36,-322.25 472.36,-322.25 472.06,-316.04 467.87,-322.47 471.88,-312.26"/>
 <text text-anchor="middle" x="482.49" y="-349.95" font-family="Times,serif" font-size="14.00">via</text>
-<text text-anchor="middle" x="445.2" y="-312" font-family="Times,serif" font-size="14.00"> &#160;card = 1</text>
+<text text-anchor="middle" x="445.2" y="-312" font-family="Times,serif" font-size="14.00"> &#160;card.= 1</text>
 </g>
 <!-- AssetBehaviour&#45;&gt;AssetProperty -->
 <g id="edge9" class="edge">
 <title>AssetBehaviour&#45;&gt;AssetProperty</title>
-<path fill="none" stroke="black" d="M327.41,-380.94C314.45,-354.55 295.76,-304.59 321.5,-274.75 339.33,-254.08 417.56,-266.63 443,-256.75 458.45,-250.75 473.9,-241.01 486.58,-231.76"/>
-<polygon fill="black" stroke="black" points="488.63,-234.6 494.49,-225.77 484.4,-229.02 488.63,-234.6"/>
+<path fill="none" stroke="black" d="M327.41,-380.94C314.45,-354.55 295.76,-304.59 321.5,-274.75 339.33,-254.08 417.56,-266.63 443,-256.75 458.6,-250.7 474.2,-240.82 486.95,-231.49"/>
+<polygon fill="black" stroke="black" points="494.72,-225.6 489.48,-235.22 491.71,-227.88 486.76,-231.64 486.76,-231.64 486.76,-231.64 491.71,-227.88 484.04,-228.05 494.72,-225.6"/>
 <text text-anchor="middle" x="353.75" y="-286.57" font-family="Times,serif" font-size="14.00">sub&#45;class of</text>
 </g>
 <!-- AssetBehaviour&#45;&gt;virtual -->
@@ -227,15 +227,15 @@
 <!-- Asset&#45;&gt;AssetProperty -->
 <g id="edge21" class="edge">
 <title>Asset&#45;&gt;AssetProperty</title>
-<path fill="none" stroke="black" d="M671.6,-279.14C643.23,-266.07 598.33,-245.4 564.04,-229.62"/>
-<polygon fill="black" stroke="black" points="565.69,-226.52 555.14,-225.52 562.76,-232.88 565.69,-226.52"/>
+<path fill="none" stroke="black" d="M671.6,-279.14C643.11,-266.02 597.94,-245.22 563.6,-229.41"/>
+<polygon fill="black" stroke="black" points="554.87,-225.4 565.84,-225.49 558.31,-226.98 563.96,-229.58 563.96,-229.58 563.96,-229.58 558.31,-226.98 562.08,-233.67 554.87,-225.4"/>
 <text text-anchor="middle" x="652.21" y="-243.45" font-family="Times,serif" font-size="14.00">has property</text>
 </g>
 <!-- Asset&#45;&gt;StructuralEntity -->
 <g id="edge17" class="edge">
 <title>Asset&#45;&gt;StructuralEntity</title>
-<path fill="none" stroke="black" d="M723.37,-274.37C737.46,-264.58 755.68,-252.38 772.5,-242.5 779.62,-238.31 787.31,-234.11 794.86,-230.13"/>
-<polygon fill="black" stroke="black" points="796.4,-233.28 803.67,-225.58 793.18,-227.06 796.4,-233.28"/>
+<path fill="none" stroke="black" d="M723.37,-274.37C737.46,-264.58 755.68,-252.38 772.5,-242.5 779.7,-238.27 787.48,-234.01 795.12,-230"/>
+<polygon fill="black" stroke="black" points="803.93,-225.44 797.12,-234.03 800.57,-227.18 795.05,-230.03 795.05,-230.03 795.05,-230.03 800.57,-227.18 792.98,-226.03 803.93,-225.44"/>
 <text text-anchor="middle" x="804.75" y="-243.45" font-family="Times,serif" font-size="14.00">sub&#45;class of</text>
 </g>
 <!-- AssetRelation -->
@@ -247,22 +247,22 @@
 <!-- AssetRelation&#45;&gt;StructuralEntity -->
 <g id="edge18" class="edge">
 <title>AssetRelation&#45;&gt;StructuralEntity</title>
-<path fill="none" stroke="black" d="M841,-274.29C841,-263.34 841,-248.94 841,-236.32"/>
-<polygon fill="black" stroke="black" points="844.5,-236.45 841,-226.45 837.5,-236.45 844.5,-236.45"/>
+<path fill="none" stroke="black" d="M841,-274.29C841,-263.22 841,-248.64 841,-235.93"/>
+<polygon fill="black" stroke="black" points="841,-226.15 845.5,-236.15 841,-229.93 841,-236.15 841,-236.15 841,-236.15 841,-229.93 836.5,-236.15 841,-226.15"/>
 <text text-anchor="middle" x="873.25" y="-243.45" font-family="Times,serif" font-size="14.00">sub&#45;class of</text>
 </g>
 <!-- AssetRelation&#45;&gt;Asset -->
 <g id="edge19" class="edge">
 <title>AssetRelation&#45;&gt;Asset</title>
-<path fill="none" stroke="black" d="M784.02,-292.75C768.49,-292.75 752.03,-292.75 737.77,-292.75"/>
-<polygon fill="black" stroke="black" points="737.89,-289.25 727.89,-292.75 737.89,-296.25 737.89,-289.25"/>
+<path fill="none" stroke="black" d="M784.02,-292.75C768.34,-292.75 751.7,-292.75 737.34,-292.75"/>
+<polygon fill="black" stroke="black" points="727.6,-292.75 737.6,-288.25 731.38,-292.75 737.6,-292.75 737.6,-292.75 737.6,-292.75 731.38,-292.75 737.6,-297.25 727.6,-292.75"/>
 <text text-anchor="middle" x="755.12" y="-296.7" font-family="Times,serif" font-size="14.00">domain</text>
 </g>
 <!-- AssetRelation&#45;&gt;Asset -->
 <g id="edge20" class="edge">
 <title>AssetRelation&#45;&gt;Asset</title>
-<path fill="none" stroke="black" d="M783.81,-275.61C769.51,-273.35 754.23,-272.66 740.12,-275.5 739.13,-275.7 738.13,-275.93 737.12,-276.17"/>
-<polygon fill="black" stroke="black" points="736.35,-272.75 727.84,-279.06 738.43,-279.43 736.35,-272.75"/>
+<path fill="none" stroke="black" d="M783.81,-275.61C769.51,-273.35 754.23,-272.66 740.12,-275.5 738.99,-275.73 737.84,-275.99 736.69,-276.28"/>
+<polygon fill="black" stroke="black" points="727.56,-279.15 735.75,-271.86 731.17,-278.01 737.1,-276.15 737.1,-276.15 737.1,-276.15 731.17,-278.01 738.45,-280.44 727.56,-279.15"/>
 <text text-anchor="middle" x="755.12" y="-276.45" font-family="Times,serif" font-size="14.00">range</text>
 </g>
 <!-- TargetSystem -->
@@ -274,31 +274,31 @@
 <!-- TargetSystem&#45;&gt;StructuralEntity -->
 <g id="edge16" class="edge">
 <title>TargetSystem&#45;&gt;StructuralEntity</title>
-<path fill="none" stroke="black" d="M946.21,-274.47C936.42,-264.37 923.21,-251.81 910,-242.5 903.8,-238.13 896.99,-233.99 890.12,-230.19"/>
-<polygon fill="black" stroke="black" points="891.91,-227.17 881.43,-225.58 888.63,-233.36 891.91,-227.17"/>
+<path fill="none" stroke="black" d="M946.21,-274.47C936.42,-264.37 923.21,-251.81 910,-242.5 903.66,-238.03 896.67,-233.8 889.64,-229.92"/>
+<polygon fill="black" stroke="black" points="881.17,-225.44 892.12,-226.14 884.52,-227.21 890.01,-230.12 890.01,-230.12 890.01,-230.12 884.52,-227.21 887.91,-234.09 881.17,-225.44"/>
 <text text-anchor="middle" x="961.39" y="-243.45" font-family="Times,serif" font-size="14.00">has structure</text>
 </g>
 <!-- OrganisationalEntity&#45;&gt;Asset -->
 <g id="edge23" class="edge">
 <title>OrganisationalEntity&#45;&gt;Asset</title>
-<path fill="none" stroke="black" d="M749.83,-467.58C740.1,-434.29 718.97,-362.04 707.25,-321.96"/>
-<polygon fill="black" stroke="black" points="710.67,-321.17 704.5,-312.56 703.95,-323.14 710.67,-321.17"/>
-<text text-anchor="middle" x="766.64" y="-400.45" font-family="Times,serif" font-size="14.00">further</text>
-<text text-anchor="middle" x="766.64" y="-386.2" font-family="Times,serif" font-size="14.00">restricted to</text>
+<path fill="none" stroke="black" d="M767.08,-467.58C753.99,-434.15 725.5,-361.42 709.85,-321.45"/>
+<polygon fill="black" stroke="black" points="706.24,-312.24 714.08,-319.91 707.62,-315.76 709.89,-321.55 709.89,-321.55 709.89,-321.55 707.62,-315.76 705.7,-323.19 706.24,-312.24"/>
+<text text-anchor="middle" x="778.64" y="-400.45" font-family="Times,serif" font-size="14.00">further</text>
+<text text-anchor="middle" x="778.64" y="-386.2" font-family="Times,serif" font-size="14.00">restricted to</text>
 </g>
 <!-- RoleAttribute -->
 <g id="node17" class="node">
 <title>RoleAttribute</title>
-<polygon fill="none" stroke="black" points="992.12,-504.25 901.88,-504.25 901.88,-468.25 992.12,-468.25 992.12,-504.25"/>
-<text text-anchor="middle" x="947" y="-480.07" font-family="Times,serif" font-size="14.00">Role attribute</text>
+<polygon fill="none" stroke="black" points="974,-504.25 920,-504.25 920,-468.25 974,-468.25 974,-504.25"/>
+<text text-anchor="middle" x="947" y="-480.07" font-family="Times,serif" font-size="14.00">Role</text>
 </g>
 <!-- OrganisationalEntity&#45;&gt;RoleAttribute -->
 <g id="edge22" class="edge">
 <title>OrganisationalEntity&#45;&gt;RoleAttribute</title>
-<path fill="none" stroke="black" d="M822.15,-486.25C844.32,-486.25 868.76,-486.25 890.09,-486.25"/>
-<polygon fill="black" stroke="black" points="890.07,-489.75 900.07,-486.25 890.07,-482.75 890.07,-489.75"/>
-<text text-anchor="middle" x="861.88" y="-504.45" font-family="Times,serif" font-size="14.00">primarily</text>
-<text text-anchor="middle" x="861.88" y="-490.2" font-family="Times,serif" font-size="14.00">working on</text>
+<path fill="none" stroke="black" d="M840.89,-486.25C863.78,-486.25 888.6,-486.25 908.48,-486.25"/>
+<polygon fill="black" stroke="black" points="918.35,-486.25 908.35,-490.75 914.56,-486.25 908.35,-486.25 908.35,-486.25 908.35,-486.25 914.56,-486.25 908.35,-481.75 918.35,-486.25"/>
+<text text-anchor="middle" x="880.44" y="-504.45" font-family="Times,serif" font-size="14.00">primarily</text>
+<text text-anchor="middle" x="880.44" y="-490.2" font-family="Times,serif" font-size="14.00">working on</text>
 </g>
 </g>
 </svg>
