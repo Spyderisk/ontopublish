@@ -1,7 +1,8 @@
 digraph SemiFinal {
-    //graph [fontname = "Helvetica"];
-    //node [fontname = "Helvetica"];
-    //edge [fontname = "Helvetica"];
+    //graph [fontname = "U001" fontsize="14" dpi=300 margin=0];
+    //node [fontname = "U001" fontsize="14"];
+    //edge [fontname = "U001" fontsize="14"];
+
     node [shape="box"]
     edge [arrowhead="vee"]
 
@@ -66,7 +67,7 @@ digraph SemiFinal {
     subgraph cluster2 {
 	label=< <B>Organisational entities</B> >
 	
-	OrganisationalEntity [label="Organisational entity/\nthreat role"]
+	OrganisationalEntity [label="Organisational entity /\nthreat role"]
 	RoleAttribute [label="Role"]
 	OrganisationalEntity -> RoleAttribute [label="primarily\nworking on" constraint="false"]
 	OrganisationalEntity -> Asset [label="further\nrestricted to" constraint="false"]

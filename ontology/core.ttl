@@ -161,7 +161,7 @@ score:BehaviourAttribute a rdfs:Class, skos:ConceptScheme ;
     dct:title "Behaviour attribute scheme. Attributes the way in which an asset behaviour
 undermines trustworthiness."@en .
     
-score:Likelihood a rdfs:Class ;
+score:Likelihood a rdfs:Class, skos:ConceptScheme ;
     rdfs:label "likelihood"@en ;
     rdfs:description "Likelihood property taken by causal (non-structural) entities.
 Definition of the scheme, including any applicable order, is specific to

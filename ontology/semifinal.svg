@@ -25,7 +25,7 @@
 </g>
 <g id="clust5" class="cluster">
 <title>cluster2</title>
-<polygon fill="none" stroke="black" points="699,-460 699,-534.75 982,-534.75 982,-460 699,-460"/>
+<polygon fill="none" stroke="black" points="697,-460 697,-534.75 984,-534.75 984,-460 697,-460"/>
 <text text-anchor="start" x="770.75" y="-518.45" font-family="Times,serif" font-size="14.00"> </text>
 <text text-anchor="start" x="774.5" y="-518.45" font-family="Times,serif" font-weight="bold" font-size="14.00">Organisational entities</text>
 <text text-anchor="start" x="906.5" y="-518.45" font-family="Times,serif" font-size="14.00"> </text>
@@ -106,16 +106,16 @@
 <!-- OrganisationalEntity -->
 <g id="node16" class="node">
 <title>OrganisationalEntity</title>
-<polygon fill="none" stroke="black" points="840.88,-504.5 707.12,-504.5 707.12,-468 840.88,-468 840.88,-504.5"/>
-<text text-anchor="middle" x="774" y="-487.2" font-family="Times,serif" font-size="14.00">Organisational entity/</text>
+<polygon fill="none" stroke="black" points="842.75,-504.5 705.25,-504.5 705.25,-468 842.75,-468 842.75,-504.5"/>
+<text text-anchor="middle" x="774" y="-487.2" font-family="Times,serif" font-size="14.00">Organisational entity /</text>
 <text text-anchor="middle" x="774" y="-472.95" font-family="Times,serif" font-size="14.00">threat role</text>
 </g>
 <!-- Threat&#45;&gt;OrganisationalEntity -->
 <g id="edge24" class="edge">
 <title>Threat&#45;&gt;OrganisationalEntity</title>
-<path fill="none" stroke="black" d="M126.3,-486.25C222.12,-486.25 545.49,-486.25 695.88,-486.25"/>
-<polygon fill="black" stroke="black" points="705.62,-486.25 695.62,-490.75 701.84,-486.25 695.62,-486.25 695.62,-486.25 695.62,-486.25 701.84,-486.25 695.62,-481.75 705.62,-486.25"/>
-<text text-anchor="middle" x="416.56" y="-490.2" font-family="Times,serif" font-size="14.00">organised with</text>
+<path fill="none" stroke="black" d="M126.3,-486.25C221.7,-486.25 542.65,-486.25 693.89,-486.25"/>
+<polygon fill="black" stroke="black" points="703.7,-486.25 693.7,-490.75 699.92,-486.25 693.7,-486.25 693.7,-486.25 693.7,-486.25 699.92,-486.25 693.7,-481.75 703.7,-486.25"/>
+<text text-anchor="middle" x="415.62" y="-490.2" font-family="Times,serif" font-size="14.00">organised with</text>
 </g>
 <!-- ThreatCause&#45;&gt;CausalEntity -->
 <g id="edge4" class="edge">
@@ -289,16 +289,16 @@
 <!-- RoleAttribute -->
 <g id="node17" class="node">
 <title>RoleAttribute</title>
-<polygon fill="none" stroke="black" points="974,-504.25 920,-504.25 920,-468.25 974,-468.25 974,-504.25"/>
-<text text-anchor="middle" x="947" y="-480.07" font-family="Times,serif" font-size="14.00">Role</text>
+<polygon fill="none" stroke="black" points="976,-504.25 922,-504.25 922,-468.25 976,-468.25 976,-504.25"/>
+<text text-anchor="middle" x="949" y="-480.07" font-family="Times,serif" font-size="14.00">Role</text>
 </g>
 <!-- OrganisationalEntity&#45;&gt;RoleAttribute -->
 <g id="edge22" class="edge">
 <title>OrganisationalEntity&#45;&gt;RoleAttribute</title>
-<path fill="none" stroke="black" d="M840.89,-486.25C863.78,-486.25 888.6,-486.25 908.48,-486.25"/>
-<polygon fill="black" stroke="black" points="918.35,-486.25 908.35,-490.75 914.56,-486.25 908.35,-486.25 908.35,-486.25 908.35,-486.25 914.56,-486.25 908.35,-481.75 918.35,-486.25"/>
-<text text-anchor="middle" x="880.44" y="-504.45" font-family="Times,serif" font-size="14.00">primarily</text>
-<text text-anchor="middle" x="880.44" y="-490.2" font-family="Times,serif" font-size="14.00">working on</text>
+<path fill="none" stroke="black" d="M843.16,-486.25C866.17,-486.25 890.94,-486.25 910.73,-486.25"/>
+<polygon fill="black" stroke="black" points="920.53,-486.25 910.53,-490.75 916.75,-486.25 910.53,-486.25 910.53,-486.25 910.53,-486.25 916.75,-486.25 910.53,-481.75 920.53,-486.25"/>
+<text text-anchor="middle" x="882.38" y="-504.45" font-family="Times,serif" font-size="14.00">primarily</text>
+<text text-anchor="middle" x="882.38" y="-490.2" font-family="Times,serif" font-size="14.00">working on</text>
 </g>
 </g>
 </svg>
