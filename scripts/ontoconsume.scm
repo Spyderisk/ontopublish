@@ -8,6 +8,7 @@
 
 (use-modules (ice-9 getopt-long)
              (ice-9 receive)
+             (ice-9 regex)
              (srfi srfi-1)
 	     (srfi srfi-9)
              ((rdf xsd)
@@ -244,10 +245,10 @@
     (let ((mo (regexp-exec re vsn)))
       (and mo (match:substring mo)))))
 
-
-(define (hash-versioning-scheme graph base target-version-string
-                                valid-from valid-to
-                                history?)
+(define* (hash-versioning-scheme graph base target-version-string
+                                 valid-from valid-to
+                                 #:key (history? #f)
+                                       (version-log #f))
   (receive (vss nvss)
       (partition (lambda (st)
                    (or
@@ -310,38 +311,96 @@
                          (begin
                            (display "Requested version is newer than nominal latest, and this graph records history. Appending the requested version to this graph.")
                            (newline)
-                           (append graph target-triples))] ;; vss + nvss
-                        [(compare-versions target-new nominal-latest)
-                         (begin
-                           (display "Requested version is newer than nominal latest, but this graph does not record history. Remove existing versioning statements and annotate with requested.")
+                           (append graph
+                                   ;; vss + nvss:
+                                   target-triples))]
+                        [(and (compare-versions target-new nominal-latest)
+                              version-log)
+                         (let ((history-triple
+                                (make-rdf-triple
+                                 (string-append base target-version-string)
+                                 (string-append endpoint "version_history")
+                                 version-log)))
+                           (display "Requested version is newer than nominal latest, but this graph does not record history. An external version log is provided, so use that. Remove existing versioning statements and annotate with requested.")
                            (newline)
-                           (append nvss target-triples))] ;; non-versioning statements
+                           (append nvss (cons history-triple target-triples)))] ;; non-versioning statements
+                        [(compare-versions target-new nominal-latest)
+                         (begin 
+                           (display "Requested version is newer than nominal latest, but this graph does not record history. No external version log is provided, so not adding that triple. Remove existing versioning statements and annotate with requested.")
+                           (newline)
+                           (append nvss target-triples))]
                         [else
                          (begin
                            (display "Requested version is less than latest transcribed in the file. Not overwriting.")
                            graph)])))))))
            
 (let* ((option-spec
-	'((target-version (single-char #\V) (value #f))
+	'((target-version (single-char #\V) (value #t))
+          (base (single-char #\b) (value #t))
+          (hist (single-char #\l) (value #t))
           (vocabulary (single-char #\U) (value #t))
-          (provenance (single-char #\P) (value #t))
+          (provenance (single-char #\L) (value #t))
           (last-version (single-char #\L) (value #f))
           (dry-run (single-char #\p) (value #f))
 	  (help (single-char #\h) (value #f))))
        (help-msg "ontoconsume [options]
-  -V --target-version VSN    Use target version VSN
-  -U --vocabulary FILE       Update versioning in RDF graph FILE, a vocabulary
-  -P --provenance FILE       Append to RDF graph FILE, a log of version history
-  -p --dry-run               Only check whether updating/annotating was feasible
-  -L --last-version          Return the last valid version (using -P or -U alone)
-  -h --help                  Display this help message
+  -V --target-version VSN   Use target version VSN
+  -b --base-ir              Use IRI as base (append other identifiers to this)
+  -l --versions IRI         IRI of external version history (some RDF graph)
+  -U --update-vocab FILE    Update versioning in RDF graph FILE, a vocabulary
+  -L --update-log   FILE    Append to RDF graph FILE, a log of version history
+  -p --dry-run              Only check whether updating/annotating was feasible
+  -L --last-version         Return the last valid version (using -P or -U alone)
+  -h --help                 Display this help message
 ")
        (options (getopt-long (command-line) option-spec))
        (target-version (option-ref options 'target-version #f))
+       (base-iri (option-ref options 'base #f))
+       (hist-iri (option-ref options 'hist #f))
        (work-on-vocabulary (option-ref options 'vocabulary #f))
        (work-on-history (option-ref options 'provenance #f))
        (last-version (option-ref options 'last-version #f))
        (dry-run (option-ref options 'dry-run #f))
        (help (option-ref options 'help #f)))
   (cond [help (display help-msg)]
-        [else (display help-msg)]))
+        [(not target-version)
+         (display "Did not specify a target version!")
+         (newline) (newline)
+         (display help-msg)]
+        [(not (or work-on-vocabulary work-on-history))
+         (display "No vocabulary or history file to version supplied!")
+         (newline) (newline)
+         (display help-msg)]
+        [(not (check-version target-version))
+         (display "Version should be of form MAJOR.MINOR.PATCH, components numeric")]
+        [(and work-on-vocabulary base-iri hist-iri)
+                (let ((target-graph (load-rdf work-on-vocabulary base-iri)))
+                  (display
+                   (rdf->turtle
+                    (hash-versioning-scheme target-graph
+                                            base-iri
+                                            target-version
+                                            0 (current-time) ;; kludge to demo it working. replace later with up to date...
+                                            #:history? #f
+                                            #:version-log hist-iri))))]
+        [(and work-on-vocabulary base-iri)
+         (let ((target-graph (load-rdf work-on-vocabulary base-iri)))
+           (display
+            (rdf->turtle
+             (hash-versioning-scheme target-graph
+                                     base-iri
+                                     target-version
+                                     0 (current-time)))))]
+        [(and work-on-history base-iri)
+         (let ((target-graph (load-rdf work-on-history base-iri)))
+           (display
+            (rdf->turtle
+             (hash-versioning-scheme target-graph
+                                     base-iri
+                                     target-version
+                                     0 (current-time)
+                                     #:history? #t))))]
+        [else (display "No base IRI supplied!")
+              (newline) (newline)
+              (display help-msg)]))
+(newline)
