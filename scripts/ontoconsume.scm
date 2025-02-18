@@ -1,15 +1,19 @@
+#! /usr/bin/guile3.0 -s
+!#
 ;; file scripts/ontoconsume.scm
 
 ;; 1. Load the RDF and spit out an error if it can't.
 ;; 2. Annotate the RDF with a version number. This should support emitting both a file annotated directly, and a separate file which will also be annotated with endpoint information.
 ;; 3. Output either the original format or the original format + other syntaxes.
 
-(use-modules (ice-9 receive)
+(use-modules (ice-9 getopt-long)
+             (ice-9 receive)
              (srfi srfi-1)
 	     (srfi srfi-9)
              ((rdf xsd)
               #:prefix xsd:)
              (rdf rdf)
+             (turtle fromrdf)
              (turtle tordf)
              (iri iri))
 
@@ -59,15 +63,48 @@
   (applies-to version-annotation-applies-to set-against-graph!)
   (applies-also version-annotation-applies-also set-related-graphs!))
 
+(define (inject-literal val)
+  (let ((make-xsd (lambda (iri)
+                    (string-append "http://www.w3.org/2001/XMLSchema#"
+                                   iri))))
+    (cond [(integer? val)
+           (make-rdf-literal (number->string val)
+                             (make-xsd "integer")
+                             #f)]
+          [(real? val) ; Guile stores non-integer reals using C double
+           (make-rdf-literal (number->string val)
+                             (make-xsd "double")
+                             #f)] 
+          [(and (boolean? val) val)
+           (make-rdf-literal "true"
+                             (make-xsd "boolean")
+                             #f)]
+          [(and (boolean? val) (not val))
+           (make-rdf-literal "false"
+                             (make-xsd "boolean")
+                             #f)]
+          [(symbol? val)
+           (make-rdf-literal (symbol->string val)
+                             (make-xsd "string")
+                             #f)]
+          [else
+           (make-rdf-literal val
+                             (make-xsd "string")
+                             #f)])))
+
 (define (emit-versioning subject versioning)
-  (let ((get-with (lambda (ref proc)
-                    (let ((maybe-elem
-                           (proc versioning)))
-                      (if maybe-elem
-                          (make-rdf-triple subject
-                                           (string-append endpoint ref)
-                                           maybe-elem)
-                          #f)))))
+  (let* ((make-rdf-iri (lambda (name)
+           (string-append "http://www.w3.org/1999/02/22-rdf-syntax-ns#" name)))
+         (make-endpoint-iri (lambda (name)
+           (string-append endpoint name)))
+         (get-with (lambda (ref proc)
+           (let ((maybe-elem
+                  (proc versioning)))
+            (if maybe-elem
+                (make-rdf-triple subject
+                                 (make-endpoint-iri ref)
+                                 (inject-literal maybe-elem))
+                #f)))))
     (filter (lambda (k) (and k))
             (list
      (get-with "major_component" version-annotation-major-component)
@@ -75,8 +112,9 @@
      (get-with "patch_component" version-annotation-patch-component)
      (get-with "see_previous" version-annotation-see-previous)
      (get-with "valid-from" version-annotation-valid-from)
-     (get-with "valid-from" version-annotation-valid-to)
-     (get-with "applies-to" version-annotation-applies-to)))))
+     (get-with "valid-to" version-annotation-valid-to)
+     (get-with "applies-to" version-annotation-applies-to)
+     (make-rdf-triple subject (make-rdf-iri "type") (make-endpoint-iri "Version"))))))
 
 ;; If they have the same major version, proceed to checking the minor version. GTEq 0 1 does not hold.
 ;; If they have the same minor version, proceed to checking the patch version.
@@ -201,11 +239,33 @@
 (define (parse-version combined-version)
   (map string->number (string-split combined-version #\.)))
 
-(define (hash-versioning-scheme graph base target-version-string valid-from valid-to history?)
+(define (check-version vsn)
+  (let ((re (make-regexp "^[0-9]+.[0-9]+.[0-9]+$")))
+    (let ((mo (regexp-exec re vsn)))
+      (and mo (match:substring mo)))))
+
+
+(define (hash-versioning-scheme graph base target-version-string
+                                valid-from valid-to
+                                history?)
   (receive (vss nvss)
       (partition (lambda (st)
-                   (member (rdf-triple-predicate st)
-                           version-statements))
+                   (or
+                    ;; most version statements
+                    (member (rdf-triple-predicate st)
+                            version-statements)
+                    ;; blank nodes, `_b0 a send:Version' &c.
+                    (member (rdf-triple-object st)
+                            version-statements)
+                    ;; remaining old version statements:
+                    ;; these are composed of base + valid version string,
+                    ;; can't reasonably detect these if not of this form
+                    (let ((subj (rdf-triple-subject st)))
+                      (and
+                       (string-prefix? base subj)
+                       (check-version
+                        (string-drop subj
+                                     (string-prefix-length base subj)))))))
                  graph)
     (let* ((parsed-version (parse-version target-version-string))
            (major (car parsed-version))
@@ -260,6 +320,28 @@
                          (begin
                            (display "Requested version is less than latest transcribed in the file. Not overwriting.")
                            graph)])))))))
-
-
            
+(let* ((option-spec
+	'((target-version (single-char #\V) (value #f))
+          (vocabulary (single-char #\U) (value #t))
+          (provenance (single-char #\P) (value #t))
+          (last-version (single-char #\L) (value #f))
+          (dry-run (single-char #\p) (value #f))
+	  (help (single-char #\h) (value #f))))
+       (help-msg "ontoconsume [options]
+  -V --target-version VSN    Use target version VSN
+  -U --vocabulary FILE       Update versioning in RDF graph FILE, a vocabulary
+  -P --provenance FILE       Append to RDF graph FILE, a log of version history
+  -p --dry-run               Only check whether updating/annotating was feasible
+  -L --last-version          Return the last valid version (using -P or -U alone)
+  -h --help                  Display this help message
+")
+       (options (getopt-long (command-line) option-spec))
+       (target-version (option-ref options 'target-version #f))
+       (work-on-vocabulary (option-ref options 'vocabulary #f))
+       (work-on-history (option-ref options 'provenance #f))
+       (last-version (option-ref options 'last-version #f))
+       (dry-run (option-ref options 'dry-run #f))
+       (help (option-ref options 'help #f)))
+  (cond [help (display help-msg)]
+        [else (display help-msg)]))

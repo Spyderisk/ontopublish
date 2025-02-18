@@ -1,5 +1,7 @@
 #! /usr/bin/guile3.0 -s
 !#
+;; file scripts/ontoprepare.scm
+
 (use-modules (ice-9 getopt-long)
 	     (ice-9 ftw)
              (ice-9 regex))
