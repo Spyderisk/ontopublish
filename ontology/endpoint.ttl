@@ -1,0 +1,103 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdfg: <http://www.w3.org/2004/03/trix/rdfg-1/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix send: <http://ontology.spyderisk.org/ns/endpoint#> .
+
+# Spyderisk ontology semantic endpoint
+#
+# For now, this primarily defines the semantics of the versioning scheme.
+# We anticipate describing the endpoint using something like WSMO-Lite.
+#
+# Core assumption is that, given a *base* IRI, this refers to the *current*
+# set of statements. This would be clear in the following:
+#
+# <https://w3id.org/example> rdf:type owl:Ontology ;
+#   owl:versionIRI <https://w3id.org/example/1.0.0> ;
+#   owl:versionInfo "1.0.0" .
+#
+# Here, we're presented with statements like:
+# <https://w3id.org/example> owl:versionIRI <Some IRI>
+# <https://w3id.org/example> owl:versionInfo <Some IRI>
+#
+# This would be what we might encounter in a standalone Turtle file this
+# program is fed. (It would be the same 'base' argument as above, otherwise
+# we have no clue what these statements refer to.)
+#
+# On the individual graph level, the shape of things to come (apologies to Mr Coleman) is like:
+#
+# <http://ontology.spyderisk.org/ns/core/0.1.0> rdf:type rdfg:Graph ;
+#    send:has_version _:b1 ;
+#    send:has_version <http://ontology.spyderisk.org/v/core#0.1.0> ;
+#    send:has_version_history <http://ontology.spyderisk.org/v/core> .
+#
+# _:b1 a send:Version ; 
+#       send:version_represented_as "0.1.0" ;
+#       send:major_component "0"^^xsd:integer ;
+#       send:minor_component "1"^^xsd:integer ;
+#       send:patch_component "0"^^xsd:integer ;
+#       send:see_previous <http://ontology.spyderisk.org/v/core#0.0.9> ;
+#       send:valid_from "2025-01-01"^^xsd:date ;
+#       send:valid_to "2025-01-16"^^xsd:date ;
+#       send:applies_to <http://ontology.spyderisk.org/ns/core> .
+
+send:Version a rdfs:Class ;
+    rdfs:label "versioning scheme"@en ;
+    rdfs:description "Version should be of form MAJOR.MINOR.PATCH, components numeric. This is consistent with the 'semantic versioning' scheme for software." .
+
+send:major_component a rdf:Property ;
+    rdfs:domain send:Version ;
+    rdfs:range  xsd:integer ;
+    rdfs:label "has major component"@en .
+send:minor_component a rdf:Property ;
+    rdfs:domain send:Version ;
+    rdfs:range  xsd:integer ;
+    rdfs:label "has minor component"@en .
+send:patch_component a rdf:Property ;
+    rdfs:domain send:Version ;
+    rdfs:range  xsd:integer ;
+    rdfs:label "has patch component"@en .
+    
+send:version_represented_as a rdf:Property ;
+    rdfs:domain send:Version ;
+    rdfs:range  xsd:string ;
+    rdfs:label "version represented as string"@en .
+send:version_hisotry a rdf:Property ;
+    rdfs:domain send:Version ;
+    rdfs:range  rdfg:Graph ;
+    rdfs:label "version is recorded in history"@en .
+
+send:see_previous a rdf:Property ;
+    rdfs:domain send:Version ;
+    rdfs:range  send:Version ;
+    rdfs:label "see previous version"@en ;
+    rdfs:description "Point to a previous version. This must be less than the current version according to the semantics of the 'semantic versioning' scheme, but it is not necessarily one of the components of the scheme incremented by one." .
+send:see_also a rdf:Property ;
+    rdfs:domain send:Version ;
+    rdfs:range  send:Version ;
+    rdfs:label "certain version is relevant"@en .
+
+send:valid_from a rdf:Property ;
+    rdfs:domain send:Version ;
+    rdfs:range  xsd:date ;
+    rdfs:label "valid from date (inclusive)"@en .
+send:valid_to a rdf:Property ;
+    rdfs:domain send:Version ;
+    rdfs:range  xsd:date ;
+    rdfs:label "valid until date (inclusive)"@en .
+
+send:applies_to a rdf:Property ;
+    rdfs:domain send:Version ;
+    rdfs:range  rdfg:Graph .
+send:applies_also a rdf:Property ;
+    rdfs:domain send:Version ;
+    rdfs:range  rdfg:Graph .
+
+send:has_version a rdf:Property ;
+    rdfs:domain rdfg:Graph ;
+    rdfs:range  send:Version ;
+    rdfs:label "RDF graph has version" .
+send:has_version_history a rdf:Property ;
+    rdfs:domain rdfg:Graph ;
+    rdfs:range  rdfg:Graph ;
+    rdfs:label "RDF graph associated with log of version history" .
