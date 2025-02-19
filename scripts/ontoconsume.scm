@@ -65,6 +65,40 @@
   (applies-to version-annotation-applies-to set-against-graph!)
   (applies-also version-annotation-applies-also set-related-graphs!))
 
+
+(define (parse-version combined-version)
+  (map string->number (string-split combined-version #\.)))
+
+(define (make-check-re rs)
+  (lambda (s)
+    (let ((re (make-regexp rs)))
+      (let ((mo (regexp-exec re s)))
+        (and mo (match:substring mo))))))
+
+(define check-version
+  (make-check-re "^[0-9]+.[0-9]+.[0-9]+$"))
+
+(define check-date
+  (make-check-re "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"))
+
+(define (from-date dat fb)
+  (if (check-date dat)
+      (car
+       (mktime
+        (car
+         (strptime "%F" dat))))
+      (begin 
+        (display "Time-stamp should be of form YYYY-MM-DD, components numeric")
+        fb)))
+
+(define (to-date epoch fb)
+  (display epoch)
+  (if (and (integer? epoch) (exact? epoch))
+      (strftime "%F" (localtime epoch))
+      (begin
+        (display "Epoch must be an exact number.")
+        fb)))
+
 (define (emit-versioning base versioning)
   (let* ((make-rdf-iri (lambda (name)
            (string-append "http://www.w3.org/1999/02/22-rdf-syntax-ns#" name)))
@@ -94,7 +128,7 @@
                   (make-rdf-triple subject
                                    (make-endpoint-iri ref)
                                    (make-rdf-literal
-                                    (strftime "%F" (localtime maybe-epoch))
+                                    (to-date maybe-epoch #f)
                                     (make-xsd "date")
                                     #f))))))
          (get-with-sg (lambda (ref proc)
@@ -203,13 +237,6 @@
          (rejected '())
          (rslv (lambda (ref)
            (string-append endpoint ref)))
-         (get-ts (lambda (ref)
-           (car
-            (mktime
-             (car
-              (strptime
-               "%F"
-               (rdf-literal-lexical-form ref)))))))
          (proc (lambda (lit)
            (string->number
             (rdf-literal-lexical-form lit)))))
@@ -226,9 +253,13 @@
                    ["patch_component" (lambda (a)
                      (set! target-patch (proc a)))]
                    ["valid_from" (lambda (a)
-                     (set-valid-from! target-map (get-ts a)))]
+                     (set-valid-from!
+                      target-map
+                      (from-date (rdf-literal-lexical-form a) #f)))]
                    ["valid_to" (lambda (a)
-                     (set-valid-to! target-map (get-ts a)))]
+                     (set-valid-to!
+                      target-map
+                      (from-date (rdf-literal-lexical-form a) #f)))]
                    ["version_history" (lambda (a)
                      (set-version-history! target-map a))]))))))
       (for-each statement-helper statements))
@@ -243,18 +274,10 @@
 ;; 2. Query the graph for the statements associated with the version.
 ;; 3. Check it matches the current one.
 
-(define (parse-version combined-version)
-  (map string->number (string-split combined-version #\.)))
-
-(define (check-version vsn)
-  (let ((re (make-regexp "^[0-9]+.[0-9]+.[0-9]+$")))
-    (let ((mo (regexp-exec re vsn)))
-      (and mo (match:substring mo)))))
-
 (define* (hash-versioning-scheme graph base target-version-string
-                                 valid-from
                                  #:key (history? #f)
                                        (version-log #f)
+                                       (valid-from #f)
                                        (valid-to #f))
   (receive (vss nvss)
       (partition (lambda (st)
@@ -357,17 +380,18 @@
           (hist (single-char #\l) (value #t))
           (vocabulary (single-char #\U) (value #t))
           (provenance (single-char #\L) (value #t))
-          (last-version (single-char #\L) (value #f))
+          (valid-from (single-char #\T) (value #t))
+          ;(last-version (single-char #\L) (value #f))
           (dry-run (single-char #\p) (value #f))
 	  (help (single-char #\h) (value #f))))
        (help-msg "ontoconsume [options]
   -V --target-version VSN   Use target version VSN
-  -b --base-ir              Use IRI as base (append other identifiers to this)
+  -b --base IRI             Use IRI as base (append other identifiers to this)
   -l --versions IRI         IRI of external version history (some RDF graph)
   -U --update-vocab FILE    Update versioning in RDF graph FILE, a vocabulary
   -L --update-log   FILE    Append to RDF graph FILE, a log of version history
+  -T --valid-from DATE      Version valid from DATE, not current date
   -p --dry-run              Only check whether updating/annotating was feasible
-  -L --last-version         Return the last valid version (using -P or -U alone)
   -h --help                 Display this help message
 ")
        (options (getopt-long (command-line) option-spec))
@@ -376,7 +400,8 @@
        (hist-iri (option-ref options 'hist #f))
        (work-on-vocabulary (option-ref options 'vocabulary #f))
        (work-on-history (option-ref options 'provenance #f))
-       (last-version (option-ref options 'last-version #f))
+       (valid-from (option-ref options 'valid-from #f))
+       ;(last-version (option-ref options 'last-version #f))
        (dry-run (option-ref options 'dry-run #f))
        (help (option-ref options 'help #f)))
   (cond [help (display help-msg)]
@@ -390,35 +415,41 @@
          (display help-msg)]
         [(not (check-version target-version))
          (display "Version should be of form MAJOR.MINOR.PATCH, components numeric")]
-        [(and work-on-vocabulary base-iri hist-iri)
-                (let ((target-graph (load-rdf work-on-vocabulary base-iri)))
-                  (display
-                   (rdf->turtle
-                    (hash-versioning-scheme target-graph
-                                            base-iri
-                                            target-version
-                                            (current-time) ;; kludge to demo it working. replace later with up to date...
-                                            #:history? #f
-                                            #:version-log hist-iri))))]
-        [(and work-on-vocabulary base-iri)
-         (let ((target-graph (load-rdf work-on-vocabulary base-iri)))
-           (display
-            (rdf->turtle
-             (hash-versioning-scheme target-graph
-                                     base-iri
-                                     target-version
-                                     (current-time)
-                                     #:history? #f))))]
-        [(and work-on-history base-iri)
-         (let ((target-graph (load-rdf work-on-history base-iri)))
-           (display
-            (rdf->turtle
-             (hash-versioning-scheme target-graph
-                                     base-iri
-                                     target-version
-                                     (current-time)
-                                     #:history? #t))))]
-        [else (display "No base IRI supplied!")
-              (newline) (newline)
-              (display help-msg)]))
+        [else
+         (let ((epoch-proper
+                (if valid-from
+                    (from-date valid-from #f)
+                    (current-time))))
+           (and epoch-proper
+                (cond [(and work-on-vocabulary base-iri hist-iri)
+                       (let ((target-graph (load-rdf work-on-vocabulary base-iri)))
+                         (display
+                          (rdf->turtle
+                           (hash-versioning-scheme target-graph
+                                                   base-iri
+                                                   target-version
+                                                   #:history? #f
+                                                   #:valid-from epoch-proper
+                                                   #:version-log hist-iri))))]
+                      [(and work-on-vocabulary base-iri)
+                       (let ((target-graph (load-rdf work-on-vocabulary base-iri)))
+                         (display
+                          (rdf->turtle
+                           (hash-versioning-scheme target-graph
+                                                   base-iri
+                                                   target-version
+                                                   #:history? #f
+                                                   #:valid-from epoch-proper))))]
+                      [(and work-on-history base-iri)
+                       (let ((target-graph (load-rdf work-on-history base-iri)))
+                         (display
+                          (rdf->turtle
+                           (hash-versioning-scheme target-graph
+                                                   base-iri
+                                                   target-version
+                                                   #:history? #t
+                                                   #:valid-from epoch-proper))))]
+                      [else (display "No base IRI supplied!")
+                            (newline) (newline)
+                            (display help-msg)])))]))           
 (newline)
