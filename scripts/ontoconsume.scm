@@ -78,18 +78,18 @@
 (define check-version
   (make-check-re "^[0-9]+.[0-9]+.[0-9]+$"))
 
-(define check-date
-  (make-check-re "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"))
-
 (define (from-date dat fb)
-  (if (check-date dat)
+  (with-exception-handler
+    (lambda (ex)
+      (display
+       "Time-stamp should be of form YYYY-MM-DD, components numeric")
+      fb)
+    (lambda ()
       (car
        (mktime
         (car
-         (strptime "%F" dat))))
-      (begin 
-        (display "Time-stamp should be of form YYYY-MM-DD, components numeric")
-        fb)))
+         (strptime "%F" dat)))))
+    #:unwind? #t))
 
 (define (to-date epoch fb)
   (if (and (integer? epoch) (exact? epoch))
@@ -414,11 +414,11 @@
   (cond [help (display help-msg)]
         [(not target-version)
          (display "Did not specify a target version!")
-         (newline) (newline)
+         (newline) (newline) ;; double newline so it's obvious
          (display help-msg)]
         [(not (or work-on-vocabulary work-on-history))
          (display "No vocabulary or history file to version supplied!")
-         (newline) (newline)
+         (newline) (newline) ;;
          (display help-msg)]
         [(not (check-version target-version))
          (display "Version should be of form MAJOR.MINOR.PATCH, components numeric")]
@@ -431,7 +431,7 @@
            (and epoch-proper
                 (cond [(and work-on-vocabulary base-iri)
                        (let ((target-graph (load-rdf work-on-vocabulary base-iri)))
-                         (cond [(and target-graph base-iri hist-iri)
+                         (cond [(and target-graph hist-iri)
                                 (display
                                  (rdf->turtle
                                   (hash-versioning-scheme target-graph
@@ -440,7 +440,7 @@
                                                           #:history? #f
                                                           #:valid-from epoch-proper
                                                           #:version-log hist-iri)))]
-                               [(and target-graph base-iri)
+                               [target-graph
                                 (display
                                  (rdf->turtle
                                   (hash-versioning-scheme target-graph
@@ -462,6 +462,6 @@
                                                        #:valid-from epoch-proper)))
                              (display "Can't continue!")))]
                       [else (display "No base IRI supplied!")
-                            (newline) (newline)
+                            (newline) (newline) ;; double newline so it's obvious
                             (display help-msg)])))]))                      
 (newline)
