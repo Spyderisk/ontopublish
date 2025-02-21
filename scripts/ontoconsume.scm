@@ -16,7 +16,8 @@
              (rdf rdf)
              (turtle fromrdf)
              (turtle tordf)
-             (iri iri))
+             (iri iri)
+             (semver))
 
 (define (load-rdf path base)
   (catch 'system-error
@@ -47,6 +48,12 @@
          "valid_from" "valid_to"
          "applies_to" "applies_also"
          "has_version" "has_version_history")))
+
+(define annotated-prefixes
+  (append `(("send" . ,endpoint)
+            ("rdfg" . "http://www.w3.org/2004/03/trix/rdfg-1/")
+            ("skos" . "http://www.w3.org/2004/02/skos/core#"))
+          common-prefixes))
 
 (define-record-type <version-annotation>
   (version-annotation major-component minor-component patch-component
@@ -98,8 +105,10 @@
         (display "Epoch must be an exact number.")
         fb)))
 
-(define (emit-versioning base versioning)
-  (let* ((make-rdf-iri (lambda (name)
+(define* (emit-versioning curr delim versioning #:key (previous-version-string #f))
+  (let* ((blank-node-index (random 10000))
+         (base (string-append curr delim))
+         (make-rdf-iri (lambda (name)
            (string-append "http://www.w3.org/1999/02/22-rdf-syntax-ns#" name)))
          (make-endpoint-iri (lambda (name)
            (string-append endpoint name)))
@@ -115,7 +124,7 @@
          (get-with (lambda (ref proc)
            (let ((maybe-val (proc versioning)))
             (and maybe-val
-                 (make-rdf-triple subject
+                 (make-rdf-triple blank-node-index
                                   (make-endpoint-iri ref)
                                   (make-rdf-literal
                                    (number->string maybe-val)
@@ -124,7 +133,7 @@
          (get-with-ts (lambda (ref proc)
            (let ((maybe-epoch (proc versioning)))
              (and maybe-epoch
-                  (make-rdf-triple subject
+                  (make-rdf-triple blank-node-index
                                    (make-endpoint-iri ref)
                                    (make-rdf-literal
                                     (to-date maybe-epoch #f)
@@ -133,7 +142,7 @@
          (get-with-sg (lambda (ref proc)
            (let ((maybe-opaque (proc versioning)))
              (and maybe-opaque
-                  (make-rdf-triple subject
+                  (make-rdf-triple blank-node-index
                                    (make-endpoint-iri ref)
                                    maybe-opaque))))))
     (filter (lambda (k) (and k))
@@ -142,31 +151,28 @@
      (get-with "minor_component" version-annotation-minor-component)
      (get-with "patch_component" version-annotation-patch-component)
      (get-with-sg "version_history" version-annotation-history)
-     (get-with-sg "see_previous" version-annotation-see-previous)
-     (get-with-ts "valid-from" version-annotation-valid-from)
-     (get-with-ts "valid-to"   version-annotation-valid-to)
-     (get-with-sg "applies-to" version-annotation-applies-to)
-     (make-rdf-triple subject (make-rdf-iri "type") (make-endpoint-iri "Version"))))))
+     ; (get-with-sg "see_previous" version-annotation-see-previous)
+     (get-with-ts "valid_from" version-annotation-valid-from)
+     (get-with-ts "valid_to"   version-annotation-valid-to)
+     (get-with-sg "applies_to" version-annotation-applies-to)
+     (get-with-sg "see_previous" (lambda (vsn)
+                                   (and previous-version-string
+                                        (string-append
+                                         (version-annotation-history vsn)
+                                         delim
+                                         previous-version-string))))
+     (make-rdf-triple blank-node-index (make-rdf-iri "type") (make-endpoint-iri "Version"))
+     (make-rdf-triple subject (make-endpoint-iri "has_version") blank-node-index)))))
+     ;(make-rdf-triple subject (make-endpoint-iri "has_version_history") version-annotation-history)))))
 
-;; If they have the same major version, proceed to checking the minor version. GTEq 0 1 does not hold.
-;; If they have the same minor version, proceed to checking the patch version.
-;; If they have the same patch version, then GTEq does hold.
-
-(define (compare-versions version0 version1)
-  (let* ((major0 (version-annotation-major-component version0))
-         (minor0 (version-annotation-minor-component version0))
-         (patch0 (version-annotation-patch-component version0))
-         (major1 (version-annotation-major-component version1))
-         (minor1 (version-annotation-minor-component version1))
-         (patch1 (version-annotation-patch-component version1)))
-    (cond ((not (and major0 minor0 patch0 major1 minor1 patch1)) #f)
-          ((and (equal? major0 major1)
-               (equal? minor0 minor1)
-               (equal? patch0 patch1)) #t)
-          ((> major0 major1) #t)
-          ((> minor0 minor1) #t)
-	  ((> patch0 patch1) #t)
-	  (else #f))))
+(define (compare-versions v0 v1)
+  (let ((sem0 (string->semver (make-version (version-annotation-major-component v0)
+                                            (version-annotation-minor-component v0)
+                                            (version-annotation-patch-component v0))))
+        (sem1 (string->semver (make-version (version-annotation-major-component v1)
+                                            (version-annotation-minor-component v1)
+                                            (version-annotation-patch-component v1)))))
+    (semver>? sem0 sem1)))    
 
 (define (make-empty-version-annotation)
   (version-annotation #f #f #f
@@ -174,9 +180,9 @@
 		      #f #f
 		      #f #f))
 
-(define (make-initial-annotation M m p vf vt)
+(define (make-initial-annotation M m p H PV vf vt)
   (version-annotation M m p
-                      #f #f #f
+                      H PV #f
                       vf vt
                       #f #f))
 
@@ -275,43 +281,41 @@
 ;; 2. Query the graph for the statements associated with the version.
 ;; 3. Check it matches the current one.
 
-(define* (hash-versioning-scheme graph base target-version-string
+(define* (hash-versioning-scheme graph curr delim target-version-string
                                  #:key (history? #f)
                                        (version-log #f)
                                        (valid-from #f)
                                        (valid-to #f))
-  (receive (vss nvss)
-      (partition (lambda (st)
-                   (or
-                    ;; most version statements
-                    (member (rdf-triple-predicate st)
-                            version-statements)
-                    ;; blank nodes, `_b0 a send:Version' &c.
-                    (member (rdf-triple-object st)
-                            version-statements)
-                    ;; remaining old version statements:
-                    ;; these are composed of base + valid version string,
-                    ;; can't reasonably detect these if not of this form
-                    (let ((subj (rdf-triple-subject st)))
-                      (and
-                       (string-prefix? base subj)
-                       (check-version
-                        (string-drop subj
-                                     (string-prefix-length base subj)))))))
-                 graph)
-    (let* ((parsed-version (parse-version target-version-string))
-           (major (car parsed-version))
-           (minor (cadr parsed-version))
-           (patch (caddr parsed-version))
-           (target-new (make-initial-annotation major minor patch
-                                                valid-from valid-to)))
-      ;; Find the matching versions
-      (let* ((target-versions
+  (let ((base (string-append curr delim)))
+    (receive (vss nvss)
+        (partition (lambda (st)
+                     (or
+                      ;; most version statements
+                      (member (rdf-triple-predicate st)
+                              version-statements)
+                      ;; blank nodes, `_b0 a send:Version' &c.
+                      (member (rdf-triple-object st)
+                              version-statements)
+                      ;; remaining old version statements:
+                      ;; these are composed of base + valid version string,
+                      ;; can't reasonably detect these if not of this form
+                      (let ((subj (rdf-triple-subject st)))
+                        (and
+                         (string-prefix? base subj)
+                         (check-version
+                          (string-drop subj
+                                       (string-prefix-length base subj)))))))
+                   graph)
+      (let* ((parsed-version (parse-version target-version-string))
+             (major (car parsed-version))
+             (minor (cadr parsed-version))
+             (patch (caddr parsed-version))
+             (target-versions
               (map rdf-triple-object
                    (filter (lambda (stmt)
                              (equal?
                               (rdf-triple-predicate stmt)
-                              (string-append endpoint "has_version")))
+                                (string-append endpoint "has_version")))
                            vss)))
              (found-in-graph
               (map (lambda (vsn)
@@ -320,70 +324,84 @@
                                 (equal? vsn
                                         (rdf-triple-subject stmt)))
                               vss)))
-                   target-versions)))
-        (cond [(and (null? found-in-graph) version-log)
-               (let ((history-triple
-                      (make-rdf-triple
-                       (string-append base target-version-string)
-                       (string-append endpoint "version_history")
-                       version-log)))
-                 ;(display
-                 ; "Looks like it's not annotated yet.")
-                 (append graph
-                         (cons history-triple
-                               (emit-versioning base target-new))))]
-              [(null? found-in-graph)
-               (begin
-                 ;(display
-                 ; "Looks like it's not annotated yet.")
-                 (append graph
-                         (emit-versioning base target-new)))]
-              [else
-               (let* ((ordered-versions (sort-list found-in-graph compare-versions))
-                      (nominal-latest (car ordered-versions)))
-                 (cond [(and (compare-versions target-new nominal-latest)
-                             history?)
-                        ;; We also have to reckon with the previous latest!
-                        ;; If the valid-to statement doesn't exist (as
-                        ;; we'd expect), edit it to be the new valid-from
-                        ;; statement -1. Otherwise, assume it still holds.
-                        (begin
-                          (if (not (version-annotation-valid-to nominal-latest))                  
-                              (set-valid-to! nominal-latest
-                                             (- valid-from (* 24 60 60))))
-                              ;;(display "Looks like there was no valid-to in the nominal previous! Setting it to 1 day prior to new version's valid-from. "))
-                              ;;(display "Requested version is newer than nominal latest, and this graph records history. Appending the requested version to this graph.")
-                              ;;(newline)
-                          (append nvss
-                                  (apply append 
-                                         (map (lambda (vsn)
-                                                (emit-versioning base vsn))
-                                              (cons target-new ;; target triples
-                                                    (cons nominal-latest
-                                                          (cdr ordered-versions)))))))]
-                       [(and (compare-versions target-new nominal-latest)
-                             version-log)
-                        (let ((history-triple
-                               (make-rdf-triple
-                                (string-append base target-version-string)
-                                (string-append endpoint "version_history")
-                                version-log)))
-                          ;;(display "Requested version is newer than nominal latest, but this graph does not record history. An external version log is provided, so use that. Remove existing versioning statements and annotate with requested.")
-                          ;;(newline)
-                          (append nvss (cons history-triple (emit-versioning base target-new))))] ;; non-versioning statements
-                       [(compare-versions target-new nominal-latest)
-                        (begin 
-                          ;;(display "Requested version is newer than nominal latest, but this graph does not record history. No external version log is provided, so not adding that triple. Remove existing versioning statements and annotate with requested.")
-                          ;;(newline)
-                          (append nvss (emit-versioning base target-new)))]
-                       [else
-                        (begin
-                          ;;(display "Requested version is less than latest transcribed in the file. Not overwriting.")
-                          graph)]))])))))
+                   target-versions))
+             (target-new
+              (make-initial-annotation major minor patch
+                                       version-log #f
+                                       valid-from valid-to)))
+          (cond [(and (null? found-in-graph) version-log)
+                 (let ((history-triple
+                        (make-rdf-triple
+                         (string-append base target-version-string)
+                         (string-append endpoint "version_history")
+                         version-log)))
+                   (display
+                    "Looks like it's not annotated yet.")
+                   (append graph
+                           (cons history-triple
+                                 (emit-versioning curr delim target-new))))]
+                [(null? found-in-graph)
+                 (begin
+                   (display
+                    "Looks like it's not annotated yet, no version log.")
+                   (append graph
+                           (emit-versioning curr delim target-new)))]
+                [else
+                 (let* ((ordered-versions (sort-list found-in-graph compare-versions))
+                        (nominal-latest (car ordered-versions))
+                        (apparent-previous
+                         (make-version
+                          (version-annotation-major-component nominal-latest)
+                          (version-annotation-minor-component nominal-latest)
+                          (version-annotation-minor-component nominal-latest))))
+                   (cond [(and (compare-versions target-new nominal-latest)
+                               history?)
+                          ;; We also have to reckon with the previous latest!
+                          ;; If the valid-to statement doesn't exist (as
+                          ;; we'd expect), edit it to be the new valid-from
+                          ;; statement -1. Otherwise, assume it still holds.
+                          (begin
+                            (if (not (version-annotation-valid-to nominal-latest))
+                                (set-valid-to! nominal-latest
+                                               (- valid-from (* 24 60 60)))
+                            (display "Looks like there was no valid-to in the nominal previous! Setting it to 1 day prior to new version's valid-from. "))
+                            (display "Requested version is newer than nominal latest, and this graph records history. Appending the requested version to this graph.")
+                            (newline)
+                            (append nvss
+                                    (apply append
+                                           (cons
+                                            (emit-versioning curr delim target-new
+                                                             #:previous-version-string apparent-previous)
+                                            (map (lambda (vsn)
+                                                   (emit-versioning curr delim vsn))
+                                                       (cons nominal-latest
+                                                             (cdr ordered-versions)))))))]
+                         [(and (compare-versions target-new nominal-latest)
+                               version-log)
+                          (let ((history-triple
+                                 (make-rdf-triple
+                                  (string-append base target-version-string)
+                                  (string-append endpoint "version_history")
+                                  version-log)))
+                            (display "Requested version is newer than nominal latest, but this graph does not record history. An external version log is provided, so use that. Remove existing versioning statements and annotate with requested.")
+                            (newline)
+                            (append nvss (cons history-triple (emit-versioning curr delim target-new
+                                                                               #:previous-version-string apparent-previous))))] ;; non-versioning statements
+                         [(compare-versions target-new nominal-latest)
+                          (begin 
+                            (display "Requested version is newer than nominal latest, but this graph does not record history. No external version log is provided, so not adding that triple. Remove existing versioning statements and annotate with requested.")
+                            (newline)
+                            (append nvss (emit-versioning curr delim target-new
+                                                          #:previous-version-string apparent-previous)))]
+                         [else
+                          (begin
+                            (display "Requested version is less than latest transcribed in the file. Not overwriting.")
+                            graph)]))])))))
            
 (let* ((option-spec
 	'((target-version (single-char #\V) (value #t))
-          (base (single-char #\b) (value #t))
+          (curr (single-char #\b) (value #t))
+          (delim (single-char #\d) (value #t))
           (hist (single-char #\l) (value #t))
           (vocabulary (single-char #\U) (value #t))
           (provenance (single-char #\L) (value #t))
@@ -393,7 +411,8 @@
 	  (help (single-char #\h) (value #f))))
        (help-msg "ontoconsume [options]
   -V --target-version VSN   Use target version VSN
-  -b --base IRI             Use IRI as base (append other identifiers to this)
+  -b --curr IRI             Use IRI as graph URI
+  -d --delim CHAR           Append CHAR to graph URI to form base
   -l --versions IRI         IRI of external version history (some RDF graph)
   -U --update-vocab FILE    Update versioning in RDF graph FILE, a vocabulary
   -L --update-log   FILE    Append to RDF graph FILE, a log of version history
@@ -403,7 +422,8 @@
 ")
        (options (getopt-long (command-line) option-spec))
        (target-version (option-ref options 'target-version #f))
-       (base-iri (option-ref options 'base #f))
+       (curr-iri (option-ref options 'curr #f))
+       (delim (option-ref options 'delim #f))
        (hist-iri (option-ref options 'hist #f))
        (work-on-vocabulary (option-ref options 'vocabulary #f))
        (work-on-history (option-ref options 'provenance #f))
@@ -412,9 +432,13 @@
        (dry-run (option-ref options 'dry-run #f))
        (help (option-ref options 'help #f)))
   (cond [help (display help-msg)]
+        [(and work-on-vocabulary work-on-history)
+         (display "-U/--update-vocab and -L/--update-log are mutually exclusive options!")
+         (newline) (newline) ;; double newline so it's obvious
+         (display help-msg)]
         [(not target-version)
          (display "Did not specify a target version!")
-         (newline) (newline) ;; double newline so it's obvious
+         (newline) (newline) ;;
          (display help-msg)]
         [(not (or work-on-vocabulary work-on-history))
          (display "No vocabulary or history file to version supplied!")
@@ -422,46 +446,45 @@
          (display help-msg)]
         [(not (check-version target-version))
          (display "Version should be of form MAJOR.MINOR.PATCH, components numeric")]
+        [(not delim)
+         (display "Must specify delimiter used to form base")]
+        [(not curr-iri)
+         (display "No graph IRI supplied!")]
         [else
          ;; don't fall back to current epoch UNLESS valid-from is not given!
          (let ((epoch-proper 
                 (if valid-from
                     (from-date valid-from #f)
                     (current-time))))
-           (and epoch-proper
-                (cond [(and work-on-vocabulary base-iri)
-                       (let ((target-graph (load-rdf work-on-vocabulary base-iri)))
-                         (cond [(and target-graph hist-iri)
-                                (display
-                                 (rdf->turtle
-                                  (hash-versioning-scheme target-graph
-                                                          base-iri
-                                                          target-version
-                                                          #:history? #f
-                                                          #:valid-from epoch-proper
-                                                          #:version-log hist-iri)))]
-                               [target-graph
-                                (display
-                                 (rdf->turtle
-                                  (hash-versioning-scheme target-graph
-                                                          base-iri
-                                                          target-version
-                                                          #:history? #f
-                                                          #:valid-from epoch-proper)))]
-                               [else
-                                (display "Can't continue!")]))]
-                      [(and work-on-history base-iri)
-                       (let ((target-graph (load-rdf work-on-history base-iri)))
-                         (if target-graph
-                             (display
-                              (rdf->turtle
-                               (hash-versioning-scheme target-graph
-                                                       base-iri
-                                                       target-version
-                                                       #:history? #t
-                                                       #:valid-from epoch-proper)))
-                             (display "Can't continue!")))]
-                      [else (display "No base IRI supplied!")
-                            (newline) (newline) ;; double newline so it's obvious
-                            (display help-msg)])))]))                      
+           (and epoch-proper                
+                (let ((target-graph
+                       (if work-on-vocabulary
+                           (load-rdf work-on-vocabulary curr-iri)
+                           (load-rdf work-on-history curr-iri))))
+                  (cond [(and target-graph hist-iri)
+                         (display
+                          (rdf->turtle
+                           (hash-versioning-scheme target-graph
+                                                   curr-iri
+                                                   delim
+                                                   target-version
+                                                   #:history? work-on-history
+                                                   #:valid-from epoch-proper
+                                                   #:version-log hist-iri)
+                           ;#:explicit-base base-iri
+                           #:prefixes annotated-prefixes))]
+                        [target-graph
+                         (display
+                          (rdf->turtle
+                           (hash-versioning-scheme target-graph
+                                                   curr-iri
+                                                   delim
+                                                   target-version
+                                                   #:history? work-on-history
+                                                   #:valid-from epoch-proper)
+                           ;#:explicit-base base-iri
+                           #:prefixes annotated-prefixes))]
+                        [else (display "No base IRI supplied!")
+                              (newline) (newline) ;; double newline so it's obvious
+                              (display help-msg)]))))]))
 (newline)
