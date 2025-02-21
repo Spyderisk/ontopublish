@@ -36,35 +36,37 @@
       (display path) (newline)
       #f)))
 
+(define skos "http://www.w3.org/2004/02/skos/core#")
 (define endpoint "http://ontology.spyderisk.org/ns/endpoint#")
+(define trix "http://www.w3.org/2004/03/trix/rdfg-1/")
 (define version-statements
   (map
    (lambda (ref)
      (string-append endpoint ref))
    (list "Version"
          "major_component" "minor_component" "patch_component"
-         "version_represented_as" "version_history"
+         "recorded_as" "string_representation"
          "see_previous" "see_also"
          "valid_from" "valid_to"
          "applies_to" "applies_also"
-         "has_version" "has_version_history")))
+         "has_version" "see_history")))
 
 (define annotated-prefixes
   (append `(("send" . ,endpoint)
-            ("rdfg" . "http://www.w3.org/2004/03/trix/rdfg-1/")
-            ("skos" . "http://www.w3.org/2004/02/skos/core#"))
+            ("rdfg" . ,trix)
+            ("skos" . ,skos))
           common-prefixes))
 
 (define-record-type <version-annotation>
   (version-annotation major-component minor-component patch-component
-		      history see-previous see-also
+		      recorded-as see-previous see-also
 		      valid-from valid-to
 		      applies-to applies-also)
   version-annotation?
   (major-component version-annotation-major-component set-major-component!)
   (minor-component version-annotation-minor-component set-minor-component!)
   (patch-component version-annotation-patch-component set-patch-component!)
-  (history version-annotation-history set-version-history!)
+  (recorded-as version-annotation-recorded-as set-version-recorded-as!)
   (see-previous version-annotation-see-previous set-version-previous!)
   (see-also version-annotation-see-also set-version-also!)
   (valid-from version-annotation-valid-from set-valid-from!)
@@ -72,9 +74,23 @@
   (applies-to version-annotation-applies-to set-against-graph!)
   (applies-also version-annotation-applies-also set-related-graphs!))
 
-
 (define (parse-version combined-version)
   (map string->number (string-split combined-version #\.)))
+
+(define (extract-version anno)
+  (make-version (version-annotation-major-component anno)
+                (version-annotation-minor-component anno)
+                (version-annotation-patch-component anno)))
+
+(define (make-version major minor patch)
+  (string-append (number->string major) "."
+		 (number->string minor) "."
+		 (number->string patch)))
+
+(define (compare-versions v0 v1)
+  (let ((sem0 (string->semver (extract-version v0)))
+        (sem1 (string->semver (extract-version v1))))
+    (semver>? sem0 sem1)))
 
 (define (make-check-re rs)
   (lambda (s)
@@ -84,6 +100,12 @@
 
 (define check-version
   (make-check-re "^[0-9]+.[0-9]+.[0-9]+$"))
+
+(define (make-empty-version-annotation)
+  (version-annotation #f #f #f
+		      #f #f #f
+		      #f #f
+		      #f #f))
 
 (define (from-date dat fb)
   (with-exception-handler
@@ -105,26 +127,32 @@
         (display "Epoch must be an exact number.")
         fb)))
 
-(define* (emit-versioning curr delim versioning #:key (previous-version-string #f))
-  (let* ((blank-node-index (random 10000))
+(define* (emit-versioning curr delim versioning
+                          #:key (previous-version-string #f)
+                                (history? #f)
+                                (recorded-in #f))
+  (let* ((current-version-string
+          (extract-version versioning))
+         (versioning-maybe-bn
+          (if (and history? recorded-in)
+              (string-append recorded-in
+                             delim
+                             current-version-string)       
+              (random 10000)))
          (base (string-append curr delim))
          (make-rdf-iri (lambda (name)
            (string-append "http://www.w3.org/1999/02/22-rdf-syntax-ns#" name)))
          (make-endpoint-iri (lambda (name)
-           (string-append endpoint name)))
+                              (string-append endpoint name)))
          (subject
-          (string-append base
-                         (make-version
-                          (version-annotation-major-component versioning)
-                          (version-annotation-minor-component versioning)
-                          (version-annotation-patch-component versioning))))
+          (string-append base current-version-string))
          (make-xsd (lambda (iri)
                      (string-append "http://www.w3.org/2001/XMLSchema#"
                                     iri)))
          (get-with (lambda (ref proc)
            (let ((maybe-val (proc versioning)))
             (and maybe-val
-                 (make-rdf-triple blank-node-index
+                 (make-rdf-triple versioning-maybe-bn
                                   (make-endpoint-iri ref)
                                   (make-rdf-literal
                                    (number->string maybe-val)
@@ -133,7 +161,7 @@
          (get-with-ts (lambda (ref proc)
            (let ((maybe-epoch (proc versioning)))
              (and maybe-epoch
-                  (make-rdf-triple blank-node-index
+                  (make-rdf-triple versioning-maybe-bn
                                    (make-endpoint-iri ref)
                                    (make-rdf-literal
                                     (to-date maybe-epoch #f)
@@ -142,54 +170,29 @@
          (get-with-sg (lambda (ref proc)
            (let ((maybe-opaque (proc versioning)))
              (and maybe-opaque
-                  (make-rdf-triple blank-node-index
+                  (make-rdf-triple versioning-maybe-bn
                                    (make-endpoint-iri ref)
                                    maybe-opaque))))))
-    (filter (lambda (k) (and k))
-            (list
-     (get-with "major_component" version-annotation-major-component)
-     (get-with "minor_component" version-annotation-minor-component)
-     (get-with "patch_component" version-annotation-patch-component)
-     (get-with-sg "version_history" version-annotation-history)
-     ; (get-with-sg "see_previous" version-annotation-see-previous)
-     (get-with-ts "valid_from" version-annotation-valid-from)
-     (get-with-ts "valid_to"   version-annotation-valid-to)
-     (get-with-sg "applies_to" version-annotation-applies-to)
-     (get-with-sg "see_previous" (lambda (vsn)
-                                   (and previous-version-string
-                                        (string-append
-                                         (version-annotation-history vsn)
-                                         delim
-                                         previous-version-string))))
-     (make-rdf-triple blank-node-index (make-rdf-iri "type") (make-endpoint-iri "Version"))
-     (make-rdf-triple subject (make-endpoint-iri "has_version") blank-node-index)))))
-     ;(make-rdf-triple subject (make-endpoint-iri "has_version_history") version-annotation-history)))))
-
-(define (compare-versions v0 v1)
-  (let ((sem0 (string->semver (make-version (version-annotation-major-component v0)
-                                            (version-annotation-minor-component v0)
-                                            (version-annotation-patch-component v0))))
-        (sem1 (string->semver (make-version (version-annotation-major-component v1)
-                                            (version-annotation-minor-component v1)
-                                            (version-annotation-patch-component v1)))))
-    (semver>? sem0 sem1)))    
-
-(define (make-empty-version-annotation)
-  (version-annotation #f #f #f
-		      #f #f #f
-		      #f #f
-		      #f #f))
-
-(define (make-initial-annotation M m p H PV vf vt)
-  (version-annotation M m p
-                      H PV #f
-                      vf vt
-                      #f #f))
-
-(define (make-version major minor patch)
-  (string-append (number->string major) "."
-		 (number->string minor) "."
-		 (number->string patch)))
+    (reverse
+     (filter (lambda (k) (and k))
+            (append
+      (list
+       (make-rdf-triple subject (make-rdf-iri "type") (string-append trix "Graph"))
+       (make-rdf-triple subject (make-endpoint-iri "has_version") versioning-maybe-bn)
+       (and recorded-in (make-rdf-triple subject (make-endpoint-iri "see_history") recorded-in))
+       (make-rdf-triple versioning-maybe-bn (make-rdf-iri "type") (make-endpoint-iri "Version"))
+       (get-with "major_component" version-annotation-major-component)
+       (get-with "minor_component" version-annotation-minor-component)
+       (get-with "patch_component" version-annotation-patch-component)
+       (get-with-sg "recorded_as" version-annotation-recorded-as)
+       (get-with-ts "valid_from" version-annotation-valid-from)
+       (get-with-ts "valid_to"   version-annotation-valid-to)
+       (get-with-sg "applies_to" version-annotation-applies-to)
+       (get-with-sg "see_previous" (lambda (vsn)
+                                     (and recorded-in previous-version-string
+                                          (string-append recorded-in
+                                                         delim
+                                                         previous-version-string))))))))))
 
 ;; Core assumption is that, given a *base* IRI, this refers to the *current*
 ;; set of statements. This would be clear in the following:
@@ -267,8 +270,11 @@
                       target-map
                       (from-date
                        (rdf-literal-lexical-form a) #f)))]
-                   ["version_history" (lambda (a)
-                     (set-version-history! target-map a))]))))))
+                   ["recorded_as" (lambda (a)
+                     (set-version-recorded-as!
+                      target-map
+                      a))] ;; not a literal, it's an opaque IRI
+                   ))))))
       (for-each statement-helper statements))
     (set-major-component! target-map target-major)
     (set-minor-component! target-map target-minor)
@@ -306,7 +312,10 @@
                           (string-drop subj
                                        (string-prefix-length base subj)))))))
                    graph)
-      (let* ((parsed-version (parse-version target-version-string))
+      (let* ((recorded-as
+              (and version-log
+                   (string-append version-log delim target-version-string)))
+             (parsed-version (parse-version target-version-string))
              (major (car parsed-version))
              (minor (cadr parsed-version))
              (patch (caddr parsed-version))
@@ -326,76 +335,56 @@
                               vss)))
                    target-versions))
              (target-new
-              (make-initial-annotation major minor patch
-                                       version-log #f
-                                       valid-from valid-to)))
-          (cond [(and (null? found-in-graph) version-log)
-                 (let ((history-triple
-                        (make-rdf-triple
-                         (string-append base target-version-string)
-                         (string-append endpoint "version_history")
-                         version-log)))
-                   (display
-                    "Looks like it's not annotated yet.")
-                   (append graph
-                           (cons history-triple
-                                 (emit-versioning curr delim target-new))))]
-                [(null? found-in-graph)
-                 (begin
-                   (display
-                    "Looks like it's not annotated yet, no version log.")
-                   (append graph
-                           (emit-versioning curr delim target-new)))]
+              (version-annotation major minor patch
+                                  recorded-as #f #f
+                                  valid-from valid-to
+                                  #f #f)))
+          (cond [(null? found-in-graph)
+                 (append graph
+                         (emit-versioning curr delim target-new
+                                          #:history? history?
+                                          #:recorded-in version-log))]
                 [else
                  (let* ((ordered-versions (sort-list found-in-graph compare-versions))
                         (nominal-latest (car ordered-versions))
-                        (apparent-previous
-                         (make-version
-                          (version-annotation-major-component nominal-latest)
-                          (version-annotation-minor-component nominal-latest)
-                          (version-annotation-minor-component nominal-latest))))
+                        (apparent-previous (extract-version nominal-latest)))
                    (cond [(and (compare-versions target-new nominal-latest)
                                history?)
                           ;; We also have to reckon with the previous latest!
                           ;; If the valid-to statement doesn't exist (as
                           ;; we'd expect), edit it to be the new valid-from
                           ;; statement -1. Otherwise, assume it still holds.
-                          (begin
-                            (if (not (version-annotation-valid-to nominal-latest))
+                          (if (not (version-annotation-valid-to nominal-latest))
                                 (set-valid-to! nominal-latest
                                                (- valid-from (* 24 60 60)))
-                            (display "Looks like there was no valid-to in the nominal previous! Setting it to 1 day prior to new version's valid-from. "))
-                            (display "Requested version is newer than nominal latest, and this graph records history. Appending the requested version to this graph.")
-                            (newline)
+                                ;;(display "Looks like there was no valid-to in the nominal previous! Setting it to 1 day prior to new version's valid-from. ")
+                                )
+                          ;; (display "Requested version is newer than nominal latest, and this graph records history. Appending the requested version to this graph.")
+                          ;; (newline)
                             (append nvss
                                     (apply append
                                            (cons
                                             (emit-versioning curr delim target-new
-                                                             #:previous-version-string apparent-previous)
+                                                             #:previous-version-string apparent-previous
+                                                             #:history? history?
+                                                             #:recorded-in version-log)
                                             (map (lambda (vsn)
-                                                   (emit-versioning curr delim vsn))
+                                                   (emit-versioning curr delim vsn
+                                                                    #:history? history?
+                                                                    #:recorded-in version-log))
                                                        (cons nominal-latest
-                                                             (cdr ordered-versions)))))))]
-                         [(and (compare-versions target-new nominal-latest)
-                               version-log)
-                          (let ((history-triple
-                                 (make-rdf-triple
-                                  (string-append base target-version-string)
-                                  (string-append endpoint "version_history")
-                                  version-log)))
-                            (display "Requested version is newer than nominal latest, but this graph does not record history. An external version log is provided, so use that. Remove existing versioning statements and annotate with requested.")
-                            (newline)
-                            (append nvss (cons history-triple (emit-versioning curr delim target-new
-                                                                               #:previous-version-string apparent-previous))))] ;; non-versioning statements
+                                                             (cdr ordered-versions))))))]
                          [(compare-versions target-new nominal-latest)
-                          (begin 
-                            (display "Requested version is newer than nominal latest, but this graph does not record history. No external version log is provided, so not adding that triple. Remove existing versioning statements and annotate with requested.")
-                            (newline)
+                          (let ()
+                            ;;(display "Requested version is newer than nominal latest, but this graph does not record history. An external version log is provided, so use that. Remove existing versioning statements and annotate with requested.")
+                            ;;(newline)
                             (append nvss (emit-versioning curr delim target-new
-                                                          #:previous-version-string apparent-previous)))]
+                                                          #:previous-version-string apparent-previous
+                                                          #:history? history?
+                                                          #:recorded-in version-log)))] ;; non-versioning statements
                          [else
                           (begin
-                            (display "Requested version is less than latest transcribed in the file. Not overwriting.")
+                            ;; (display "Requested version is less than latest transcribed in the file. Not overwriting.")
                             graph)]))])))))
            
 (let* ((option-spec
@@ -461,8 +450,8 @@
                        (if work-on-vocabulary
                            (load-rdf work-on-vocabulary curr-iri)
                            (load-rdf work-on-history curr-iri))))
-                  (cond [(and target-graph hist-iri)
-                         (display
+                  (if target-graph
+                      (display
                           (rdf->turtle
                            (hash-versioning-scheme target-graph
                                                    curr-iri
@@ -472,19 +461,9 @@
                                                    #:valid-from epoch-proper
                                                    #:version-log hist-iri)
                            ;#:explicit-base base-iri
-                           #:prefixes annotated-prefixes))]
-                        [target-graph
-                         (display
-                          (rdf->turtle
-                           (hash-versioning-scheme target-graph
-                                                   curr-iri
-                                                   delim
-                                                   target-version
-                                                   #:history? work-on-history
-                                                   #:valid-from epoch-proper)
-                           ;#:explicit-base base-iri
-                           #:prefixes annotated-prefixes))]
-                        [else (display "No base IRI supplied!")
-                              (newline) (newline) ;; double newline so it's obvious
-                              (display help-msg)]))))]))
+                           #:prefixes annotated-prefixes))
+                      (let ()
+                        (display "No base IRI supplied!")
+                        (newline) (newline) ;; double newline so it's obvious
+                        (display help-msg))))))]))
 (newline)
