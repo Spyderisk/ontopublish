@@ -29,20 +29,22 @@
               (turtle->rdf port base))
             (lambda (key . args)
               (display "Could not parse input as RDF/TTL: ")
-              (display path) (newline)
+              (display path)
               #f)))))
     (lambda (key . args)
       (display "Non-existent input file: ")
-      (display path) (newline)
+      (display path)
       #f)))
 
-(define skos "http://www.w3.org/2004/02/skos/core#")
-(define endpoint "http://ontology.spyderisk.org/ns/endpoint#")
-(define trix "http://www.w3.org/2004/03/trix/rdfg-1/")
+(define skos-prefix "http://www.w3.org/2004/02/skos/core#")
+(define endpoint-prefix "http://ontology.spyderisk.org/ns/endpoint#")
+(define trix-prefix "http://www.w3.org/2004/03/trix/rdfg-1/")
+(define dcterms-prefix "http://purl.org/dc/terms/")
+(define shex-prefix "http://www.w3.org/ns/shex#")
 (define version-statements
   (map
    (lambda (ref)
-     (string-append endpoint ref))
+     (string-append endpoint-prefix ref))
    (list "Version"
          "major_component" "minor_component" "patch_component"
          "recorded_as" "string_representation"
@@ -52,9 +54,11 @@
          "has_version" "see_history")))
 
 (define annotated-prefixes
-  (append `(("send" . ,endpoint)
-            ("rdfg" . ,trix)
-            ("skos" . ,skos))
+  (append `(("send" . ,endpoint-prefix)
+            ("rdfg" . ,trix-prefix)
+            ("skos" . ,skos-prefix)
+            ("dct"  . ,dcterms-prefix)
+            ("shex" . ,shex-prefix))
           common-prefixes))
 
 (define-record-type <version-annotation>
@@ -123,7 +127,7 @@
 (define (to-date epoch fb)
   (if (and (integer? epoch) (exact? epoch))
       (strftime "%F" (localtime epoch))
-      (begin
+      (let ()
         (display "Epoch must be an exact number.")
         fb)))
 
@@ -139,13 +143,11 @@
                              delim
                              current-version-string)       
               (random 10000)))
-         (base (string-append curr delim))
          (make-rdf-iri (lambda (name)
            (string-append "http://www.w3.org/1999/02/22-rdf-syntax-ns#" name)))
          (make-endpoint-iri (lambda (name)
-                              (string-append endpoint name)))
-         (subject
-          (string-append base current-version-string))
+           (string-append endpoint-prefix name)))
+         (graph-subject (string-append curr delim current-version-string))
          (make-xsd (lambda (iri)
                      (string-append "http://www.w3.org/2001/XMLSchema#"
                                     iri)))
@@ -177,9 +179,9 @@
      (filter (lambda (k) (and k))
             (append
       (list
-       (make-rdf-triple subject (make-rdf-iri "type") (string-append trix "Graph"))
-       (make-rdf-triple subject (make-endpoint-iri "has_version") versioning-maybe-bn)
-       (and recorded-in (make-rdf-triple subject (make-endpoint-iri "see_history") recorded-in))
+       (make-rdf-triple graph-subject (make-rdf-iri "type") (string-append trix-prefix "Graph"))
+       (make-rdf-triple graph-subject (make-endpoint-iri "has_version") versioning-maybe-bn)
+       (and recorded-in (make-rdf-triple graph-subject (make-endpoint-iri "see_history") recorded-in))
        (make-rdf-triple versioning-maybe-bn (make-rdf-iri "type") (make-endpoint-iri "Version"))
        (get-with "major_component" version-annotation-major-component)
        (get-with "minor_component" version-annotation-minor-component)
@@ -244,7 +246,7 @@
          (target-patch #f)
          (rejected '())
          (rslv (lambda (ref)
-           (string-append endpoint ref)))
+           (string-append endpoint-prefix ref)))
          (proc (lambda (lit)
            (string->number
             (rdf-literal-lexical-form lit)))))
@@ -324,7 +326,7 @@
                    (filter (lambda (stmt)
                              (equal?
                               (rdf-triple-predicate stmt)
-                                (string-append endpoint "has_version")))
+                                (string-append endpoint-prefix "has_version")))
                            vss)))
              (found-in-graph
               (map (lambda (vsn)
@@ -383,7 +385,7 @@
                                                           #:history? history?
                                                           #:recorded-in version-log)))] ;; non-versioning statements
                          [else
-                          (begin
+                          (let ()
                             ;; (display "Requested version is less than latest transcribed in the file. Not overwriting.")
                             graph)]))])))))
            
@@ -392,32 +394,34 @@
           (curr (single-char #\b) (value #t))
           (delim (single-char #\d) (value #t))
           (hist (single-char #\l) (value #t))
+          (curr-prefix (single-char #\p) (value #t))
+          (hist-prefix (single-char #\P) (value #t))
           (vocabulary (single-char #\U) (value #t))
           (provenance (single-char #\L) (value #t))
           (valid-from (single-char #\T) (value #t))
-          ;(last-version (single-char #\L) (value #f))
-          (dry-run (single-char #\p) (value #f))
 	  (help (single-char #\h) (value #f))))
        (help-msg "ontoconsume [options]
   -V --target-version VSN   Use target version VSN
   -b --curr IRI             Use IRI as graph URI
   -d --delim CHAR           Append CHAR to graph URI to form base
   -l --versions IRI         IRI of external version history (some RDF graph)
+  -p --curr-prefix          Short name for regular RDF graph prefix
+  -P --hist-prefix          Short name for history RDF graph prefix
   -U --update-vocab FILE    Update versioning in RDF graph FILE, a vocabulary
   -L --update-log   FILE    Append to RDF graph FILE, a log of version history
   -T --valid-from DATE      Version valid from DATE, not current date
-  -p --dry-run              Only check whether updating/annotating was feasible
   -h --help                 Display this help message
 ")
        (options (getopt-long (command-line) option-spec))
        (target-version (option-ref options 'target-version #f))
        (curr-iri (option-ref options 'curr #f))
-       (delim (option-ref options 'delim #f))
        (hist-iri (option-ref options 'hist #f))
+       (delim (option-ref options 'delim #f))
+       (curr-prefix (option-ref options 'curr-prefix #f))
+       (hist-prefix (option-ref options 'hist-prefix #f))
        (work-on-vocabulary (option-ref options 'vocabulary #f))
        (work-on-history (option-ref options 'provenance #f))
        (valid-from (option-ref options 'valid-from #f))
-       ;(last-version (option-ref options 'last-version #f))
        (dry-run (option-ref options 'dry-run #f))
        (help (option-ref options 'help #f)))
   (cond [help (display help-msg)]
@@ -433,6 +437,8 @@
          (display "No vocabulary or history file to version supplied!")
          (newline) (newline) ;;
          (display help-msg)]
+        [(and work-on-history (not hist-iri))
+         (display "When appending to version log, need an IRI for the version log")]
         [(not (check-version target-version))
          (display "Version should be of form MAJOR.MINOR.PATCH, components numeric")]
         [(not delim)
@@ -441,10 +447,24 @@
          (display "No graph IRI supplied!")]
         [else
          ;; don't fall back to current epoch UNLESS valid-from is not given!
-         (let ((epoch-proper 
-                (if valid-from
-                    (from-date valid-from #f)
-                    (current-time))))
+         (let* ((epoch-proper 
+                 (if valid-from
+                     (from-date valid-from #f)
+                     (current-time)))
+                (curr-prefix-proper
+                 (and curr-prefix
+                      `(,curr-prefix . ,(string-append curr-iri delim))))
+                (hist-prefix-proper
+                 (and hist-prefix
+                      `(,hist-prefix . ,(string-append hist-iri delim))))
+                (annotated-prefixes+
+                 (cond [(and curr-prefix hist-prefix)
+                        (append `(,curr-prefix-proper ,hist-prefix-proper) annotated-prefixes)]
+                       [curr-prefix
+                        (cons curr-prefix-proper annotated-prefixes)]
+                       [hist-prefix
+                        (cons hist-prefix-proper annotated-prefixes)]
+                       [else annotated-prefixes])))
            (and epoch-proper                
                 (let ((target-graph
                        (if work-on-vocabulary
@@ -460,10 +480,5 @@
                                                    #:history? work-on-history
                                                    #:valid-from epoch-proper
                                                    #:version-log hist-iri)
-                           ;#:explicit-base base-iri
-                           #:prefixes annotated-prefixes))
-                      (let ()
-                        (display "No base IRI supplied!")
-                        (newline) (newline) ;; double newline so it's obvious
-                        (display help-msg))))))]))
+                           #:prefixes annotated-prefixes+))))))]))
 (newline)
