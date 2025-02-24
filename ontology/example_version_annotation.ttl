@@ -1,0 +1,19 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdfg: <http://www.w3.org/2004/03/trix/rdfg-1/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix send: <http://ontology.spyderisk.org/ns/endpoint#> .
+@prefix score: <http://ontology.spyderisk.org/ns/core#> .
+
+<http://ontology.spyderisk.org/v/core#1.0.1> a send:Version ;
+    send:major_component 1 ;
+    send:minor_component 0 ;
+    send:patch_component 1 ;
+    send:recorded_as <http://ontology.spyderisk.org/v/core#1.0.1> ;
+    send:valid_from "2025-02-24"^^xsd:date .
+
+<http://ontology.spyderisk.org/v/core> a rdfg:Graph .
+
+score:1.0.1 a rdfg:Graph ;
+    send:has_version <http://ontology.spyderisk.org/v/core#1.0.1> ;
+    send:see_history <http://ontology.spyderisk.org/v/core> .
