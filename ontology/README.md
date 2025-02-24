@@ -35,7 +35,18 @@ Not everything can be modelled effectively with RDF and RDF/S properties and cla
 - SKOS has notions of broader and narrower generalisations of concepts, as well as imposing order on these.
 - SKOS provides a rich interface for extending and elaborating concepts which have already declared, like we do in this vocabulary.
 
-What SKOS does not get us is things like constraints, such as on cardinality. For this, one would need to use something like OWL, or one of the newer shape constraints languages like [ShEx](https://shex.io/) or [SHACL](https://www.w3.org/TR/shacl/).
+What SKOS does not get us is things like constraints, such as on cardinality. Traditionally, constraints would be imposed using something like OWL, but while OWL is rich, it is also complex. Instead, RDF/TTL vocabularies are accompanied by [ShEx](https://shex.io/) schemas. Nonetheless, invoking `skos:Concept` does imply one thing: anything we associate with it is also an `owl:Class`. It is feasible that we may want to adopt certain elements of OWL.
+
+## Constraints 
+
+Shape expressions let us describe the shape of valid RDF data, such as cardinality of relationships between classes.
+
+The core model's RDF source is in `ontology/core.ttl` and is accompanied by `core.shex`. Validation is not of the ShEx schema document itself (other than syntax and manual validation), but whether RDF *instance* data, reusing or elaborating on concepts from the core model, is consistent with the shapes defined. 
+
+For the core model, test data are provided under `ontology/example_instance.ttl`. This is an initial demonstration of validation---and should suffice for now, since the constraints are primarily in terms of cardinality--but -more tests should be feasible, e.g. using a ShEx software library to script it. Validation was with the PyShEx library (Python v3.11 in a virtual environment), using the `shexeval` command line tool included with the library.
+
+Similarly, the versioning scheme in `ontology/endpoint.ttl` is accompanied by `endpoint.shex` and `example_version_annotation.ttl`.
+
 
 ## Shaded items
 
@@ -81,11 +92,3 @@ On discussion, 'node' has been renamed to "threat role", as 'node' is vague and 
 Similarly, as given, threats, threat causes, and asset properties are considered to be sub-classes of causal entities (things with likelihood). The motivation here appears to be that these are all things which can have a likelihood.
 
 I have modelled this in two ways. First, I have modelled 'causal entity' as part of a SKOS concept scheme. The hierarchy is modelled using `skos:broader` and `skos:broaderTransitive`. Second, I have associated everything defined as a sub-class of 'causal entity' to have a 'likelihood' property. This likelihood is also modelled as a SKOS concept scheme, with order imposed using `skos:OrderedCollection`.
-
-## Next steps
-
-The vocabulary does not currently develop constraints on cardinality, as given. The exact approach to employ here is not clear:
-- We may not want to adopt OWL, which is rich, but also complex. Nonetheless, invoking `skos:Concept` does imply one thing: anything we associate with it is also an `owl:Class`. It is feasible that we may want to adopt certain elements of OWL.
-- Shape constraints languages like ShEx or SHACL are relatively new, and would likely be suitable here. The key advantage is that they may be less complex than certain concepts from OWL. They let us describe the shape of data and apply constraints.
-
-The way in which we enforce constraints depends on the constraints we need, and how we intend to enforce them, neither of which are especially clear.

@@ -71,7 +71,7 @@ my:ParentCompanyEmployee a score:Threat ;
     
 my:UnknownFriendOfEmployees a score:Threat ;
     rdfs:label "unknown friend of one or more employees"@en ;
-    rdfs:description "this fellow sometimes finds his way into the lab"@en ;
+    rdfs:description "this person sometimes finds their way into the lab"@en ;
     score:incorporates_role my:VagueThreatRole ;
     score:has_cause my:FriendOfEployees .
 
