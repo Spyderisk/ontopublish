@@ -10,89 +10,78 @@ PREFIX scoresh: <http://ontology.spyderisk.org/sh/core#>
 # Structural entities
 
 scoresh:StructuralEntityShape {
-    rdf:type  rdfs:Class .
+    a [ score:StructuralEntity ]? ;
+    a [ score:AssetRelation score:Asset ] ;
+    rdfs:label       rdf:langString? ;
+    rdfs:description rdf:langString? ;
 }
-
+scoresh:TargetSystemShape {
+    a [ score:TargetSystem ] ;
+    score:has_structure @scoresh:StructuralEntityShape* ;
+}
 scoresh:AssetShape {
-    rdfs:subClassOf    score:StructuralEntity ;
-    score:inScheme     score:StructuralEntityScheme? ;
-    score:has_property @scoresh:AssetPropertyShape* .
+    a [ score:Asset ] ;
+    # Add label/description &c. later?
+    # score:has_property @scoresh:AssetPropertyShape* ;
 }
 scoresh:AssetRelationShape {
-    rdfs:subClassOf    score:StructuralEntity ;
+    a [ score:AssetRelation ] ;
+    # rdfs:subClassOf    [ score:StructuralEntity ] ;
     rdfs:domain        @scoresh:AssetShape ;
-    rdfs:range         @scoresh:AssetShape .
+    rdfs:range         @scoresh:AssetShape ;
 }
 
-scoresh:TargetSystemShape {
-    rdf:type             rdfs:Class ;
-    score:has_structure  @scoresh:StructuralEntityShape .
-}
+
 
 # Organisational entities
 
+# N.B. this is restricted to a type, a broad class of assets.
 scoresh:OrganisationalEntityShape {
-    rdf:type               rdfs:Class ;
+    a [ score:OrganisationalEntity ] ;
     score:takes_attribute  @scoresh:RoleAttributeShape ;
-    score:restricted_to    @scoresh:AssetShape .
+    score:restricted_to    @scoresh:AssetShape? ;
 }
-scoresh:RoleAttribute {
-    rdf:type   rdfs:Class ;
-    rdf:type   skos:ConceptScheme .
+scoresh:RoleAttributeShape {
+    a [ score:RoleAttribute ] ;
 }
+
+
 
 # Causal entities
 
 scoresh:CausalEntityShape {
-    score:has_likelihood    @score:LikelihoodShape ;
-    skos:inScheme           score:CausalEntityScheme? ;
-    skos:broader            @scoresh:CausalEntityShape* ;
-    skos:broaderTransitive  @scoresh:CausalEntityShape* ;
-    skos:narrower           @scoresh:CausalEntityShape* ;
-    skos:narrowerTransitive @scoresh:CausalEntityShape* .
+    a [ score:CausalEntity rdfs:Class ]+ ;
+    score:has_likelihood @scoresh:LikelihoodComponentShape ;
 }
-
 scoresh:LikelihoodShape {
-    rdf:type   rdf:Class ;
-    rdf:type   skos:ConceptScheme .
+    a [ score:Likelihood skos:ConceptScheme ]+ ;
+}
+scoresh:LikelihoodComponentShape {
+    a [ skos:Concept ] ;
+    skos:inScheme @scoresh:LikelihoodShape ;
 }
 
-score:ThreatShape {
-    # as well as causal entity stuff,
-    rdfs:subClassOf score:CausalEntity ;
-    skos:inScheme   score:CausalEntityScheme ;
-    skos:broaderTransitive score:CausalEntity ;
-    score:incorporates_role @scoresh:OrganisationalEntity? ;
-    score:caused_by         @scoresh:ThreatCauseShape? ;
-    score:triggered_by      @scoresh:ControlStrategyShape* . # 0..n
+scoresh:ThreatShape {
+    a [ score:Threat ] ;
+    score:incorporates_role @scoresh:OrganisationalEntityShape ;
+    score:caused_by        @scoresh:ThreatCauseShape? ;
+    score:triggered_by     @scoresh:ControlStrategyShape* ;
 }
 
-score:ThreatCauseShape {
-    # causal entity misc
-    rdfs:subClassOf score:CausalEntity ;
-    skos:inScheme   score:CausalEntityScheme ;
-    skos:broaderTransitive score:CausalEntity .
+scoresh:ThreatCauseShape {
+    a [ score:ThreatCause ] ;
 }
-
 scoresh:ControlStrategyShape {
-    rdfs:subClassOf score:ThreatCause ;
-    skos:inScheme   score:CausalEntityScheme ;
-    skos:broaderTransitive score:ThreatCause ;
-    scoresh:has_control    @scoresh:ControlShape
+    a [ score:ControlStrategy ] ;
+    scoresh:has_control @scoresh:ControlShape
 }
-
 scoresh:ControlShape {
-    rdfs:subClassOf score:AssetProperty ;
-    skos:inScheme   score:CausalEntityScheme ;
-    skos:broaderTransitive score:AssetProperty ;
+    a [ score:Control ] ;
 }
-
 scoresh:AssetPropertyShape {
-    rdfs:subClassOf score:CausalEntity ;
-    skos:inScheme   score:CausalEntityScheme ;
-    skos:broaderTransitive score:CausalEntity .
+    a [ score:AssetProperty ] ;
 }
-
+#
 # Behaviour/trustworthiness interaction
 #
 # The inverse triple constraint here says that every valid
@@ -104,25 +93,22 @@ scoresh:AssetPropertyShape {
 # making statements about statements, and there is surely a better way.
 #
 scoresh:AssetBehaviourShape {
-    rdfs:subClassOf score:AssetProperty ;
-    skos:inScheme   score:CausalEntityScheme ;
-    skos:broaderTransitive score:AssetProperty ;
-    score:undermines @scoresh:AssetTrustworthinessShape? .
+    a [ score:AssetBehaviour ] ;
+    score:undermines @scoresh:AssetTrustworthinessShape? ;
 }
 
 scoresh:AssetTrustworthinessShape {
-    rdfs:subClassOf score:AssetProperty ;
-    skos:inScheme   score:CausalEntityScheme ;
-    skos:broaderTransitive score:AssetProperty .
+    a [ score:AssetTrustworthiness ] ;
 }
 
-scoresh:underminesShape {
-    rdfs:domain score:AssetBehaviour ;
-    rdfs:range  score:AssetTrustworthiness .
+scoresh:manifestUnderminesShape {
+    a [ score:manifest_undermines ] ;
+    rdfs:domain [ score:AssetBehaviour ] ;
+    rdfs:range  [ score:AssetTrustworthiness ] ;
 }
 
 scoresh:BehaviourAttributeShape {
-    rdf:type  rdfs:Class ;
-    rdf:type  skos:ConceptScheme ;
-    ^score:via @scoresh:underminesShape? .
+    a [ score:BehaviourAttribute ];
+    # rdf:type  skos:ConceptScheme ;
+    ^score:via @scoresh:manifestUnderminesShape? ;
 }
