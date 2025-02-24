@@ -1,87 +1,113 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdfg: <http://www.w3.org/2004/03/trix/rdfg-1/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix send: <http://ontology.spyderisk.org/ns/endpoint#> .
 @prefix score: <http://ontology.spyderisk.org/ns/core#> .
-@prefix my: <http://ontology.spyderisk.org/p/example#> .
+@prefix my: <http:/ontology.spyderisk.org/p/ex#> .
 
-# Instantiation / ontology re-use example
-## RDF reification to make statements about statements.
+my:SSHBastion a score:Asset ;
+    rdfs:label "SSH bastion host"@en .
+my:CoreVPN a score:Asset ;
+    rdfs:label "core VPN asset"@en .
+my:CommunalLaptop a score:Asset ;
+    rdfs:label "a shared laptop used as a test-bed"@en .
 
-my:RS232_from a score:asset_relation ;
-    rdfs:label "example asset relation: dedicated RS232"@en .
-my:baud_rate a rdf:Property ;
-    rdfs:label "baud rate (float)"@en ;
-    rdfs:domain my:RS232_from ;
-    rdfs:range  xsd:float .
-
-my:Symbolics3600 a score:Asset ;
-    rdfs:label "example asset type instantiation: these are Symbolics 3600 series Lisp Machines"@en .
-my:VT100 a score:Asset ;
-    rdfs:label "example asset type instantiation: these are VT100 serial terminals"@en ;
-    my:RS232_from my:Symbolics3600 .
-
-my:MaliciousMacroAuthor a score:Threat ;
-    rdfs:label "example instantiation of a threat: malicious Lisp macro/function author"@en ;
-    score:introduces my:MaliciousMacroPattern .
-
-# Reification statements are difficult to query, as they aren't asserted.
-# https://stackoverflow.com/questions/24064643/making-statements-about-statements-which-are-no-reified#26938649
-# This points to a couple of alternatives:
-# - RDF-star (RDF*): https://www.w3.org/2021/12/rdf-star.html
-# - rdf:singletonProperty (Nguyen et al. 2014 - https://doi.org/10.1145/2566486.2567973)
-# - Something like the below, where we declare that there exists a thing which is
-#   a pattern_asset property, which itself has a statement made about it, that it
-#   occupies a role, attributing the role to it:
-
-my:pattern_asset_role_Symbolics3600 a score:pattern_asset ;
-    score:pattern_asset_role score:role_unique .
-my:pattern_asset_role_VT100 a score:pattern_asset ;
-    score:pattern_asset_role score:role_unique .
-
-my:MaliciousMacroPattern a score:Pattern ;
-    score:pattern_asset_roleVT100 my:VT100 ;
-    score:pattern_asset_roleSymbolics3600 my:Symbolics3600 .
-#my:MaliciousMacroPattern a score:Pattern ;
-#    score:pattern_asset my:VT100, my:Symbolics3600 .
+my:Bagpuss a score:Asset ;
+    rdfs:label "toy bagpuss the cat (this asset is part of the target system, but interacts with few other system components)"@en .
     
-## Sample likelihood scheme
+my:Laboratory a score:TargetSystem ;
+    rdfs:label "scientific laboratory full of computer equipment"@en ;
+    score:has_structure my:SSHBastion, my:CoreVPN, my:CommunalLaptop, my:Bagpuss .
+    
+my:PrimaryRoleAttribute a score:RoleAttribute ;
+    rdf:value "In attacker's workstation collection" .
+my:SecondaryRoleAttribute a score:RoleAttribute ;
+    rdf:value "In attacker's employer's workstation collection" .
 
-my:SampleLikelihood a skos:ConceptScheme ;
-    dct:title "Example likelihood level scheme"@en .
+my:PrimaryThreatRole a score:OrganisationalEntity ;
+    score:takes_attribute my:PrimaryRoleAttribute ;
+    score:restricted_to my:SSHBastion .
 
-my:negligeable_likelihood a skos:Concept, score:Likelihood ;
-    skos:inScheme   my:SampleLikelihoodScheme ;
-    skos:prefLabel  "negligeable"@en ;
-    skos:altLabel   "negligible"@en ;
-    rdfs:label      "'negligeable' likelihood"@en .
-my:very_low_likelihood a skos:Concept, score:Likelihood ;
-    skos:inScheme   my:SampleLikelihoodScheme ;
-    skos:prefLabel  "very low"@en ;
-    rdfs:label      "'very low' likelihood"@en .
-my:low_likelihood a skos:Concept, score:Likelihood ;
-    skos:inScheme   my:SampleLikelihoodScheme ;
-    skos:prefLabel  "low"@en ;
-    rdfs:label      "'low' likelihood"@en .
-my:medium_likelihood a skos:Concept, score:Likelihood ;
-    skos:inScheme   my:SampleLikelihoodScheme ;
-    skos:prefLabel  "medium"@en ;
-    rdfs:label      "'medium' likelihood"@en .
-my:high_likelihood a skos:Concept, score:Likelihood ;
-    skos:inScheme   my:SampleLikelihoodScheme ;
-    skos:prefLabel  "high"@en ;
-    rdfs:label      "'high' likelihood"@en .
-my:very_high_likelihood a skos:Concept, score:Likelihood ;
-    skos:inScheme   my:SampleLikelihoodScheme ;
-    skos:prefLabel  "very high"@en ;
-    rdfs:label      "'very high' likelihood"@en .
+my:SecondaryThreatRole a score:OrganisationalEntity ;
+    score:takes_attribute my:SecondaryRoleAttribute ;
+    score:restricted_to my:CoreVPN .
 
-my:SampleLikelihoodOrder rdf:type skos:OrderedCollection ;
-    skos:prefLabel "likelihood ordering, least likely to most likely"@en ;
-    skos:memberList (
-        my:negligeable_likelihood
-        my:very_low_likelihood
-        my:low_likelihood
-        my:medium_likelihood
-        my:high_likelihood
-        my:very_high_likelihood ) .
+my:VagueThreatRole a score:OrganisationalEntity ;
+    score:takes_attribute my:PrimaryRoleAttribute .
+    
+my:PrimaryCause a score:ThreatCause ;
+    rdfs:label "generic cause (don't name this for now)"@en ;
+    score:has_likelihood my:InitialCauseMostLikely .
+
+my:SecondaryCause a score:ThreatCause ;
+    rdfs:label "generic secondary cause (don't name this for now)"@en ;
+    score:has_likelihood my:InitialCauseLeastLikely .
+
+my:FriendOfEmployees a score:ThreatCause ;
+    rdfs:label "threat is caused by employees letting their friend in"@en ;
+    score:has_likelihood my:InitialCauseMediumLikely .
+
+my:InitialCauseLikelihoodScheme a skos:ConceptScheme .
+
+my:InitialCauseMostLikely a skos:Concept ;
+    skos:inScheme my:InitialCauseLikelihoodScheme .
+my:InitialCauseMediumLikely a skos:Concept ;
+    skos:inScheme my:InitialCauseLikelihoodScheme .
+my:InitialCauseLeastLikely a skos:Concept ;
+    skos:inScheme my:InitialCauseLikelihoodScheme .
+    
+my:MaliciousTechnician a score:Threat ;
+    rdfs:label "malicious technician"@en ;
+    score:incorporates_role my:PrimaryThreatRole ;
+    score:has_cause my:PrimaryCause .
+    
+my:ParentCompanyEmployee a score:Threat ;
+    rdfs:label "parent company employee employee"@en ;
+    rdfs:description "an employeed with some sort of high-level access via a network port during servicing"@en ;
+    score:incorporates_role my:SecondaryThreatRole ;
+    score:has_cause my:SecondaryCause .
+    
+my:UnknownFriendOfEmployees a score:Threat ;
+    rdfs:label "unknown friend of one or more employees"@en ;
+    rdfs:description "this fellow sometimes finds his way into the lab"@en ;
+    score:incorporates_role my:VagueThreatRole ;
+    score:has_cause my:FriendOfEployees .
+
+my:interface_flapping a score:BehaviourAttribute .
+my:high_CPU_load a score:BehaviourAttribute .
+
+my:SSHBastionReachability a score:AssetTrustworthiness .
+my:PortsProtected a score:AssetTrustworthiness .
+
+# Defined like this for reusability, even though we may only use it once
+my:manifest_interface_flapping a score:undermines ;
+    rdfs:domain score:AssetBehaviour ;
+    rdfs:range  score:AssetTrustworthiness ;
+    score:via   my:interface_flapping .
+
+my:manifest_high_CPU_load a score:undermines ;
+    rdfs:domain score:AssetBehaviour ;
+    rdfs:range  score:AssetTrustworthiness ;
+    score:via   my:high_CPU_load .
+    
+my:NetworkInterfaceUnderLoad a score:AssetBehaviour ;
+    my:manifest_flapping_interface my:SSHBastionReachability .
+
+my:NetworkInterfaceRaceCondition a score:AssetBehaviour ;
+    my:manifest_high_CPU_load my:PortsProtected .
+
+my:NotSmart a score:AssetTrustworthiness ;
+    rdfs:description "unlike some toys, bagpuss is not internet connected, nor has e.g. microphones, cameras inside"@en .
+
+my:SSHBastion
+    score:has_property my:SSHBastionReachability ;
+    score:has_property my:NetworkInterfaceUnderLoad .
+
+my:CoreVPN
+    score:has_property my:PortsProtected ;
+    score:has_property my:NetworkInterfaceRaceCondition .
+    
+my:Bagpuss
+    score:has_property my:NotSmart .

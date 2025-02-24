@@ -26,7 +26,6 @@ scoresh:AssetShape {
 }
 scoresh:AssetRelationShape {
     a [ score:AssetRelation ] ;
-    # rdfs:subClassOf    [ score:StructuralEntity ] ;
     rdfs:domain        @scoresh:AssetShape ;
     rdfs:range         @scoresh:AssetShape ;
 }
@@ -50,9 +49,11 @@ scoresh:RoleAttributeShape {
 # Causal entities
 
 scoresh:CausalEntityShape {
-    a [ score:CausalEntity rdfs:Class ]+ ;
+    a [ score:CausalEntity ]? ;
+    a [ score:Threat score:ThreatCause score:ControlStrategy score:AssetProperty ] ;
     score:has_likelihood @scoresh:LikelihoodComponentShape ;
 }
+
 scoresh:LikelihoodShape {
     a [ score:Likelihood skos:ConceptScheme ]+ ;
 }
@@ -79,7 +80,8 @@ scoresh:ControlShape {
     a [ score:Control ] ;
 }
 scoresh:AssetPropertyShape {
-    a [ score:AssetProperty ] ;
+    a [ score:AssetProperty ]? ;
+    a [ score:Control score:AssetBehaviour score:AssetTrustworthiness ] ;
 }
 #
 # Behaviour/trustworthiness interaction
@@ -101,14 +103,13 @@ scoresh:AssetTrustworthinessShape {
     a [ score:AssetTrustworthiness ] ;
 }
 
-scoresh:manifestUnderminesShape {
-    a [ score:manifest_undermines ] ;
+scoresh:underminesShape {
+    a [ score:undermines ] ;
     rdfs:domain [ score:AssetBehaviour ] ;
     rdfs:range  [ score:AssetTrustworthiness ] ;
 }
 
 scoresh:BehaviourAttributeShape {
     a [ score:BehaviourAttribute ];
-    # rdf:type  skos:ConceptScheme ;
-    ^score:via @scoresh:manifestUnderminesShape? ;
+    ^score:via @scoresh:underminesShape? ;
 }
