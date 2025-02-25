@@ -41,13 +41,13 @@ TARGET_DOC_CONF	= $(INPUT_BASE).mkdocs.yaml
 TARGET_ROOT_SH = $(SHEX_ROOT)/$(INPUT_BASE)
 TARGET_HTACCESS_SH = $(TARGET_ROOT_SH)/.htaccess
 
-INITIAL_VERSION = 0.0.1
+INITIAL_VERSION = 1.0.0	
 
 help:
 	@echo "
 	Versioning scheme: MAJOR.MINOR.PATCH
 	
-	make initialise-with VERSION (default 0.0.1)
+	make initialise-with VERSION (default 1.0.0)
 	make increment-major (increment MAJOR version component)
 	make increment-minor (increment MINOR version component)
 	make increment-patch (increment PATCH version component)
@@ -64,8 +64,11 @@ initialise-with: $(TARGET_ROOT) $(TARGET_ROOT_SH) $(VSN_ROOT)
 	ontoconsume -b $(GRAPH_IDENT) -l $(HIST_IDENT) -d $(DELIM) -p $(GRAPH_PREFIX) -P $(HIST_PREFIX) -U ./empty.ttl -V $(INITIAL_VERSION) > v/$(INPUT_TTL) ;
 	rm ./empty.ttl ;
 	rapper -i turtle -o ntriples $$TARGET_SITE/$(INPUT_TTL) > $$TARGET_SITE/$(EXTRA_N_TRIPLES) ;
-	rapper -i turtle -o ntriples $$TARGET_SITE/$(INPUT_TTL) > $$TARGET_SITE/$(EXTRA_RDF_XML) ;
+	rapper -i turtle -o rdfxml $$TARGET_SITE/$(INPUT_TTL) > $$TARGET_SITE/$(EXTRA_RDF_XML) ;
 	rapper -i turtle -o html $$TARGET_SITE/$(INPUT_TTL) > $$TARGET_SITE/index.html ;
+	rapper -i turtle -o ntriples v/$(INPUT_TTL) > v/$(INPUT_BASE).nt ;
+	rapper -i turtle -o rdfxml v/$(INPUT_TTL) > v/$(INPUT_BASE).rdf ;
+	rapper -i turtle -o html v/$(INPUT_TTL) > v/$(INPUT_BASE).html ;
 	cp $(EXTRA_SHEXC) $$TARGET_SITE_SH ;
 
 increment-major: save-old-htaccess
@@ -78,10 +81,13 @@ increment-major: save-old-htaccess
 	mkdir -p $$TARGET_SITE $$TARGET_SITE_SH ;
 	ontoconsume -b $(GRAPH_IDENT) -l $(HIST_IDENT) -d $(DELIM) -p $(GRAPH_PREFIX) -P $(HIST_PREFIX) -U $(TARGET_ROOT)/$$LAST_VERSION/$(INPUT_TTL) -V $$NEW_VERSION >  $$TARGET_SITE/$(INPUT_TTL) ;
 	ontoconsume -b $(GRAPH_IDENT) -l $(HIST_IDENT) -d $(DELIM) -p $(GRAPH_PREFIX) -P $(HIST_PREFIX) -L v/$(INPUT_TTL) -V $$NEW_VERSION > v/$(INPUT_TTL).new ;
-	mv v/$(INPUT_TTL).new v/$(INPUT_TTL) ;
 	rapper -i turtle -o ntriples $$TARGET_SITE/$(INPUT_TTL) > $$TARGET_SITE/$(EXTRA_N_TRIPLES) ;
-	rapper -i turtle -o ntriples $(INPUT_TTL) > $$TARGET_SITE/$(EXTRA_RDF_XML) ;
+	rapper -i turtle -o rdfxml $(INPUT_TTL) > $$TARGET_SITE/$(EXTRA_RDF_XML) ;
 	rapper -i turtle -o html $$TARGET_SITE/$(INPUT_TTL) > $$TARGET_SITE/index.html ;
+	rapper -i turtle -o ntriples v/$(INPUT_TTL).new > v/$(INPUT_BASE).nt ;
+	rapper -i turtle -o rdfxml v/$(INPUT_TTL).new > v/$(INPUT_BASE).rdf ;
+	rapper -i turtle -o html v/$(INPUT_TTL).new > v/$(INPUT_BASE).html ;
+	mv v/$(INPUT_TTL).new v/$(INPUT_TTL) ;
 	cp $(EXTRA_SHEXC) $$TARGET_SITE_SH ;
 
 increment-minor: save-old-htaccess
@@ -94,10 +100,13 @@ increment-minor: save-old-htaccess
 	mkdir -p $$TARGET_SITE $$TARGET_SITE_SH ;
 	ontoconsume -b $(GRAPH_IDENT) -l $(HIST_IDENT) -d $(DELIM) -p $(GRAPH_PREFIX) -P $(HIST_PREFIX) -U $(TARGET_ROOT)/$$LAST_VERSION/$(INPUT_TTL) -V $$NEW_VERSION >  $$TARGET_SITE/$(INPUT_TTL) ;
 	ontoconsume -b $(GRAPH_IDENT) -l $(HIST_IDENT) -d $(DELIM) -p $(GRAPH_PREFIX) -P $(HIST_PREFIX) -L v/$(INPUT_TTL) -V $$NEW_VERSION > v/$(INPUT_TTL).new ;
-	mv v/$(INPUT_TTL).new v/$(INPUT_TTL) ;
 	rapper -i turtle -o ntriples $$TARGET_SITE/$(INPUT_TTL) > $$TARGET_SITE/$(EXTRA_N_TRIPLES) ;
-	rapper -i turtle -o ntriples $(INPUT_TTL) > $$TARGET_SITE/$(EXTRA_RDF_XML) ;
+	rapper -i turtle -o rdfxml $(INPUT_TTL) > $$TARGET_SITE/$(EXTRA_RDF_XML) ;
 	rapper -i turtle -o html $$TARGET_SITE/$(INPUT_TTL) > $$TARGET_SITE/index.html ;
+	rapper -i turtle -o ntriples v/$(INPUT_TTL).new > v/$(INPUT_BASE).nt ;
+	rapper -i turtle -o rdfxml v/$(INPUT_TTL).new > v/$(INPUT_BASE).rdf ;
+	rapper -i turtle -o html v/$(INPUT_TTL).new > v/$(INPUT_BASE).html ;
+	mv v/$(INPUT_TTL).new v/$(INPUT_TTL) ;
 	cp $(EXTRA_SHEXC) $$TARGET_SITE_SH ;
 
 increment-patch: save-old-htaccess
@@ -110,10 +119,13 @@ increment-patch: save-old-htaccess
 	mkdir -p $$TARGET_SITE $$TARGET_SITE_SH ;
 	ontoconsume -b $(GRAPH_IDENT) -l $(HIST_IDENT) -d $(DELIM) -p $(GRAPH_PREFIX) -P $(HIST_PREFIX) -U $(TARGET_ROOT)/$$LAST_VERSION/$(INPUT_TTL) -V $$NEW_VERSION >  $$TARGET_SITE/$(INPUT_TTL) ;
 	ontoconsume -b $(GRAPH_IDENT) -l $(HIST_IDENT) -d $(DELIM) -p $(GRAPH_PREFIX) -P $(HIST_PREFIX) -L v/$(INPUT_TTL) -V $$NEW_VERSION > v/$(INPUT_TTL).new ;
-	mv v/$(INPUT_TTL).new v/$(INPUT_TTL) ;
 	rapper -i turtle -o ntriples $$TARGET_SITE/$(INPUT_TTL) > $$TARGET_SITE/$(EXTRA_N_TRIPLES) ;
-	rapper -i turtle -o ntriples $(INPUT_TTL) > $$TARGET_SITE/$(EXTRA_RDF_XML) ;
+	rapper -i turtle -o rdfxml $(INPUT_TTL) > $$TARGET_SITE/$(EXTRA_RDF_XML) ;
 	rapper -i turtle -o html $$TARGET_SITE/$(INPUT_TTL) > $$TARGET_SITE/index.html ;
+	rapper -i turtle -o ntriples v/$(INPUT_TTL).new > v/$(INPUT_BASE).nt ;
+	rapper -i turtle -o rdfxml v/$(INPUT_TTL).new > v/$(INPUT_BASE).rdf ;
+	rapper -i turtle -o html v/$(INPUT_TTL).new > v/$(INPUT_BASE).html ;
+	mv v/$(INPUT_TTL).new v/$(INPUT_TTL) ;
 	cp $(EXTRA_SHEXC) $$TARGET_SITE_SH ;
 
 save-old-htaccess:
