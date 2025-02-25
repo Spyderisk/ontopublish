@@ -1,0 +1,160 @@
+@import url('reset.css');
+
+@font-face {
+    font-family: Besley;
+    font-style: normal;
+    font-weight: 1 999;
+    src: url('Besley.woff2') format('woff2-variations');
+}
+@font-face {
+    font-family: Besley;
+    font-style: italic;
+    font-weight: 1 999;
+    src: url('Besley-Italic.woff2') format('woff2-variations');
+}
+/* These fonts are NOT free software according to the FSF definition;
+   they are distributed under the ‘Aladdin Free Public License’. This
+   is sufficient to allow essentially unrestricted web font use, since
+   we don’t charge for access to the fonts, which is the main
+   restriction this licence imposes.
+
+   <https://spdx.org/licenses/Aladdin.html>
+*/
+@font-face {
+    font-family: 'Univers';
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    src: url('./URWClassicSans-Regular.woff2');
+}
+@font-face {
+    font-family: 'Univers';
+    font-weight: bold;
+    font-style: normal;
+    font-stretch: normal;
+    src: url('./URWClassicSans-Bold.woff2');
+}
+@font-face {
+    font-family: 'Univers';
+    font-weight: normal;
+    font-style: italic;
+    font-stretch: normal;
+    src: url('./URWClassicSans-RegularIt.woff2');
+}
+@font-face {
+    font-family: 'Univers';
+    font-weight: bold;
+    font-style: italic;
+    font-stretch: normal;
+    src: url('./URWClassicSans-BoldItalic.woff2');
+}
+@font-face {
+    font-family: 'Univers';
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: condensed;
+    src: url('./URWClassicSansCond-Regular.woff2');
+}
+@font-face {
+    font-family: 'Univers';
+    font-weight: bold;
+    font-style: normal;
+    font-stretch: condensed;
+    src: url('./URWClassicSansCond-Bold.woff2');
+}
+@font-face {
+    font-family: 'Univers';
+    font-weight: normal;
+    font-style: italic;
+    font-stretch: condensed;
+    src: url('./URWClassicSansCond-Italic.woff2');
+}
+@font-face {
+    font-family: 'Univers';
+    font-weight: bold;
+    font-style: italic;
+    font-stretch: condensed;
+    src: url('./URWClassicSansCond-BdItalic.woff2');
+}
+
+
+html {
+    font-family: Univers, sans-serif;
+    font-size: 21px;
+    line-height: 30px;
+
+    & body {
+        font-size: inherit;
+        line-height: inherit;
+        background-color: #fffff8;
+    }
+}
+
+.content {
+    & dfn {
+        font-weight: bold;
+    }
+    & var {
+        font-family: Besley, serif;
+        font-style: italic;
+    }
+    & small {
+        font-size: 0.8em;
+    }
+    & p {
+        margin: 1em 0;
+    }
+    & ul, & ol {
+        margin: 1em 0 1em 1rem;
+    }
+    & ul {
+        list-style-type: disc;
+    }
+
+    & h2 {
+        font-size: 30px;
+        line-height: 36px;
+        margin: 1rem 0;
+    }
+    & h3 {
+        font-size: 24px;
+        line-height: 30px;
+        margin: 1rem 0;
+        clear: both;
+    }
+
+    & dd {
+        margin-left: 1rem;
+    }
+
+    & footer {
+        font-size: 16px;
+        line-height: 20px;
+    }
+    & .bookcover {
+        float: left;
+        padding: 0 1rem 1rem 0;
+        & img {
+            height: 220px;
+        }
+    }
+}
+
+
+sup, sub {
+    vertical-align: baseline;
+    position: relative;
+    top: -0.4em;
+    font-size: 0.8em;
+}
+sub { 
+    top: 0.4em; 
+}
+
+a:link, a:visited, a:hover, a:active {
+    text-decoration: underline;
+    color: inherit;
+}
+a:hover, a:active {
+    opacity: 67%;
+}

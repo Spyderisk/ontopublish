@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Spyderisk Ontopublish</title>
+    <link rel="stylesheet" href=/assets/univers.css>
+  </head>
+  <body>
+    <h1>Spyderisk Ontopublish</h1>
+    <p>Welcome to the Spyderisk ontology publisher. The directory structure is as follows:</p>
+    <dl>
+      <dt><a href=/ns><code>/ns</code></a></dt>
+      <dd>Vocabularies and ontologies</dd>
+      <dt><a href=/sh><code>/sh</code></a></dt>
+      <dd>Shape expressions (currently <a href=https://shex.io>ShEx</a>), imposing constraints</dd>
+      <dt><a href=/v><code>/v</code></a></dt>
+      <dd>Versioning/provenance logs (semantics described <a href=/ns/endpoint><code>here</code></a>)</dd>
+      <dt><a href=/p><code>/p</code></a></dt>
+      <dd>Instance data, including examples</dd>
+    </dl> 
+    <p>Generally speaking, an RDF/S vocabulary will have a corresponding shape expression file (used to impose constraints on instance data), as well as a version log. For example, the Spyderisk V1 core vocabulary is found at <a href=/ns/core><code>/ns/core</code></a>, and it has a corresponding shape expression document <a href=/sh/core><code>/sh/core</code></a>, as well as a version log <a href=/v/core><code>/v/core</code></a>.</p>
+    
+    <h1>Ontologies</h1>
+    
+    <h2>Spyderisk version 1 core ontology</h2>
+    <a href=/ns/core><code>http://ontology.spyderisk.org/ns/core</code></a>
+    <p>This is a conceptualisation of Spyderisk v1 in RDF, for interoperability.</p>
+
+    <h2>Spyderisk ontopublish semantic endpoint and versioning scheme</h2>
+    <a href=/ns/endpoint><code>http://ontology.spyderisk.org/ns/endpoint</code></a>
+    <p>This vocabulary documents the versioning scheme injected into RDF documents deployed here.</p>
+    <p>As Ontopublish develops, it is anticipated that additional information will be described using something like <a href=https://www.w3.org/submissions/WSMO-Lite/>WSMO-Lite</a>></p>
+    
+    <h2>BEAM Ontology: ontology of the Erlang virtual machine</h2>
+    <a href=/ns/beam><code>http://ontology.spyderisk.org/ns/html/beam</code></a>
+    <p>The BEAM is Erlang's virtual machine. This is a lightweight, demonstration ontology with fairly simple semantics based on the RDF schema (RDF/S) alone, i.e. no dependency on OWL. It models what the BEAM is doing at a high level, and some of OTP (many of the bits which make Erlang Erlang).</p>
+    <p>The aim is to use it to demonstrate versioning an ontology with respect to what RDF/S alone gives us.</p>
+
+  </body>
+</html>
+    
