@@ -23,15 +23,24 @@ Assuming the following:
 
 Initialise (no deployed RDF):
 
-	make initialise-with INITIAL_VERSION=0.1.0 INPUT_BASE=core
+    make initialise-with INITIAL_VERSION="1.0.0" \
+	                     TITLE="Spyderisk version 1 core model ontology" \
+						 INPUT_BASE="core"  \
+						 GRAPH_PREFIX="score" GRAPH_IDENT="http://ontology.spyderisk.org/ns/core" \
+						 HIST_PREFIX="scorev" HIST_IDENT="http://ontology.spyderisk.org/v/core" \
+						 MKDOCS_TEMPLATE=../scripts/mkdocs.yaml.in
 		
 Increment major version:
 
-	make increment-major INPUT_BASE=core
+    make increment-major TITLE="Spyderisk version 1 core model ontology" \
+						 INPUT_BASE="core"  \
+						 GRAPH_PREFIX="score" GRAPH_IDENT="http://ontology.spyderisk.org/ns/core" \
+						 HIST_PREFIX="scorev" HIST_IDENT="http://ontology.spyderisk.org/v/core" \
+						 MKDOCS_TEMPLATE=../scripts/mkdocs.yaml.in
 
-What's going on underneath is a call to our `ontoprepare` script, which knows about the versioning scheme, and generates `.htaccess` files accordingly, pointing at the new version. The script will eventually inject version information into the RDF, as well as information about the endpoint, for external consumption.
+What's going on underneath is a call to our `ontoprepare` script, which knows about the versioning scheme, and generates `.htaccess` files accordingly, pointing at the new version. The script will eventually inject version information into the RDF, as well as information about the endpoint, for external consumption. The `GRAPH_PREFIX` (&c.) values are passed to our `ontoconsume` script, which injects triples with our versioning scheme accordingly. The `HIST_` variables concern an associated log of versions, where the injected triples for the input RDF graph only concern the latest version, but refer to this log.
 
-The output scheme is `ns/<base>/<version>`. In the first case, we would find `ns/core/0.1.0`, and within it, the input turtle file, conversions to RDF/XML and N Triples, as well as generated HTML documentation.
+The output scheme is `ns/<base>/<version>`. In the first case, we would find `ns/core/0.1.0`, and within it, the input turtle file, conversions to RDF/XML and N Triples, as well as generated HTML documentation. The log of versions is a single RDF graph (e.g. `v/core.ttl`) which records all valid versions so far.
 
 The top-level of this can be varied from `ns`, using the `SUB_ROOT` environment variable. In the first case, the version forcibly output is `0.1.0`. If we then ran the second case, the existing, deployed version 0.1.0 would be discovered, and then the next version `1.0.0` is derived. When incrementing versions, the lower components are reset to zero, which is why the minor version component got reset to zero.
 
