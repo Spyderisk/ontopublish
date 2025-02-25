@@ -1,4 +1,4 @@
-#! /usr/bin/guile3.0 -s
+#! /usr/bin/guile -s
 !#
 ;; file scripts/ontoconsume.scm
 

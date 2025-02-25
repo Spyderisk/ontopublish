@@ -1,4 +1,4 @@
-#! /usr/bin/guile3.0 -s
+#! /usr/bin/guile -s
 !#
 ;; file scripts/ontoprepare.scm
 
@@ -210,6 +210,7 @@
        (version-only (option-ref options 'version-only #f))
        (help (option-ref options 'help #f))
        (default-type-pairs '(("text/turtle" . "ttl")
+                             ("text/shex" . "shex")
                              ("application/n-triples" . "nt")
                              ("application/rdf+xml" . "rdf")))
        (vsn-regexp (make-regexp "^[0-9]+.[0-9]+.[0-9]+$"))
