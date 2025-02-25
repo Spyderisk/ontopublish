@@ -9,20 +9,13 @@ PREFIX sendsh: <http://ontology.spyderisk.org/sh/endpoint#>
 
 sendsh:extendGraph {
     a [ rdfg:Graph ] ;
-    rdfs:label rdf:langString? ;
-    rdfs:description rdf:langString? ;
-    #
     send:has_version @sendsh:VersionShape? ;
     # send:see_history @sendsh:extendGraph? ;
-    send:see_history IRI? ;
-    
+    send:see_history IRI? ;    
 }
 
 sendsh:VersionShape {
     a [ send:Version ] ;
-    rdfs:label rdf:langString? ;
-    rdfs:description rdf:langString? ;
-    #
     send:major_component xsd:integer ;
     send:minor_component xsd:integer ;
     send:patch_component xsd:integer ;

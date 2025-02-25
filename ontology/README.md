@@ -35,11 +35,11 @@ Not everything can be modelled effectively with RDF and RDF/S properties and cla
 - SKOS has notions of broader and narrower generalisations of concepts, as well as imposing order on these.
 - SKOS provides a rich interface for extending and elaborating concepts which have already declared, like we do in this vocabulary.
 
-What SKOS does not get us is things like constraints, such as on cardinality. Traditionally, constraints would be imposed using something like OWL, but while OWL is rich, it is also complex. Instead, RDF/TTL vocabularies are accompanied by [ShEx](https://shex.io/) schemas. Nonetheless, invoking `skos:Concept` does imply one thing: anything we associate with it is also an `owl:Class`. It is feasible that we may want to adopt certain elements of OWL.
-
 ## Constraints 
 
-Shape expressions let us describe the shape of valid RDF data, such as cardinality of relationships between classes.
+What SKOS does not get us is things like constraints, such as on cardinality. Normative semantic web practice is to impose constraints using OWL, but while OWL is rich, it is also complex. Instead, our RDF/TTL vocabularies are accompanied by [ShEx](https://shex.io/) schemas. Nonetheless, invoking `skos:Concept` does imply one thing: anything we associate with it is also an `owl:Class` (and many other standard W3C vocabularies, such as PROV-O, make use of OWL). As well as using shape expressions, it is feasible that we may want to adopt certain elements of OWL, such as the temporal elements.
+
+ShEx shape expressions let us describe the *shape* of valid RDF data, such as cardinality of relationships between classes. See the [ShEx primer](https://shex.io/shex-primer/index.html) for a broad overview of how it works.
 
 The core model's RDF source is in `ontology/core.ttl` and is accompanied by `core.shex`. Validation is not of the ShEx schema document itself (other than syntax and manual validation), but whether RDF *instance* data, reusing or elaborating on concepts from the core model, is consistent with the shapes defined. 
 
