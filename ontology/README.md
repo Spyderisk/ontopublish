@@ -41,11 +41,11 @@ What SKOS does not get us is things like constraints, such as on cardinality. No
 
 ShEx shape expressions let us describe the *shape* of valid RDF data, such as cardinality of relationships between classes. See the [ShEx primer](https://shex.io/shex-primer/index.html) for a broad overview of how it works.
 
-The core model's RDF source is in `ontology/core.ttl` and is accompanied by `core.shex`. Validation is not of the ShEx schema document itself (other than syntax and manual validation), but whether RDF *instance* data, reusing or elaborating on concepts from the core model, is consistent with the shapes defined. 
+The core model's RDF source is in `ontology/core.ttl` and is accompanied by `ontology/core.shex`. Validation is not of the ShEx schema document itself (other than syntax and manual validation), but whether RDF *instance* data, reusing or elaborating on concepts from the core model, is consistent with the shapes defined. 
 
-For the core model, test data are provided under `ontology/example_instance.ttl`. This is an initial demonstration of validation---and should suffice for now, since the constraints are primarily in terms of cardinality--but -more tests should be feasible, e.g. using a ShEx software library to script it. Validation was with the PyShEx library (Python v3.11 in a virtual environment), using the `shexeval` command line tool included with the library.
+For the core model, test data are provided under `examples/example_instance.ttl`. This is an initial demonstration of validation---and should suffice for now, since the constraints are primarily in terms of cardinality--but -more tests should be feasible, e.g. using a ShEx software library to script it. Validation was with the PyShEx library (Python v3.11 in a virtual environment), using the `shexeval` command line tool included with the library.
 
-Similarly, the versioning scheme in `ontology/endpoint.ttl` is accompanied by `endpoint.shex` and `example_version_annotation.ttl`.
+Similarly, the versioning scheme in `ontology/endpoint.ttl` is accompanied by `ontology/endpoint.shex` and `examples/example_version_annotation.ttl`.
 
 
 ## Shaded items

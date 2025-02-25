@@ -35,7 +35,7 @@ _:b1 a send:Version ;
     send:applies_to <http://ontology.spyderisk.org/ns/core> .
 ```
     
-The versioning scheme identifiers and relations are currently described using RDF/S in [`examples/versioning.ttl`](https://github.com/Spyderisk/ontopublish/blob/main/examples/versioning.ttl). This RDF structure is broadly similar to that described by [Grandi et al. (2012)](https://doi.org/10.1016/j.jbi.2012.07.005). A recent overview of nominal practice is found in [Garijo & Poveda-Villalón (2020)](https://doi.org/10.48550/arXiv.2003.13084).
+The versioning scheme identifiers and relations are described using RDF/S in [`ontology/endpoint.ttl`](https://github.com/Spyderisk/ontopublish/blob/main/ontology/endpoint.ttl). Example instance data against which shape expressions are described is in [`examples/example_version_annotation.ttl`](https://github.com/Spyderisk/ontopublish/blob/main/examples/example_version_annotation.ttl). This RDF structure is broadly similar to that described by [Grandi et al. (2012)](https://doi.org/10.1016/j.jbi.2012.07.005). A recent overview of nominal practice is found in [Garijo & Poveda-Villalón (2020)](https://doi.org/10.48550/arXiv.2003.13084).
 
 Some elements of the versioning scheme are conceptually similar to some of the semantics provided by Owl, but we don't currently use Owl, and we are interested in designing the versioning scheme with respect to the *behaviour* of the endpoint as a publishing pipeline (as well as the history).
 
