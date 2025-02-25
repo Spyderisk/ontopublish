@@ -2,27 +2,24 @@
 
 TITLE		= "My Ontology"
 INPUT_BASE	= my-ontology
-
-# 1. Start by looking in the webroot for existence of .htaccess file
-# 2. Get the previous version (-L option of ontoprepare). If the .htaccess file exists, copy it to <prev version>.htaccess and put it somewhere in the source directory of ontologies.
-# 3. Append to the file.
-# 4. Run the rest of the rules.
-
-# Source directory of ontologies under /srv
-# Web root at /var/www/htdocs or similar
-# Targeting vocabularies living at ontology.spyderisk.org/ns/
-# Perhaps including instances data living at ontology.spyderisk.org/p/
+GRAPH_IDENT	= "http://ontology.spyderisk.org/p/ex"
+HIST_IDENT	= "http://ontology.spyderisk.org/v/ex"
+DELIM		= "\#"
+GRAPH_PREFIX	= "ex"
+HIST_PREFIX	= "exv"
 
 SUB_ROOT	= ns
+VSN_ROOT	= v
 
-SITE_DIR	= /tmp/site
-MD_DIR		= /tmp/docs
+SITE_DIR	= ./site
+MD_DIR		= ./docs
+MKDOCS_TEMPLATE = ./mkdocs.yaml.in
 
 INPUT_TTL	= $(INPUT_BASE).ttl
 EXTRA_N_TRIPLES	= $(INPUT_BASE).nt
 EXTRA_RDF_XML	= $(INPUT_BASE).rdf
 
-# PREV_VERSION	= $(shell ./ontoprepare.scm -L -d $(TARGET_ROOT))
+# PREV_VERSION	= $(shell ontoprepare -L -d $(TARGET_ROOT))
 # TARGET_SITE	= $(TARGET_ROOT)/$(TARGET_VERSION)
 
 TARGET_ROOT	= $(SUB_ROOT)/$(INPUT_BASE)
@@ -41,70 +38,65 @@ help:
 	make increment-patch (increment PATCH version component)
 	"
 
-increment-major:	html-components rdf-components coalesce-with-new-major
-increment-minor:	html-components rdf-components coalesce-with-new-minor
-increment-patch:	html-components rdf-components coalesce-with-new-patch
-
-initialise-with: html-components rdf-components
-	./ontoprepare.scm -F $(INITIAL_VERSION) -d $(TARGET_ROOT) > $(TARGET_HTACCESS) ;
+initialise-with: $(VSN_ROOT)
 	TARGET_SITE=$(TARGET_ROOT)/$(INITIAL_VERSION) ;
-	mv -v /tmp/site $$TARGET_SITE ;
-	cp -v $(INPUT_TTL) $$TARGET_SITE ;
-	mv -v /tmp/$(EXTRA_N_TRIPLES) $$TARGET_SITE ;
-	mv -v /tmp/$(EXTRA_RDF_XML) $$TARGET_SITE
+	mkdir -p $$TARGET_SITE
+	ontoprepare -F $(INITIAL_VERSION) -d $(TARGET_ROOT) > $(TARGET_HTACCESS) ;
+	ontoconsume -b $(GRAPH_IDENT) -l $(HIST_IDENT) -d $(DELIM) -p $(GRAPH_PREFIX) -P $(HIST_PREFIX) -U $(INPUT_TTL) -V $(INITIAL_VERSION) >  $$TARGET_SITE/$(INPUT_TTL) ;\
+	touch ./empty.ttl
+	ontoconsume -b $(GRAPH_IDENT) -l $(HIST_IDENT) -d $(DELIM) -p $(GRAPH_PREFIX) -P $(HIST_PREFIX) -U ./empty.ttl -V $(INITIAL_VERSION) > v/$(INPUT_TTL) ;
+	rm ./empty.ttl
+	rapper -i turtle -o ntriples $$TARGET_SITE/$(INPUT_TTL) > $$TARGET_SITE/$(EXTRA_N_TRIPLES) ;
+	rapper -i turtle -o ntriples $$TARGET_SITE/$(INPUT_TTL) > $$TARGET_SITE/$(EXTRA_RDF_XML) ;
+	rapper -i turtle -o html $$TARGET_SITE/$(INPUT_TTL) > $$TARGET_SITE/index.html ;
 
-html-components:	prep-mkdocs gen-md gen-site
-rdf-components:		gen-syntaxes
-
-gen-syntaxes: $(TARGET_ROOT)
-	rapper -i turtle -o ntriples $(INPUT_TTL) > /tmp/$(EXTRA_N_TRIPLES)	&&
-	rapper -i turtle -o rdfxml   $(INPUT_TTL) > /tmp/$(EXTRA_RDF_XML)
-
-gen-site: gen-md
-	mkdocs build -f /tmp/$(TARGET_DOC_CONF) -d /tmp/site
-
-gen-md: $(MD_DIR) # prep-mkdocs
-	ontospy gendocs --type 3 --title $(TITLE) -o /tmp/docs $(INPUT_TTL)
-
-# Start by moving /tmp/site to ./ns/beam/1.0.0 or whatever
-coalesce-with-new-major: save-old-htaccess
-	NEW_VERSION=$$(./ontoprepare.scm -V -I -d $(TARGET_ROOT)) ;
+increment-major: save-old-htaccess
+	LAST_VERSION=$$(ontoprepare -L -d $(TARGET_ROOT))
+	NEW_VERSION=$$(ontoprepare -V -I -d $(TARGET_ROOT)) ;
 	TARGET_SITE=$(TARGET_ROOT)/$$NEW_VERSION/
-	./ontoprepare.scm -I -d $(TARGET_ROOT) > $(TARGET_HTACCESS) ;
+	mkdir -p $$TARGET_SITE
+	ontoprepare -I -d $(TARGET_ROOT) > $(TARGET_HTACCESS) ;
+	ontoconsume -b $(GRAPH_IDENT) -l $(HIST_IDENT) -d $(DELIM) -p $(GRAPH_PREFIX) -P $(HIST_PREFIX) -U $(TARGET_ROOT)/$$LAST_VERSION/$(INPUT_TTL) -V $$NEW_VERSION >  $$TARGET_SITE/$(INPUT_TTL) ;
+	ontoconsume -b $(GRAPH_IDENT) -l $(HIST_IDENT) -d $(DELIM) -p $(GRAPH_PREFIX) -P $(HIST_PREFIX) -L v/$(INPUT_TTL) -V $$NEW_VERSION > v/$(INPUT_TTL).new ;
+	mv v/$(INPUT_TTL).new v/$(INPUT_TTL) ;
+	rapper -i turtle -o ntriples $$TARGET_SITE/$(INPUT_TTL) > $$TARGET_SITE/$(EXTRA_N_TRIPLES) ;
+	rapper -i turtle -o ntriples $(INPUT_TTL) > $$TARGET_SITE/$(EXTRA_RDF_XML) ;
+	rapper -i turtle -o html $$TARGET_SITE/$(INPUT_TTL) > $$TARGET_SITE/index.html ;
 
-	mv -v /tmp/site $$TARGET_SITE 
-	cp -v $(INPUT_TTL) $$TARGET_SITE
-	mv -v /tmp/$(EXTRA_N_TRIPLES) $$TARGET_SITE
-	mv -v /tmp/$(EXTRA_RDF_XML) $$TARGET_SITE
-
-coalesce-with-new-minor: save-old-htaccess
-	NEW_VERSION=$$(./ontoprepare.scm -V -i -d $(TARGET_ROOT)) ;
+increment-minor: save-old-htaccess
+	LAST_VERSION=$$(ontoprepare -L -d $(TARGET_ROOT))
+	NEW_VERSION=$$(ontoprepare -V -i -d $(TARGET_ROOT)) ;
 	TARGET_SITE=$(TARGET_ROOT)/$$NEW_VERSION/
-	./ontoprepare.scm -i -d $(TARGET_ROOT) > $(TARGET_HTACCESS) ;
+	mkdir -p $$TARGET_SITE
+	ontoprepare -I -d $(TARGET_ROOT) > $(TARGET_HTACCESS) ;
+	ontoconsume -b $(GRAPH_IDENT) -l $(HIST_IDENT) -d $(DELIM) -p $(GRAPH_PREFIX) -P $(HIST_PREFIX) -U $(TARGET_ROOT)/$$LAST_VERSION/$(INPUT_TTL) -V $$NEW_VERSION >  $$TARGET_SITE/$(INPUT_TTL) ;
+	ontoconsume -b $(GRAPH_IDENT) -l $(HIST_IDENT) -d $(DELIM) -p $(GRAPH_PREFIX) -P $(HIST_PREFIX) -L v/$(INPUT_TTL) -V $$NEW_VERSION > v/$(INPUT_TTL).new ;
+	mv v/$(INPUT_TTL).new v/$(INPUT_TTL) ;
+	rapper -i turtle -o ntriples $$TARGET_SITE/$(INPUT_TTL) > $$TARGET_SITE/$(EXTRA_N_TRIPLES) ;
+	rapper -i turtle -o ntriples $(INPUT_TTL) > $$TARGET_SITE/$(EXTRA_RDF_XML) ;
+	rapper -i turtle -o html $$TARGET_SITE/$(INPUT_TTL) > $$TARGET_SITE/index.html ;
 
-	mv -v /tmp/site $$TARGET_SITE
-	cp -v $(INPUT_TTL) $$TARGET_SITE
-	mv -v /tmp/$(EXTRA_N_TRIPLES) $$TARGET_SITE
-	mv -v /tmp/$(EXTRA_RDF_XML) $$TARGET_SITE
-
-coalesce-with-new-patch: save-old-htaccess
-	NEW_VERSION=$$(./ontoprepare.scm -V -p -d $(TARGET_ROOT)) ;
+increment-patch: save-old-htaccess
+	LAST_VERSION=$$(ontoprepare -L -d $(TARGET_ROOT))
+	NEW_VERSION=$$(ontoprepare -V -p -d $(TARGET_ROOT)) ;
 	TARGET_SITE=$(TARGET_ROOT)/$$NEW_VERSION/
-	./ontoprepare.scm -p -d $(TARGET_ROOT) > $(TARGET_HTACCESS) ;
-
-	mv -v /tmp/site $$TARGET_SITE
-	cp -v $(INPUT_TTL) $$TARGET_SITE
-	mv -v /tmp/$(EXTRA_N_TRIPLES) $$TARGET_SITE
-	mv -v /tmp/$(EXTRA_RDF_XML) $$TARGET_SITE
+	mkdir -p $$TARGET_SITE
+	ontoprepare -I -d $(TARGET_ROOT) > $(TARGET_HTACCESS) ;
+	ontoconsume -b $(GRAPH_IDENT) -l $(HIST_IDENT) -d $(DELIM) -p $(GRAPH_PREFIX) -P $(HIST_PREFIX) -U $(TARGET_ROOT)/$$LAST_VERSION/$(INPUT_TTL) -V $$NEW_VERSION >  $$TARGET_SITE/$(INPUT_TTL) ;
+	ontoconsume -b $(GRAPH_IDENT) -l $(HIST_IDENT) -d $(DELIM) -p $(GRAPH_PREFIX) -P $(HIST_PREFIX) -L v/$(INPUT_TTL) -V $$NEW_VERSION > v/$(INPUT_TTL).new ;
+	mv v/$(INPUT_TTL).new v/$(INPUT_TTL) ;
+	rapper -i turtle -o ntriples $$TARGET_SITE/$(INPUT_TTL) > $$TARGET_SITE/$(EXTRA_N_TRIPLES) ;
+	rapper -i turtle -o ntriples $(INPUT_TTL) > $$TARGET_SITE/$(EXTRA_RDF_XML) ;
+	rapper -i turtle -o html $$TARGET_SITE/$(INPUT_TTL) > $$TARGET_SITE/index.html ;
 
 save-old-htaccess:
 	if [ -f $(TARGET_HTACCESS) ]; then
-		ORIGINAL_VERSION=$$(./ontoprepare.scm -L -d $(TARGET_ROOT))
+		ORIGINAL_VERSION=$$(ontoprepare -L -d $(TARGET_ROOT))
 		mv -f $(TARGET_HTACCESS) $(INPUT_BASE).$(ORIGINAL_VERSION).htaccess.old
 	fi
 
 prep-mkdocs:
-	cat mkdocs.yaml.in | sed s/TITLE/${TITLE}/ > /tmp/${INPUT_BASE}.mkdocs.yaml
+	cat $(MKDOCS_TEMPLATE) | sed s/TITLE/"${TITLE}"/ > /tmp/${INPUT_BASE}.mkdocs.yaml
 
 $(SITE_DIR):
 	mkdir -p $@
@@ -115,10 +107,13 @@ $(MD_DIR):
 $(TARGET_ROOT):
 	mkdir -p $@
 
+$(VSN_ROOT):
+	mkdir -p $@
+
 clean:
 	rm -f $(TARGET_DOC_CONF) &&
-	rm -f /tmp/$(EXTRA_RDF_XML) &&
-	rm -f /tmp/$(EXTRA_N_TRIPLES) &&
 	rm -rf $(MD_DIR) &&
-	rm -rf $(SITE_DIR)
-
+	rm -f /tmp/${INPUT_BASE}.mkdocs.yaml
+	#rm -rf $(SITE_DIR)
+	#rm -f $(EXTRA_RDF_XML) &&
+	#rm -f /tmp/$(EXTRA_N_TRIPLES) &&
