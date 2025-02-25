@@ -66,7 +66,7 @@ send:string_representation a rdf:Property ;
     
 send:recorded_as a rdf:Property ;
     rdfs:domain send:Version ;
-    rdfs:range  rdfg:Version ;
+    rdfs:range  send:Version ;
     rdfs:label "version is recorded in history"@en ;
     rdfs:description "The identifier as recorded in a log of versions (history). This is in addition to the identifier in an RDF graph, because it may there be a blank node, whereas in history it would probably not be."@en .
 
