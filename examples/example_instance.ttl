@@ -13,13 +13,10 @@ my:CoreVPN a score:Asset ;
     rdfs:label "core VPN asset"@en .
 my:CommunalLaptop a score:Asset ;
     rdfs:label "a shared laptop used as a test-bed"@en .
-
-my:Bagpuss a score:Asset ;
-    rdfs:label "toy bagpuss the cat (this asset is part of the target system, but interacts with few other system components)"@en .
     
 my:Laboratory a score:TargetSystem ;
     rdfs:label "scientific laboratory full of computer equipment"@en ;
-    score:has_structure my:SSHBastion, my:CoreVPN, my:CommunalLaptop, my:Bagpuss .
+    score:has_structure my:SSHBastion, my:CoreVPN, my:CommunalLaptop .
     
 my:InAttackersWorkstationCollection a score:RoleAttribute ;
     rdf:value "In attacker's workstation collection" .
@@ -100,9 +97,6 @@ my:NetworkInterfaceUnderLoad a score:AssetBehaviour ;
 my:NetworkInterfaceRaceCondition a score:AssetBehaviour ;
     my:manifest_high_CPU_load my:PortsProtected .
 
-my:NotSmart a score:AssetTrustworthiness ;
-    rdfs:description "unlike some toys, bagpuss is not internet connected, nor has e.g. microphones, cameras inside"@en .
-
 my:SSHBastion
     score:has_property my:SSHBastionReachability ;
     score:has_property my:NetworkInterfaceUnderLoad .
@@ -110,6 +104,14 @@ my:SSHBastion
 my:CoreVPN
     score:has_property my:PortsProtected ;
     score:has_property my:NetworkInterfaceRaceCondition .
-    
-my:Bagpuss
-    score:has_property my:NotSmart .
+
+
+my:laptop_accessed_from a score:AssetRelation ;
+    rdfs:domain my:CommunalLaptop ;
+    rdfs:range  my:SSHBastion .
+#
+# mysh:LaptopShape {
+#   a [ score:Asset ] ;
+#   my:laptop_accessed_from @scoresh:AssetShape? ;
+# }
+#

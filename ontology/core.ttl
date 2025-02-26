@@ -40,7 +40,7 @@ score:Threat a rdfs:Class, skos:Concept ;
 score:incorporates_role a rdf:Property ;
     rdfs:label "threat incorporates role"@en ;
     rdfs:domain score:Threat ;
-    rdfs:range  score:ThreatRole .
+    rdfs:range  score:OrganisationalEntity .
     
 score:OrganisationalEntity a rdfs:Class, skos:Concept ;
     skos:prefLabel "organisational entity"@en ;
