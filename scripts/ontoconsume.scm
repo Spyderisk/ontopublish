@@ -356,11 +356,18 @@
                           ;; If the valid-to statement doesn't exist (as
                           ;; we'd expect), edit it to be the new valid-from
                           ;; statement -1. Otherwise, assume it still holds.
-                          (if (not (version-annotation-valid-to nominal-latest))
-                                (set-valid-to! nominal-latest
-                                               (- valid-from (* 24 60 60)))
-                                ;;(display "Looks like there was no valid-to in the nominal previous! Setting it to 1 day prior to new version's valid-from. ")
-                                )
+                          (cond [(and (not (version-annotation-valid-to nominal-latest))
+				      (version-annotation-valid-from nominal-latest)
+				      (> (version-annotation-valid-from nominal-latest)
+					 valid-from))
+				 (set-valid-to! nominal-latest
+						(- valid-from (* 24 60 60)))]
+				[(<= (version-annotation-valid-from nominal-latest)
+				     valid-from)
+				 (set-valid-to! nominal-latest
+						(current-time))]
+				[else #f])
+                            ;;(display "Looks like there was no valid-to in the nominal previous! Setting it to 1 day prior to new version's valid-from. "))
                           ;; (display "Requested version is newer than nominal latest, and this graph records history. Appending the requested version to this graph.")
                           ;; (newline)
                             (append nvss

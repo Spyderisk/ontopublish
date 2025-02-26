@@ -21,28 +21,30 @@ my:Laboratory a score:TargetSystem ;
     rdfs:label "scientific laboratory full of computer equipment"@en ;
     score:has_structure my:SSHBastion, my:CoreVPN, my:CommunalLaptop, my:Bagpuss .
     
-my:PrimaryRoleAttribute a score:RoleAttribute ;
+my:InAttackersWorkstationCollection a score:RoleAttribute ;
     rdf:value "In attacker's workstation collection" .
-my:SecondaryRoleAttribute a score:RoleAttribute ;
+my:InEmployersWorkstationCollection a score:RoleAttribute ;
     rdf:value "In attacker's employer's workstation collection" .
+my:SharingAccess a score:RoleAttribute ;
+    rdf:value "Employee(s) share their access with third party" .
 
 my:PrimaryThreatRole a score:OrganisationalEntity ;
-    score:takes_attribute my:PrimaryRoleAttribute ;
+    score:takes_attribute my:InAttackersWorkstationCollection ;
     score:restricted_to my:SSHBastion .
 
 my:SecondaryThreatRole a score:OrganisationalEntity ;
-    score:takes_attribute my:SecondaryRoleAttribute ;
+    score:takes_attribute my:InEmployersWorkstationCollection ;
     score:restricted_to my:CoreVPN .
 
 my:VagueThreatRole a score:OrganisationalEntity ;
-    score:takes_attribute my:PrimaryRoleAttribute .
+    score:takes_attribute my:SharingAccess .
     
-my:PrimaryCause a score:ThreatCause ;
-    rdfs:label "generic cause (don't name this for now)"@en ;
+my:AttackerGivenAccessToWorkstation a score:ThreatCause ;
+    rdfs:label "attacker given access to a workstation"@en ;
     score:has_likelihood my:InitialCauseMostLikely .
 
-my:SecondaryCause a score:ThreatCause ;
-    rdfs:label "generic secondary cause (don't name this for now)"@en ;
+my:DeploysMaliciousScript a score:ThreatCause ;
+    rdfs:label "attacker deploys malicious script"@en ;
     score:has_likelihood my:InitialCauseLeastLikely .
 
 my:FriendOfEmployees a score:ThreatCause ;
@@ -58,16 +60,16 @@ my:InitialCauseMediumLikely a skos:Concept ;
 my:InitialCauseLeastLikely a skos:Concept ;
     skos:inScheme my:InitialCauseLikelihoodScheme .
     
-my:MaliciousTechnician a score:Threat ;
-    rdfs:label "malicious technician"@en ;
+my:NetworkTrafficFromWorkstation a score:Threat ;
+    rdfs:label "intense network traffic from workstation"@en ;
     score:incorporates_role my:PrimaryThreatRole ;
-    score:has_cause my:PrimaryCause .
+    score:has_cause my:AttackerGivenACcessToWorkstation .
     
-my:ParentCompanyEmployee a score:Threat ;
-    rdfs:label "parent company employee employee"@en ;
-    rdfs:description "an employeed with some sort of high-level access via a network port during servicing"@en ;
+my:ScriptOnFirewall a score:Threat ;
+    rdfs:label "attacker's script running on firewall"@en ;
+    rdfs:description "A script running at a high level on a firewall. Firewall rules applying to the rest of the network can be subverted."@en ;
     score:incorporates_role my:SecondaryThreatRole ;
-    score:has_cause my:SecondaryCause .
+    score:has_cause my:DeploysMaliciousScript .
     
 my:UnknownFriendOfEmployees a score:Threat ;
     rdfs:label "unknown friend of one or more employees"@en ;
