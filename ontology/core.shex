@@ -17,12 +17,12 @@ scoresh:StructuralEntityShape {
 }
 scoresh:TargetSystemShape {
     a [ score:TargetSystem ] ;
-    score:has_structure @scoresh:StructuralEntityShape* ;
+    score:has_structure @scoresh:AssetShape* ;
+    score:has_structure @scoresh:AssetRelationShape* ;
 }
 scoresh:AssetShape {
     a [ score:Asset ] ;
-    # Add label/description &c. later?
-    # score:has_property @scoresh:AssetPropertyShape* ;
+    score:has_property @scoresh:AssetPropertyShape* ;
 }
 scoresh:AssetRelationShape {
     a [ score:AssetRelation ] ;
@@ -55,35 +55,51 @@ scoresh:CausalEntityShape {
 }
 
 scoresh:LikelihoodShape {
-    a [ score:Likelihood skos:ConceptScheme ]+ ;
+    a [ skos:ConceptScheme ]+ ;
 }
 scoresh:LikelihoodComponentShape {
-    a [ skos:Concept ] ;
+    a [ skos:Concept score:Likelihood ] ;
     skos:inScheme @scoresh:LikelihoodShape ;
 }
 
 scoresh:ThreatShape {
     a [ score:Threat ] ;
     score:incorporates_role @scoresh:OrganisationalEntityShape ;
-    score:caused_by        @scoresh:ThreatCauseShape? ;
-    score:triggered_by     @scoresh:ControlStrategyShape* ;
+    score:caused_by         @scoresh:ThreatCauseShape? ;
+    score:triggered_by      @scoresh:ControlStrategyShape* ;
+    score:has_likelihood    @scoresh:LikelihoodComponentShape ;
 }
 
 scoresh:ThreatCauseShape {
     a [ score:ThreatCause ] ;
+    score:has_likelihood @scoresh:LikelihoodComponentShape ;
 }
 scoresh:ControlStrategyShape {
     a [ score:ControlStrategy ] ;
-    scoresh:has_control @scoresh:ControlShape
+    scoresh:has_control  @scoresh:ControlShape ;
+    score:has_likelihood @scoresh:LikelihoodComponentShape ;
 }
 scoresh:ControlShape {
-    a [ score:Control ] ;
+    a [ score:AssetControl ] ;
+    score:has_likelihood @scoresh:LikelihoodComponentShape ;
 }
 scoresh:AssetPropertyShape {
     a [ score:AssetProperty ]? ;
-    a [ score:Control score:AssetBehaviour score:AssetTrustworthiness ] ;
+    a [ score:AssetControl score:AssetBehaviour score:AssetTrustworthiness ] ;
+    score:has_likelihood @scoresh:LikelihoodComponentShape ;
 }
-#
+
+scoresh:AssetBehaviourShape {
+    a [ score:AssetBehaviour ] ;
+    score:undermines     @scoresh:AssetTrustworthinessShape? ;
+    score:has_likelihood @scoresh:LikelihoodComponentShape ;
+}
+
+scoresh:AssetTrustworthinessShape {
+    a [ score:AssetTrustworthiness ] ;
+    score:has_likelihood @scoresh:LikelihoodComponentShape ;
+}
+
 # Behaviour/trustworthiness interaction
 #
 # The inverse triple constraint here says that every valid
@@ -94,22 +110,13 @@ scoresh:AssetPropertyShape {
 # This is where we're really coming up against RDF's poor support for
 # making statements about statements, and there is surely a better way.
 #
-scoresh:AssetBehaviourShape {
-    a [ score:AssetBehaviour ] ;
-    score:undermines @scoresh:AssetTrustworthinessShape? ;
-}
-
-scoresh:AssetTrustworthinessShape {
-    a [ score:AssetTrustworthiness ] ;
-}
-
-scoresh:underminesShape {
-    a [ score:undermines ] ;
-    rdfs:domain [ score:AssetBehaviour ] ;
-    rdfs:range  [ score:AssetTrustworthiness ] ;
-}
-
-scoresh:BehaviourAttributeShape {
-    a [ score:BehaviourAttribute ];
-    ^score:via @scoresh:underminesShape? ;
-}
+#scoresh:underminesShape {
+#    a [ score:undermines ] ;
+#    rdfs:domain [ score:AssetBehaviour ] ;
+#    rdfs:range  [ score:AssetTrustworthiness ] ;
+#}
+#
+#scoresh:BehaviourAttributeShape {
+#    a [ score:BehaviourAttribute ];
+#    ^score:via @scoresh:underminesShape? ;
+#}
