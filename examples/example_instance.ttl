@@ -77,10 +77,11 @@ my:NetworkTrafficFromWorkstation a score:Threat ;
     
 my:ScriptOnFirewall a score:Threat ;
     rdfs:label "attacker's script running on firewall"@en ;
-    rdfs:description "A script running at a high level on a firewall. Firewall rules applying to the rest of the network can be subverted."@en ;
+    rdfs:description "A script running at a high level on a firewall. Firewall rules applying to the rest of the network can be subverted. Further, the attacker resorts to this strategy after their previous access to the firewall over serial port becomes impossible (CCTV now watches it)."@en ;
     score:incorporates_role my:SecondaryThreatRole ;
     score:has_cause my:ScriptDeployedAtFirewall ;
-    score:has_likelihood my:InitialCauseLeastLikely .
+    score:has_likelihood my:InitialCauseLeastLikely ;
+    score:triggered_by my:RestrictAccess .
     
 my:UnknownFriendOfEmployees a score:Threat ;
     rdfs:label "unknown friend of one or more employees"@en ;
@@ -88,6 +89,32 @@ my:UnknownFriendOfEmployees a score:Threat ;
     score:incorporates_role my:VagueThreatRole ;
     score:has_cause my:FriendOfEployees ;
     score:has_likelihood my:InitialCauseMediumLikely .
+
+my:RestrictAccess a score:ControlStrategy ;
+    rdfs:description "Management elects to closely monitor and restrict access, to ensure unknown parties do not find their way into the laboratory."@en ;
+    score:has_control my:CCTVAcrossLab, my:CCTVAgainstFirewall ;
+    score:has_likelihood my:InitialCauseMostLikely .
+    
+my:FinalResortStrategy a score:ControlStrategy ;
+    rdfs:description "The systems in the laboratory become unusable. The employees panic and turn everything off."@en ;
+    score:has_control my:TurnOffSSHBastion, my:TurnOffCoreVPN ;
+    score:has_likelihood my:InitialCauseLeastLikely .
+    
+my:DeployCCTV a score:AssetControl ;
+    rdfs:description "CCTV is deployed, looking at particular assets in the laboratory."@en .
+my:CCTVAcrossLab a score:AssetControl, my:DeployCCTV ;
+    rdfs:description "CCTV is deployed at strategic location. This is designed to watch usage of the communal laptop, which moves around the laboratory as different employees use it. Hence this asset control really concerns the laptop."@en ;
+    score:has_likelihood my:InitialCauseMostLikely .
+my:CCTVAgainstFirewall a score:AssetControl ;
+    rdfs:description "CCCV focuses on the core VPN, especially serial ports which have poor access control."@en ;
+    score:has_likelihood my:InitialCauseMostLikely .
+    
+my:TurnOffMachine a score:AssetControl .
+my:TurnOffSSHBastion a score:AssetControl ;#my:TurnOffMachine, score:AssetControl ;
+    score:has_likelihood my:InitialCauseLeastLikely .
+my:TurnOffCoreVPN a score:AssetControl ;#my:TurnOffMachine, score:AssetControl ;
+    score:has_likelihood my:InitialCauseMediumLikely .
+    
 
 #my:interface_flapping a score:BehaviourAttribute .
 #my:high_CPU_load a score:BehaviourAttribute .
@@ -121,10 +148,14 @@ my:NetworkInterfaceRaceCondition a score:AssetBehaviour ;
 my:SSHBastion
     score:has_property my:SSHBastionReachability ;
     score:has_property my:NetworkInterfaceUnderLoad .
-
+    
 my:CoreVPN
     score:has_property my:PortsProtected ;
-    score:has_property my:NetworkInterfaceRaceCondition .
+    score:has_property my:NetworkInterfaceRaceCondition ;
+    score:has_property my:CCTVAgainstFirewall .
+
+my:CommunalLaptop
+    score:has_property my:CCTVAcrossLab .
     
 my:laptop_accessed_from a score:AssetRelation ;
     rdfs:domain my:CommunalLaptop ;

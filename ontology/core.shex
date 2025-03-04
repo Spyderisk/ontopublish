@@ -10,22 +10,24 @@ PREFIX scoresh: <http://ontology.spyderisk.org/sh/core#>
 # Structural entities
 
 scoresh:StructuralEntityShape {
-    a [ score:StructuralEntity ]? ;
-    a [ score:AssetRelation score:Asset ] ;
+    #a [ score:StructuralEntity ]? ;
+    #a [ score:AssetRelation score:Asset ] ;
     rdfs:label       rdf:langString? ;
     rdfs:description rdf:langString? ;
 }
 scoresh:TargetSystemShape {
-    a [ score:TargetSystem ] ;
+    #a [ score:TargetSystem ] ;
     score:has_structure @scoresh:AssetShape* ;
     score:has_structure @scoresh:AssetRelationShape* ;
 }
 scoresh:AssetShape {
-    a [ score:Asset ] ;
-    score:has_property @scoresh:AssetPropertyShape* ;
+    #a [ score:Asset ] ;
+    score:has_property @scoresh:AssetControlShape* ;
+    score:has_property @scoresh:AssetBehaviourShape* ;
+    score:has_property @scoresh:AssetTrustworthinessShape* ;
 }
 scoresh:AssetRelationShape {
-    a [ score:AssetRelation ] ;
+    #a [ score:AssetRelation ] ;
     rdfs:domain        @scoresh:AssetShape ;
     rdfs:range         @scoresh:AssetShape ;
 }
@@ -33,29 +35,29 @@ scoresh:AssetRelationShape {
 
 
 # Organisational entities
-
+#
 # N.B. this is restricted to a type, a broad class of assets.
-scoresh:OrganisationalEntityShape {
-    a [ score:OrganisationalEntity ] ;
-    score:takes_attribute  @scoresh:RoleAttributeShape ;
-    score:restricted_to    @scoresh:AssetShape? ;
-}
-scoresh:RoleAttributeShape {
-    a [ score:RoleAttribute ] ;
-}
+#scoresh:OrganisationalEntityShape {
+#    a [ score:OrganisationalEntity ] ;
+#    score:takes_attribute  @scoresh:RoleAttributeShape ;
+#    score:restricted_to    @scoresh:AssetShape? ;
+#}
+#scoresh:RoleAttributeShape {
+#    a [ score:RoleAttribute ] ;
+#}
 
 
 
 # Causal entities
 
 scoresh:CausalEntityShape {
-    a [ score:CausalEntity ]? ;
-    a [ score:Threat score:ThreatCause score:ControlStrategy score:AssetProperty ] ;
+    #a [ score:CausalEntity ]? ;
+    #a [ score:Threat score:ThreatCause score:ControlStrategy score:AssetProperty ] ;
     score:has_likelihood @scoresh:LikelihoodComponentShape ;
 }
 
 scoresh:LikelihoodShape {
-    a [ skos:ConceptScheme ]+ ;
+    a [ skos:ConceptScheme ] ;
 }
 scoresh:LikelihoodComponentShape {
     a [ skos:Concept score:Likelihood ] ;
@@ -63,7 +65,7 @@ scoresh:LikelihoodComponentShape {
 }
 
 scoresh:ThreatShape {
-    a [ score:Threat ] ;
+    #a [ score:Threat ] ;
     score:incorporates_role @scoresh:OrganisationalEntityShape ;
     score:caused_by         @scoresh:ThreatCauseShape? ;
     score:triggered_by      @scoresh:ControlStrategyShape* ;
@@ -71,32 +73,35 @@ scoresh:ThreatShape {
 }
 
 scoresh:ThreatCauseShape {
-    a [ score:ThreatCause ] ;
+    #a [ score:ThreatCause ] ;
     score:has_likelihood @scoresh:LikelihoodComponentShape ;
 }
 scoresh:ControlStrategyShape {
-    a [ score:ControlStrategy ] ;
-    scoresh:has_control  @scoresh:ControlShape ;
+    #a [ score:ControlStrategy ] ;
+    scoresh:has_control  @scoresh:AssetControlShape* ;
     score:has_likelihood @scoresh:LikelihoodComponentShape ;
 }
-scoresh:ControlShape {
-    a [ score:AssetControl ] ;
-    score:has_likelihood @scoresh:LikelihoodComponentShape ;
-}
-scoresh:AssetPropertyShape {
-    a [ score:AssetProperty ]? ;
-    a [ score:AssetControl score:AssetBehaviour score:AssetTrustworthiness ] ;
+
+
+#scoresh:AssetPropertyShape {
+#    a [ score:AssetProperty ]? ;
+#    a [ score:AssetControl score:AssetBehaviour score:AssetTrustworthiness ] ;
+#    score:has_likelihood @scoresh:LikelihoodComponentShape ;
+#}
+
+scoresh:AssetControlShape {
+    #a [ score:AssetControl ] ;
     score:has_likelihood @scoresh:LikelihoodComponentShape ;
 }
 
 scoresh:AssetBehaviourShape {
-    a [ score:AssetBehaviour ] ;
+    #a [ score:AssetBehaviour ] ;
     score:undermines     @scoresh:AssetTrustworthinessShape? ;
     score:has_likelihood @scoresh:LikelihoodComponentShape ;
 }
 
 scoresh:AssetTrustworthinessShape {
-    a [ score:AssetTrustworthiness ] ;
+    #a [ score:AssetTrustworthiness ] ;
     score:has_likelihood @scoresh:LikelihoodComponentShape ;
 }
 
