@@ -46,41 +46,41 @@ my:AccessProvided a score:ThreatCause ;
 
 my:AttackerGivenAccessToWorkstation a my:AccessProvided, score:ThreatCause ;
     rdfs:label "attacker given access to a workstation"@en ;
-    score:has_likelihood my:InitialCauseMostLikely .
+    score:has_likelihood my:MostLikely .
 
 my:ScriptDeployment a score:ThreatCause ;
     rdfs:description "General script deployment threat cause, by an attacker. The idea is that deployment of a script *at* different assets would have different likelihoods. They are different things, but they are related."@en .
     
 my:ScriptDeployedAtFirewall a my:ScriptDeployment, score:ThreatCause ;
     rdfs:label "attacker deploys malicious script at firewall"@en ;
-    score:has_likelihood my:InitialCauseLeastLikely .
+    score:has_likelihood my:LeastLikely .
 
 my:FriendOfEmployees a score:ThreatCause ;
     rdfs:label "threat is caused by employees letting their friend in"@en ;
     rdfs:description "We don't necessarily need to elaborate on all concepts, as we do for the two instances above. This example is simply a threat cause, perhaps it stands on its own, and we don't know enough to say any more about whether there are other threat causes which are context (appearing with different likelihoods at different assets) dependent."@en ;
-    score:has_likelihood my:InitialCauseMediumLikely .
+    score:has_likelihood my:MediumLikely .
 
-my:InitialCauseLikelihoodScheme a skos:ConceptScheme .
+my:LikelihoodScheme a skos:ConceptScheme .
 
-my:InitialCauseMostLikely a skos:Concept ;
-    skos:inScheme my:InitialCauseLikelihoodScheme .
-my:InitialCauseMediumLikely a skos:Concept ;
-    skos:inScheme my:InitialCauseLikelihoodScheme .
-my:InitialCauseLeastLikely a skos:Concept ;
-    skos:inScheme my:InitialCauseLikelihoodScheme .
+my:MostLikely a skos:Concept ;
+    skos:inScheme my:LikelihoodScheme .
+my:MediumLikely a skos:Concept ;
+    skos:inScheme my:LikelihoodScheme .
+my:LeastLikely a skos:Concept ;
+    skos:inScheme my:LikelihoodScheme .
     
 my:NetworkTrafficFromWorkstation a score:Threat ;
     rdfs:label "intense network traffic from workstation"@en ;
     score:incorporates_role my:PrimaryThreatRole ;
     score:has_cause my:AttackerGivenACcessToWorkstation ;
-    score:has_likelihood my:InitialCauseMostLikely .
+    score:has_likelihood my:MostLikely .
     
 my:ScriptOnFirewall a score:Threat ;
     rdfs:label "attacker's script running on firewall"@en ;
     rdfs:description "A script running at a high level on a firewall. Firewall rules applying to the rest of the network can be subverted. Further, the attacker resorts to this strategy after their previous access to the firewall over serial port becomes impossible (CCTV now watches it)."@en ;
     score:incorporates_role my:SecondaryThreatRole ;
     score:has_cause my:ScriptDeployedAtFirewall ;
-    score:has_likelihood my:InitialCauseLeastLikely ;
+    score:has_likelihood my:LeastLikely ;
     score:triggered_by my:RestrictAccess .
     
 my:UnknownFriendOfEmployees a score:Threat ;
@@ -88,41 +88,41 @@ my:UnknownFriendOfEmployees a score:Threat ;
     rdfs:description "this person sometimes finds their way into the lab"@en ;
     score:incorporates_role my:VagueThreatRole ;
     score:has_cause my:FriendOfEployees ;
-    score:has_likelihood my:InitialCauseMediumLikely .
+    score:has_likelihood my:MediumLikely .
 
 my:RestrictAccess a score:ControlStrategy ;
     rdfs:description "Management elects to closely monitor and restrict access, to ensure unknown parties do not find their way into the laboratory."@en ;
     score:has_control my:CCTVAcrossLab, my:CCTVAgainstFirewall ;
-    score:has_likelihood my:InitialCauseMostLikely .
+    score:has_likelihood my:MostLikely .
     
 my:FinalResortStrategy a score:ControlStrategy ;
     rdfs:description "The systems in the laboratory become unusable. The employees panic and turn everything off."@en ;
     score:has_control my:TurnOffSSHBastion, my:TurnOffCoreVPN ;
-    score:has_likelihood my:InitialCauseLeastLikely .
+    score:has_likelihood my:LeastLikely .
     
 my:DeployCCTV a score:AssetControl ;
     rdfs:description "CCTV is deployed, looking at particular assets in the laboratory."@en .
 my:CCTVAcrossLab a score:AssetControl, my:DeployCCTV ;
     rdfs:description "CCTV is deployed at strategic location. This is designed to watch usage of the communal laptop, which moves around the laboratory as different employees use it. Hence this asset control really concerns the laptop."@en ;
-    score:has_likelihood my:InitialCauseMostLikely .
+    score:has_likelihood my:MostLikely .
 my:CCTVAgainstFirewall a score:AssetControl ;
     rdfs:description "CCCV focuses on the core VPN, especially serial ports which have poor access control."@en ;
-    score:has_likelihood my:InitialCauseMostLikely .
+    score:has_likelihood my:MostLikely .
     
 my:TurnOffMachine a score:AssetControl .
 my:TurnOffSSHBastion a score:AssetControl ;#my:TurnOffMachine, score:AssetControl ;
-    score:has_likelihood my:InitialCauseLeastLikely .
+    score:has_likelihood my:LeastLikely .
 my:TurnOffCoreVPN a score:AssetControl ;#my:TurnOffMachine, score:AssetControl ;
-    score:has_likelihood my:InitialCauseMediumLikely .
+    score:has_likelihood my:MediumLikely .
     
 
 #my:interface_flapping a score:BehaviourAttribute .
 #my:high_CPU_load a score:BehaviourAttribute .
 my:SSHBastionReachability a score:AssetTrustworthiness ;
-    score:has_likelihood my:InitialCauseMostLikely .
+    score:has_likelihood my:MostLikely .
     
 my:PortsProtected a score:AssetTrustworthiness ;
-    score:has_likelihood my:InitialCauseMostLikely .
+    score:has_likelihood my:MostLikely .
 
 # Defined like this for reusability, even though we may only use it once
 #my:manifest_interface_flapping a score:undermines ;
@@ -138,12 +138,12 @@ my:PortsProtected a score:AssetTrustworthiness ;
 my:NetworkInterfaceUnderLoad a score:AssetBehaviour ;
     #my:manifest_flapping_interface my:SSHBastionReachability .
     score:undermines my:SSHBastionReachability ;
-    score:has_likelihood my:InitialCauseMostLikely .
+    score:has_likelihood my:MostLikely .
     
 my:NetworkInterfaceRaceCondition a score:AssetBehaviour ;
     #my:manifest_high_CPU_load my:PortsProtected .
     score:undermines my:PortsProtected ;
-    score:has_likelihood my:InitialCauseLeastLikely .
+    score:has_likelihood my:LeastLikely .
         
 my:SSHBastion
     score:has_property my:SSHBastionReachability ;
