@@ -161,7 +161,7 @@ score:undermines a rdf:Property ;
     
 score:Likelihood a rdfs:Class, skos:ConceptScheme ;
     rdfs:label "likelihood"@en ;
-    rdfs:description "Likelihood property taken by causal (non-structural) entities. Definition of the scheme, including any applicable order, is specific to the domain model."@en .
+    rdfs:description "Likelihood property taken by causal (non-structural) entities. Definition of the scheme, including any applicable order, is specific to the causal model solver."@en .
     
 score:has_likelihood a rdf:Property ;
     rdfs:label "likelihood"@en ;
