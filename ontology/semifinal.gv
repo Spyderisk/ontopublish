@@ -1,13 +1,13 @@
 digraph SemiFinal {
-    //graph [fontname = "U001" fontsize="14" dpi=300 margin=0];
-    //node [fontname = "U001" fontsize="14"];
-    //edge [fontname = "U001" fontsize="14"];
+    // graph [fontname = "U001" fontsize="14" dpi=300];
+    // node [fontname = "U001" fontsize="14"];
+    // edge [fontname = "U001" fontsize="14"];
 
     node [shape="box"]
     edge [arrowhead="vee"]
 
     subgraph cluster0 {
-	label=< <B>Causal entities</B> >
+	label=<<B>Causal entities</B>>
 	
 	CausalEntity [label="Causal entity"]
 	Likelihood [label="Likelihood"]
@@ -16,41 +16,32 @@ digraph SemiFinal {
 	ThreatCause [label="Threat cause"]
 	ControlStrategy [label="Control strategy"]
 	AssetProperty [label="Asset property"]
-	Control [label="Control"]
 	{
 	    rank=same
+	    AssetControl [label="Asset control"]
 	    AssetTrustworthiness [label="Asset trustworthiness"]
-	    virtual [shape=point style=invis]
-	    AssetBehaviour [label="Asset behaviour /\nthreat effect"]
+	    AssetBehaviour [label="Asset behaviour /\nthreat effect"]	    
 	}
-	AssetBehaviour -> virtual [headclip=false label="undermines" dir=none]
-	virtual -> AssetTrustworthiness [tailclip=false dir=forward headlabel="    card.= 1"]
+	AssetBehaviour -> AssetTrustworthiness [label="undermines" headlabel="card.=1"]
     
 	// Causal entity class hierarchy
 	Threat -> CausalEntity [label="sub-class of"]
 	ThreatCause -> CausalEntity [label="sub-class of"]
 	AssetProperty -> CausalEntity [label="sub-class of"]
 	ControlStrategy -> ThreatCause [label="sub-class of"]
-	Control -> AssetProperty [label="sub-class of"]
+	AssetControl -> AssetProperty [label="sub-class of"]
 	AssetTrustworthiness -> AssetProperty [label="sub-class of"]
-	AssetBehaviour -> AssetProperty [label="sub-class of" constraint="false"]
+	AssetBehaviour -> AssetProperty [label="sub-class of"]
 
 	// Causal entities relations
 	CausalEntity -> Likelihood [label="has"]
 	Threat -> ThreatCause [label="caused by"]
-	ControlStrategy -> Control [label="has"]
-	Threat -> ControlStrategy [label="triggered by" headlabel="card.= 0..n  "]
+	ControlStrategy -> AssetControl [label="has"]
+	Threat -> ControlStrategy [label="triggered by" headlabel="card.=0..n    "]
 	Threat -> AssetBehaviour [label="induces"]
-
-	// 'External' relations which should be declared here so that the nodes don't get put in the other subgraphs.
-	
-	node[shape=oval] {
-	    BehaviourAttribute [label="behaviour attribute"]
-	    virtual -> BehaviourAttribute [label="via" tailclip=false headlabel="  card.= 1"]
-	}
     }
     subgraph cluster1 {
-	label=< <B>Structural entities</B> >
+	label=<<B>Structural entities</B>>
 	
 	StructuralEntity [label="Structural entity"]
 	Asset [label="Asset"]
@@ -59,18 +50,10 @@ digraph SemiFinal {
 	TargetSystem -> StructuralEntity [label="has structure"]
 	Asset -> StructuralEntity [label="sub-class of"]
 	AssetRelation -> StructuralEntity [label="sub-class of"]
-	AssetRelation -> Asset [label="domain" constraint="false"]
-	AssetRelation -> Asset [label="range" constraint="false"]
+	AssetRelation -> Asset [label="links from" constraint="false"]
+	AssetRelation -> Asset [label="links to" constraint="false"]
 	Asset -> AssetProperty [label="has property"]
-    }
-
-    subgraph cluster2 {
-	label=< <B>Organisational entities</B> >
 	
-	OrganisationalEntity [label="Organisational entity /\nthreat role"]
-	RoleAttribute [label="Role"]
-	OrganisationalEntity -> RoleAttribute [label="primarily\nworking on" constraint="false"]
-	OrganisationalEntity -> Asset [label="further\nrestricted to" constraint="false"]
-	Threat -> OrganisationalEntity [label="organised with" constraint="false"]
+	Threat -> Asset [label="involves"]
     }
 }
