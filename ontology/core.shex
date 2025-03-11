@@ -28,8 +28,8 @@ scoresh:AssetShape {
 }
 scoresh:AssetRelationShape {
     #a [ score:AssetRelation ] ;
-    rdfs:domain        @scoresh:AssetShape ;
-    rdfs:range         @scoresh:AssetShape ;
+    score:links_from  @scoresh:AssetShape ;
+    score:links_to    @scoresh:AssetShape ;
 }
 
 
