@@ -212,7 +212,7 @@
        (default-type-pairs '(("text/turtle" . "ttl")
                              ("text/shex" . "shex")
                              ("application/n-triples" . "nt")
-                             ("application/rdf+xml" . "rdf")))
+                             ("application/rdf\\+xml" . "rdf")))
        (vsn-regexp (make-regexp "^[0-9]+.[0-9]+.[0-9]+$"))
        (get-vsn (lambda (last-version)
                   (cond ((not last-version) last-version)

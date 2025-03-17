@@ -11,5 +11,5 @@ RewriteCond %{HTTP_ACCEPT} text/turtle
 RewriteRule ^([A-z0-9-_^/]+)$ $1.ttl [R=303,L]
 RewriteCond %{HTTP_ACCEPT} application/n-triples
 RewriteRule ^([A-z0-9-_^/]+)$ $1.nt [R=303,L]
-RewriteCond %{HTTP_ACCEPT} application/rdf+xml
+RewriteCond %{HTTP_ACCEPT} application/rdf\+xml
 RewriteRule ^([A-z0-9-_^/]+)$ $1.rdf [R=303,L]
