@@ -17,38 +17,20 @@ my:CommunalLaptop a score:Asset ;
 my:Laboratory a score:TargetSystem ;
     rdfs:label "scientific laboratory full of computer equipment"@en ;
     score:has_structure my:SSHBastion, my:CoreVPN, my:CommunalLaptop .
-    
-my:InAttackersWorkstationCollection a score:RoleAttribute ;
-    rdf:value "In attacker's workstation collection" .
-my:InEmployersWorkstationCollection a score:RoleAttribute ;
-    rdf:value "In attacker's employer's workstation collection" .
-my:SharingAccess a score:RoleAttribute ;
-    rdf:value "Employee(s) share their access with third party" .
-
-my:PrimaryThreatRole a score:OrganisationalEntity ;
-    score:takes_attribute my:InAttackersWorkstationCollection ;
-    score:restricted_to my:SSHBastion .
-
-my:SecondaryThreatRole a score:OrganisationalEntity ;
-    score:takes_attribute my:InEmployersWorkstationCollection ;
-    score:restricted_to my:CoreVPN .
-
-my:VagueThreatRole a score:OrganisationalEntity ;
-    score:takes_attribute my:SharingAccess .
 
 # Demonstrate how to instantiate different concepts
 # The distinction between sub-class and instatiation is somewhat unclear.
 # The former case is really necessary for elaborating on things which
 # subsequent classes can inherit, whereas the latter works fairly well here
 # instead.
-my:AccessProvided a score:ThreatCause ;
+my:AccessProvided rdfs:subClassOf score:ThreatCause ;
     rdfs:description "General attacker given access to system cause. The idea is that being given access *at* different assets has differential meaning, depending on the asset. There is still a relation to generally being provided access, and indeed we can instantiate different types of access, e.g. non-malicious persons could be given access, and this cause can be elaborated on by RDF instances later."@en .
 
 my:AttackerGivenAccessToWorkstation a my:AccessProvided, score:ThreatCause ;
     rdfs:label "attacker given access to a workstation"@en ;
     score:has_likelihood my:MostLikely .
 
-my:ScriptDeployment a score:ThreatCause ;
+my:ScriptDeployment rdfs:subClassOf score:ThreatCause ;
     rdfs:description "General script deployment threat cause, by an attacker. The idea is that deployment of a script *at* different assets would have different likelihoods. They are different things, but they are related."@en .
     
 my:ScriptDeployedAtFirewall a my:ScriptDeployment, score:ThreatCause ;
@@ -68,17 +50,19 @@ my:MediumLikely a skos:Concept ;
     skos:inScheme my:LikelihoodScheme .
 my:LeastLikely a skos:Concept ;
     skos:inScheme my:LikelihoodScheme .
-    
+
 my:NetworkTrafficFromWorkstation a score:Threat ;
     rdfs:label "intense network traffic from workstation"@en ;
-    score:incorporates_role my:PrimaryThreatRole ;
+    score:involves my:SSHBastion ;
+    score:induces  my:NetworkInterfaceUnderLoad ;
     score:has_cause my:AttackerGivenACcessToWorkstation ;
     score:has_likelihood my:MostLikely .
     
 my:ScriptOnFirewall a score:Threat ;
     rdfs:label "attacker's script running on firewall"@en ;
     rdfs:description "A script running at a high level on a firewall. Firewall rules applying to the rest of the network can be subverted. Further, the attacker resorts to this strategy after their previous access to the firewall over serial port becomes impossible (CCTV now watches it)."@en ;
-    score:incorporates_role my:SecondaryThreatRole ;
+    score:involves my:CoreVPN ;
+    score:induces my:NetworkInterfaceRaceCondition ;
     score:has_cause my:ScriptDeployedAtFirewall ;
     score:has_likelihood my:LeastLikely ;
     score:triggered_by my:RestrictAccess .
@@ -86,7 +70,7 @@ my:ScriptOnFirewall a score:Threat ;
 my:UnknownFriendOfEmployees a score:Threat ;
     rdfs:label "unknown friend of one or more employees"@en ;
     rdfs:description "this person sometimes finds their way into the lab"@en ;
-    score:incorporates_role my:VagueThreatRole ;
+    score:involves score:CommunalLaptop ;
     score:has_cause my:FriendOfEployees ;
     score:has_likelihood my:MediumLikely .
 
@@ -110,38 +94,22 @@ my:CCTVAgainstFirewall a score:AssetControl ;
     score:has_likelihood my:MostLikely .
     
 my:TurnOffMachine a score:AssetControl .
-my:TurnOffSSHBastion a score:AssetControl ;#my:TurnOffMachine, score:AssetControl ;
+my:TurnOffSSHBastion a score:AssetControl ;
     score:has_likelihood my:LeastLikely .
-my:TurnOffCoreVPN a score:AssetControl ;#my:TurnOffMachine, score:AssetControl ;
+my:TurnOffCoreVPN a score:AssetControl ;
     score:has_likelihood my:MediumLikely .
     
-
-#my:interface_flapping a score:BehaviourAttribute .
-#my:high_CPU_load a score:BehaviourAttribute .
 my:SSHBastionReachability a score:AssetTrustworthiness ;
     score:has_likelihood my:MostLikely .
     
 my:PortsProtected a score:AssetTrustworthiness ;
     score:has_likelihood my:MostLikely .
-
-# Defined like this for reusability, even though we may only use it once
-#my:manifest_interface_flapping a score:undermines ;
-#    rdfs:domain score:AssetBehaviour ;
-#    rdfs:range  score:AssetTrustworthiness ;
-#    score:via   my:interface_flapping .
-#
-#my:manifest_high_CPU_load a score:undermines ;
-#    rdfs:domain score:AssetBehaviour ;
-#    rdfs:range  score:AssetTrustworthiness ;
-#    score:via   my:high_CPU_load .
     
 my:NetworkInterfaceUnderLoad a score:AssetBehaviour ;
-    #my:manifest_flapping_interface my:SSHBastionReachability .
     score:undermines my:SSHBastionReachability ;
     score:has_likelihood my:MostLikely .
     
 my:NetworkInterfaceRaceCondition a score:AssetBehaviour ;
-    #my:manifest_high_CPU_load my:PortsProtected .
     score:undermines my:PortsProtected ;
     score:has_likelihood my:LeastLikely .
         
@@ -160,3 +128,5 @@ my:CommunalLaptop
 my:laptop_accessed_from a score:AssetRelation ;
     rdfs:domain my:CommunalLaptop ;
     rdfs:range  my:SSHBastion .
+
+

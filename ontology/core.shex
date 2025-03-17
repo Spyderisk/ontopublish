@@ -16,48 +16,30 @@ scoresh:StructuralEntityShape {
     rdfs:description rdf:langString? ;
 }
 scoresh:TargetSystemShape {
-    #a [ score:TargetSystem ] ;
     score:has_structure @scoresh:AssetShape* ;
     score:has_structure @scoresh:AssetRelationShape* ;
 }
 scoresh:AssetShape {
-    #a [ score:Asset ] ;
     score:has_property @scoresh:AssetControlShape* ;
     score:has_property @scoresh:AssetBehaviourShape* ;
     score:has_property @scoresh:AssetTrustworthinessShape* ;
 }
 scoresh:AssetRelationShape {
-    #a [ score:AssetRelation ] ;
     score:links_from  @scoresh:AssetShape ;
     score:links_to    @scoresh:AssetShape ;
 }
-
-
-
-# Organisational entities
-#
-# N.B. this is restricted to a type, a broad class of assets.
-#scoresh:OrganisationalEntityShape {
-#    a [ score:OrganisationalEntity ] ;
-#    score:takes_attribute  @scoresh:RoleAttributeShape ;
-#    score:restricted_to    @scoresh:AssetShape? ;
-#}
-#scoresh:RoleAttributeShape {
-#    a [ score:RoleAttribute ] ;
-#}
-
-
 
 # Causal entities
 
 scoresh:CausalEntityShape {
     #a [ score:CausalEntity ]? ;
     #a [ score:Threat score:ThreatCause score:ControlStrategy score:AssetProperty ] ;
-    score:has_likelihood @scoresh:LikelihoodComponentShape ;
+    score:has_likelihood @scoresh:LikelihoodComponentShape? ;
 }
 
 scoresh:LikelihoodShape {
     a [ skos:ConceptScheme ] ;
+    a [ score:Likelihood ]? ;
 }
 scoresh:LikelihoodComponentShape {
     a [ skos:Concept score:Likelihood ] ;
@@ -65,63 +47,30 @@ scoresh:LikelihoodComponentShape {
 }
 
 scoresh:ThreatShape {
-    #a [ score:Threat ] ;
-    score:incorporates_role @scoresh:OrganisationalEntityShape ;
+    score:involves          @scoresh:AssetShape* ;
+    score:induces           @scoresh:AssetBehaviourShape* ;
     score:caused_by         @scoresh:ThreatCauseShape? ;
     score:triggered_by      @scoresh:ControlStrategyShape* ;
-    score:has_likelihood    @scoresh:LikelihoodComponentShape ;
+    score:has_likelihood    @scoresh:LikelihoodComponentShape? ;
 }
 
 scoresh:ThreatCauseShape {
-    #a [ score:ThreatCause ] ;
-    score:has_likelihood @scoresh:LikelihoodComponentShape ;
+    score:has_likelihood @scoresh:LikelihoodComponentShape? ;
 }
 scoresh:ControlStrategyShape {
-    #a [ score:ControlStrategy ] ;
     scoresh:has_control  @scoresh:AssetControlShape* ;
-    score:has_likelihood @scoresh:LikelihoodComponentShape ;
+    score:has_likelihood @scoresh:LikelihoodComponentShape? ;
 }
 
-
-#scoresh:AssetPropertyShape {
-#    a [ score:AssetProperty ]? ;
-#    a [ score:AssetControl score:AssetBehaviour score:AssetTrustworthiness ] ;
-#    score:has_likelihood @scoresh:LikelihoodComponentShape ;
-#}
-
 scoresh:AssetControlShape {
-    #a [ score:AssetControl ] ;
-    score:has_likelihood @scoresh:LikelihoodComponentShape ;
+    score:has_likelihood @scoresh:LikelihoodComponentShape? ;
 }
 
 scoresh:AssetBehaviourShape {
-    #a [ score:AssetBehaviour ] ;
     score:undermines     @scoresh:AssetTrustworthinessShape? ;
-    score:has_likelihood @scoresh:LikelihoodComponentShape ;
+    score:has_likelihood @scoresh:LikelihoodComponentShape? ;
 }
 
 scoresh:AssetTrustworthinessShape {
-    #a [ score:AssetTrustworthiness ] ;
-    score:has_likelihood @scoresh:LikelihoodComponentShape ;
+    score:has_likelihood @scoresh:LikelihoodComponentShape? ;
 }
-
-# Behaviour/trustworthiness interaction
-#
-# The inverse triple constraint here says that every valid
-# BehaviourAttribute must have an edge from some `undermines' edge.
-# We can't say the opposite because these edges attribute particular
-# edges which are `score:undermines' edges (e.g. `my:rel rdf:type
-# score:undermines') but cannot have the identifier `score:undermines'.
-# This is where we're really coming up against RDF's poor support for
-# making statements about statements, and there is surely a better way.
-#
-#scoresh:underminesShape {
-#    a [ score:undermines ] ;
-#    rdfs:domain [ score:AssetBehaviour ] ;
-#    rdfs:range  [ score:AssetTrustworthiness ] ;
-#}
-#
-#scoresh:BehaviourAttributeShape {
-#    a [ score:BehaviourAttribute ];
-#    ^score:via @scoresh:underminesShape? ;
-#}
