@@ -49,7 +49,7 @@ scoresh:LikelihoodComponentShape {
 scoresh:ThreatShape {
     score:involves          @scoresh:AssetShape* ;
     score:induces           @scoresh:AssetBehaviourShape* ;
-    score:caused_by         @scoresh:ThreatCauseShape? ;
+    score:caused_by         @scoresh:ThreatCauseShape+ ;
     score:triggered_by      @scoresh:ControlStrategyShape* ;
     score:has_likelihood    @scoresh:LikelihoodComponentShape? ;
 }
