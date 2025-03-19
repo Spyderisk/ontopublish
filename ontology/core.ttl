@@ -19,7 +19,7 @@ score:StructuralEntity a rdfs:Class, skos:Concept ;
     
 score:TargetSystem a rdfs:Class ;
     rdfs:label "target system"@en ;
-    rdfs:description "A target system is made up of structural entities, i.e. assets and relations between them"@en .
+    rdfs:comment "A target system is made up of structural entities, i.e. assets and relations between them"@en .
     
 score:has_structure a rdf:Property ;
     rdfs:label "target system contains structural entity"@en ;
@@ -75,7 +75,7 @@ score:has_control a rdf:Property ;
 
 score:AssetControl a rdfs:Class, skos:Concept ;
     skos:prefLabel "asset control property"@en ;
-    rdfs:description "Asset control property. Distinguished from other asset properties by being unaffected by threats."@en ;
+    rdfs:comment "Asset control property. Distinguished from other asset properties by being unaffected by threats."@en ;
     rdfs:subClassOf score:AssetProperty ;
     skos:inScheme   score:CausalEntityScheme ;
     skos:broaderTransitive score:AssetProperty .
@@ -87,7 +87,7 @@ score:triggered_by a rdf:Property ;
 
 score:AssetProperty a rdfs:Class, skos:Concept ;
     skos:prefLabel "asset property"@en ;
-    rdfs:description "General asset property class. Sub-classes elaborate on relation to threats: caused by, not caused by, unaffected by."@en ;
+    rdfs:comment "General asset property class. Sub-classes elaborate on relation to threats: caused by, not caused by, unaffected by."@en ;
     rdfs:subClassOf score:CausalEntity ;
     skos:inScheme   score:CausalEntityScheme ;
     skos:broaderTransitive score:CausalEntity .
@@ -103,7 +103,7 @@ score:asset_property a rdf:Property ;
 
 score:AssetTrustworthiness a rdfs:Class, skos:Concept ;
     skos:prefLabel "asset trust level"@en ;
-    rdfs:description "Asset trustworthiness attribute. Distinguished from other asset properties by not being caused by threats." @en ;
+    rdfs:comment "Asset trustworthiness attribute. Distinguished from other asset properties by not being caused by threats." @en ;
     rdfs:subClassOf score:AssetProperty, score:ThreatCause ;
     skos:inScheme   score:CausalEntityScheme ;
     skos:broaderTransitive score:AssetProperty .
@@ -116,23 +116,23 @@ score:induces a rdf:Property ;
 score:AssetBehaviour a rdfs:Class, skos:Concept ;
     skos:prefLabel  "asset behaviour"@en ;
     skos:altLabel "threat effect"@en ;
-    rdfs:description "Asset behaviour. Distinguished from other asset properties by being induced by threats, i.e. a threat effect."@en ;
+    rdfs:comment "Asset behaviour. Distinguished from other asset properties by being induced by threats, i.e. a threat effect."@en ;
     rdfs:subClassOf score:AssetProperty ;
     skos:inScheme   score:CausalEntityScheme ;
     skos:broaderTransitive score:AssetProperty .
 
 score:undermines a rdf:Property ;
     rdfs:label "behaviour undermines trust"@en ;
-    rdfs:description "Asset behaviour undermines trustworthiness attribute"@en ;
+    rdfs:comment "Asset behaviour undermines trustworthiness attribute"@en ;
     rdfs:domain score:AssetBehaviour ;
     rdfs:range  score:AssetTrustworthiness .
     
 score:Likelihood a rdfs:Class, skos:ConceptScheme ;
     rdfs:label "likelihood"@en ;
-    rdfs:description "Likelihood property taken by causal (non-structural) entities. Definition of the scheme, including any applicable order, is specific to the causal model solver."@en .
+    rdfs:comment "Likelihood property taken by causal (non-structural) entities. Definition of the scheme, including any applicable order, is specific to the causal model solver."@en .
     
 score:has_likelihood a rdf:Property ;
     rdfs:label "likelihood"@en ;
-    rdfs:description "Entity has likelihood. It is a causal entity."@en ;
+    rdfs:comment "Entity has likelihood. It is a causal entity."@en ;
     rdfs:domain score:CausalEntity ;
     rdfs:range  score:Likelihood .

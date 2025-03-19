@@ -43,7 +43,7 @@
 
 send:Version a rdfs:Class ;
     rdfs:label "versioning scheme"@en ;
-    rdfs:description "Version should be of form MAJOR.MINOR.PATCH, components numeric. This is consistent with the 'semantic versioning' scheme for software."@en .
+    rdfs:comment "Version should be of form MAJOR.MINOR.PATCH, components numeric. This is consistent with the 'semantic versioning' scheme for software."@en .
 
 send:major_component a rdf:Property ;
     rdfs:domain send:Version ;
@@ -62,19 +62,19 @@ send:string_representation a rdf:Property ;
     rdfs:domain send:Version ;
     rdfs:range  xsd:string ;
     rdfs:label "version represented as string"@en ;
-    rdfs:description "String representation of the version. This is distinct from the three semantic components (major, minor, patch) as it may include annotations like the version being a release candidate. The string represntation should be seen as implementation-specific, and should not be used to compare different versions."@en .
+    rdfs:comment "String representation of the version. This is distinct from the three semantic components (major, minor, patch) as it may include annotations like the version being a release candidate. The string represntation should be seen as implementation-specific, and should not be used to compare different versions."@en .
     
 send:recorded_as a rdf:Property ;
     rdfs:domain send:Version ;
     rdfs:range  send:Version ;
     rdfs:label "version is recorded in history"@en ;
-    rdfs:description "The identifier as recorded in a log of versions (history). This is in addition to the identifier in an RDF graph, because it may there be a blank node, whereas in history it would probably not be."@en .
+    rdfs:comment "The identifier as recorded in a log of versions (history). This is in addition to the identifier in an RDF graph, because it may there be a blank node, whereas in history it would probably not be."@en .
 
 send:see_previous a rdf:Property ;
     rdfs:domain send:Version ;
     rdfs:range  send:Version ;
     rdfs:label "see previous version"@en ;
-    rdfs:description "Point to a previous version. This must be less than the current version according to the semantics of the 'semantic versioning' scheme, but it is not necessarily one of the components of the scheme incremented by one."@en .
+    rdfs:comment "Point to a previous version. This must be less than the current version according to the semantics of the 'semantic versioning' scheme, but it is not necessarily one of the components of the scheme incremented by one."@en .
 send:see_also a rdf:Property ;
     rdfs:domain send:Version ;
     rdfs:range  send:Version ;
@@ -93,12 +93,12 @@ send:applies_to a rdf:Property ;
     rdfs:domain send:Version ;
     rdfs:range  rdfg:Graph ;
     rdfs:label "applies to RDF graph" ;
-    rdfs:description "This version applies to specific RDF graph. Normative practice is to serve the latest version of an RDF vocabulary or instance data at a URI which does not include the version number."@en .
+    rdfs:comment "This version applies to specific RDF graph. Normative practice is to serve the latest version of an RDF vocabulary or instance data at a URI which does not include the version number."@en .
 send:applies_also a rdf:Property ;
     rdfs:domain send:Version ;
     rdfs:range  rdfg:Graph ;
     rdfs:label "also applies to RDF graph"@en ;
-    rdfs:description "This version applies to an RDF graph, which may not be the latest version. This supports situations where an RDF vocabulary or instance data is served at a different URI, such as a PURL or archive service. It also in deals with configurations like release candidates, where the version number has not been incremented, but changes may fix broken syntax, not semantics."@en .
+    rdfs:comment "This version applies to an RDF graph, which may not be the latest version. This supports situations where an RDF vocabulary or instance data is served at a different URI, such as a PURL or archive service. It also in deals with configurations like release candidates, where the version number has not been incremented, but changes may fix broken syntax, not semantics."@en .
 
 send:has_version a rdf:Property ;
     rdfs:domain rdfg:Graph ;
