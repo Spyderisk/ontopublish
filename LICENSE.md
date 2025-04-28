@@ -1,7 +1,8 @@
 # Short summary
 
 Ontopublish is licensed under the Apache 2.0 license, with documentation under Creative Commons, and any other licenses as
-required by open source projects we reuse.
+required by open source projects we reuse. RDF schema data, ShEx constraints and example RDF instance data are also 
+licensed under Creative Commons.
 
 The site [TL;DR Legal](https://www.tldrlegal.com/license/apache-license-2-0-apache-2-0)
 summarises the Apache license as:
