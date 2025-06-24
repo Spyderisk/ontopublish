@@ -1,0 +1,8 @@
+@prefix score: <http://ontology.spyderisk.org/ns/core#> .
+
+# query
+{
+    ?WHO a score:Threat.
+} => {
+    ?WHO a score:Threat.
+}.

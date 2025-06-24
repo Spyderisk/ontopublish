@@ -1,0 +1,479 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix score: <http://ontology.spyderisk.org/ns/core#> .
+
+@prefix test1: <http://surridge.net/ns/testcase1#> .
+
+# Really this is part of a domain model, since it defines 'generic' types of entities of which there are different cases in the system.
+# I included it to see how this might work, but here it is encoded as part of the system model.
+#
+# Note that a full domain model would include a specification of
+# - the asset roles and relationships in each threat
+# - the effects of each threat related to asset roles and Behaviour types
+# - the causes of each threat related to asset roles and Behaviour or TWA types
+# - the causes of each threat in terms of control strategy types
+# - the controls in each control strategy related to asset roles in the related threats
+# These details should be expressed in the form of inference rules allowing the causal model elements and their relationships to be deduced.
+# These rules would contain references to base classes of threats, assets, asset relationships, control strategies and controls.
+# Here, we have no structures for creating such rules, so they have been left out, leaving only the base classes for system model entities.
+
+test1:Space a rdfs:Class ;
+	rdfs:label "Space" ;
+	rdfs:description "Models a physical space" ;
+	rdfs:subClassOf score:Asset .
+
+test1:PublicSpace a rdfs:Class ;
+	rdfs:label "Public Space" ;
+	rdfs:description "Models a physical space with no restrictions on access" ;
+	rdfs:subClassOf test1:Space .
+
+test1:PrivateSpace a rdfs:Class ;
+	rdfs:label "Private Space" ;
+	rdfs:description "Models a physical space in which access is restricted to authorized people" ;
+	rdfs:subClassOf test1:Space .
+
+test1:Entrance a rdfs:Class ;
+	rdfs:label "Entrance" ;
+	rdfs:description "Models a means of moving between two physical spaces" ;
+	rdfs:subClassOf score:Asset .
+
+test1:from a rdfs:Class ;
+	rdfs:subClassOf score:asset_relation ;
+	rdfs:label "from" ;
+	rdfs:description "Refers from an Entrance to the space from which it allows movement" ;
+	rdfs:links_from test1:Entrance ;
+	rdfs:links_to  test1:Space .
+
+test1:to a rdfs:Class ;
+	rdfs:subClassOf score:asset_relation ;
+	rdfs:label "from" ;
+	rdfs:description "Refers from an Entrance to the space to which it allows movement" ;
+	rdfs:links_from test1:Entrance ;
+	rdfs:links_to  test1:Space .
+
+test1:PhysicalIntrusion a rdfs:Class ;
+	rdfs:subClassOf score:AssetBehaviour .
+
+test1:LossOfControl a rdfs:Class ;
+	rdfs:subClassOf score:AssetBehaviour .
+	
+test1:OccupantTW a rdfs:Class ;
+	rdfs:subClassOf score:AssetTrustworthiness .
+
+test1:PhysicalControl a rdfs:Class ;
+	rdfs:subClassOf score:AssetTrustworthiness .
+
+test1:PhysicalLock a rdfs:Class ;
+	rdfs:subClassOf score:AssetControl .
+
+test1:S.L.SS.3 a rdfs:Class ;
+	rdfs:subClassOf score:Threat .
+
+test1:LockedDoor a rdfs:Class ;
+	rdfs:subClassOf score:ControlStrategy .
+
+# This part is the structural system model, plus references to causal model elements
+
+## The target system
+
+test1:TestCase1 a score:TargetSystem ;
+	rdfs:label "Test Case 1" ;
+	rdfs:description "Simple model of spaces designed to test the core model" ;
+	score:has_structure test1:World ;
+	score:has_structure test1:Street ;
+	score:has_structure test1:Vestibule ;
+	score:has_structure test1:Office ;
+	score:has_structure test1:StrongRoom ;
+	score:has_structure test1:Barn ;
+	score:has_structure test1:World-to-Street ;
+	score:has_structure test1:Street-to-World ;
+	score:has_structure test1:Barn-to-Street ;
+	score:has_structure test1:Street-to-Barn ;
+	score:has_structure test1:Vestibule-to-Street ;
+	score:has_structure test1:Street-to-Vestibule ;
+	score:has_structure test1:Vestibule-to-Office ;
+	score:has_structure test1:Office-to-Vestibule ;
+	score:has_structure test1:StrongRoom-to-Office ;
+	score:has_structure test1:Office-to-StrongRoom ;
+	score:has_structure test1:World-to-Office ;
+	score:has_structure test1:Office-to-World ;
+	score:has_structure test1:from-World-to-Street ;
+	score:has_structure test1:to-Street-from-World ;
+	score:has_structure test1:from-Street-to-World ;
+	score:has_structure test1:to-World-from-Street ;
+	score:has_structure test1:from-Barn-to-Street ;
+	score:has_structure test1:to-Street-from-Barn ;
+	score:has_structure test1:from-Street-to-Barn ;
+	score:has_structure test1:to-Barn-from-Street ;
+	score:has_structure test1:from-Vestibule-to-Street ;
+	score:has_structure test1:to-Street-from-Vestibule ;
+	score:has_structure test1:from-Street-to-Vestibule ;
+	score:has_structure test1:to-Vestibule-from-Street ;
+	score:has_structure test1:from-Vestibule-to-Office ;
+	score:has_structure test1:to-Office-from-Vestibule ;
+	score:has_structure test1:from-Office-to-Vestibule ;
+	score:has_structure test1:to-Vestibule-from-Office ;
+	score:has_structure test1:from-StrongRoom-to-Office ;
+	score:has_structure test1:to-Office-from-StrongRoom ;
+	score:has_structure test1:from-Office-to-StrongRoom ;
+	score:has_structure test1:to-StrongRoom-from-Office ;
+	score:has_structure test1:from-StrongRoom-to-Office ;
+	score:has_structure test1:to-Office-from-StrongRoom ;
+	score:has_structure test1:from-Office-to-StrongRoom ;
+	score:has_structure test1:to-StrongRoom-from-Office .
+
+## The target system assets
+
+test1:World a test1:PublicSpace ;
+	rdfs:label "World" ;
+	rdfs:description "The global public space, i.e., all public space excluding that defined as a distinct space" ;
+	score:asset_property test1:World-OccupantTW	;
+	score:asset_property test1:World-PhysicalIntrusion .
+
+test1:Street a test1:PublicSpace ;
+	rdfs:label "Street" ;
+	rdfs:description "The street on which there is an office building and a barn" ;
+	score:asset_property test1:Street-OccupantTW ;
+	score:asset_property test1:Street-PhysicalIntrusion .
+
+test1:Vestibule a test1:PublicSpace ;
+	rdfs:label "Vestibule" ;
+	rdfs:description "The entrance to the office building" ;
+	score:asset_property test1:Vestibule-OccupantTW	;
+	score:asset_property test1:Vestibule-PhysicalIntrusion .
+
+test1:Office a test1:PrivateSpace ;
+	rdfs:label "Office" ;
+	rdfs:description "A room in the office building" ;
+	score:asset_property test1:Office-OccupantTW ;
+	score:asset_property test1:Office-PhysicalIntrusion .
+
+test1:StrongRoom a test1:PrivateSpace ;
+	rdfs:label "Strong Room" ;
+	rdfs:description "A room in the office building" ;
+	score:asset_property test1:StrongRoom-OccupantTW ;
+	score:asset_property test1:StrongRoom-PhysicalIntrusion .
+
+test1:Barn a test1:PrivateSpace ;
+	rdfs:label "Barn" ;
+	rdfs:description "A building used to store agricultural products" ;
+	score:asset_property test1:Barn-OccupantTW ;
+	score:asset_property test1:Barn-PhysicalIntrusion .
+
+test1:World-to-Street a test1:Entrance ;
+	rdfs:label "World-to-Street" ;
+	score:asset_property test1:World-to-Street-PhysicalControl ;
+	score:asset_property test1:World-to-Street-LossOfControl .
+
+test1:Street-to-World a test1:Entrance ;
+	rdfs:label "Street-to-World" ;
+	score:asset_property test1:Street-to-World-PhysicalControl ;
+	score:asset_property test1:Street-to-World-LossOfControl .
+
+test1:Barn-to-Street a test1:Entrance ;
+	rdfs:label "Barn-to-Street" ;
+	score:asset_property test1:Barn-to-Street-PhysicalControl ;
+	score:asset_property test1:Barn-to-Street-LossOfControl ;
+	score:asset_property test1:Barn-to-Street-PhysicalLock .
+
+test1:Street-to-Barn a test1:Entrance ;
+	rdfs:label "Street-to-Barn" ;
+	score:asset_property test1:Street-to-Barn-PhysicalControl ;
+	score:asset_property test1:Street-to-Barn-LossOfControl ;
+	score:asset_property test1:Street-to-Barn-PhysicalLock .
+
+test1:Vestibule-to-Street a test1:Entrance ;
+	rdfs:label "Vestibule-to-Street" ;
+	score:asset_property test1:Vestibule-to-Street-PhysicalControl ;
+	score:asset_property test1:Vestibule-to-Street-LossOfControl ;
+	score:asset_property test1:Vestibule-to-Street-PhysicalLock .
+
+test1:Street-to-Vestibule a test1:Entrance ;
+	rdfs:label "Street-to-Vestibule" ;
+	score:asset_property test1:Street-to-Vestibule-PhysicalControl ;
+	score:asset_property test1:Street-to-Vestibule-LossOfControl ;
+	score:asset_property test1:Street-to-Vestibule-PhysicalLock .
+
+test1:Vestibule-to-Office a test1:Entrance ;
+	rdfs:label "Vestibule-to-Office" ;
+	score:asset_property test1:Vestibule-to-Office-PhysicalControl ;
+	score:asset_property test1:Vestibule-to-Office-LossOfControl ;
+	score:asset_property test1:Vestibule-to-Office-PhysicalLock .
+
+test1:Office-to-Vestibule a test1:Entrance ;
+	rdfs:label "Office-to-Vestibule" ;
+	score:asset_property test1:Office-to-Vestibule-PhysicalControl ;
+	score:asset_property test1:Office-to-Vestibule-LossOfControl ;
+	score:asset_property test1:Office-to-Vestibule-PhysicalLock .
+
+test1:StrongRoom-to-Office a test1:Entrance ;
+	rdfs:label "StrongRoom-to-Office" ;
+	score:asset_property test1:StrongRoom-to-Office-PhysicalControl ;
+	score:asset_property test1:StrongRoom-to-Office-LossOfControl ;
+	score:asset_property test1:StrongRoom-to-Office-PhysicalLock .
+
+test1:Office-to-StrongRoom a test1:Entrance ;
+	rdfs:label "Office-to-StrongRoom" ;
+	score:asset_property test1:Office-to-StrongRoom-PhysicalControl ;
+	score:asset_property test1:Office-to-StrongRoom-LossOfControl ;
+	score:asset_property test1:Office-to-StrongRoom-PhysicalLock .
+
+test1:World-to-Office a test1:Entrance ;
+	rdfs:label "World-to-Office" ;
+	score:asset_property test1:World-to-Office-PhysicalControl ;
+	score:asset_property test1:World-to-Office-LossOfControl ;
+	score:asset_property test1:World-to-Office-PhysicalLock .
+
+test1:Office-to-World a test1:Entrance ;
+	rdfs:label "Office-to-World" ;
+	score:asset_property test1:Office-to-World-PhysicalControl ;
+	score:asset_property test1:Office-to-World-LossOfControl ;
+	score:asset_property test1:Office-to-World-PhysicalLock .
+
+## The target system asset relationships
+
+test1:from-World-to-Street a test1:from ;
+	test1:links_from test1:World-to-Street ;
+	test1:links_to test1:World .
+
+test1:to-Street-from-World a test1:to ;
+	test1:links_from test1:World-to-Street ;
+	test1:links_to test1:Street .
+
+test1:from-Street-to-World a test1:from ;
+	test1:links_from test1:Street-to-World ;
+	test1:links_to test1:Street .
+
+test1:to-World-from-Street a test1:to ;
+	test1:links_from test1:Street-to-World ;
+	test1:links_to test1:World .
+
+test1:from-Barn-to-Street a test1:from ;
+	test1:links_from test1:Barn-to-Street ;
+	test1:links_to test1:Barn .
+
+test1:to-Street-from-Barn a test1:to ;
+	test1:links_from test1:Barn-to-Street ;
+	test1:links_to test1:Street .
+
+test1:from-Street-to-Barn a test1:from ;
+	test1:links_from test1:Street-to-Barn ;
+	test1:links_to test1:Street .
+
+test1:to-Barn-from-Street a test1:to ;
+	test1:links_from test1:Street-to-Barn ;
+	test1:links_to test1:Barn .
+
+test1:from-Vestibule-to-Street a test1:from ;
+	test1:links_from test1:Vestibule-to-Street ;
+	test1:links_to test1:Vestibule .
+
+test1:to-Street-from-Vestibule a test1:to ;
+	test1:links_from test1:Vestibule-to-Street ;
+	test1:links_to test1:Street .
+
+test1:from-Street-to-Vestibule a test1:from ;
+	test1:links_from test1:Street-to-Vestibule ;
+	test1:links_to test1:Street .
+
+test1:to-Vestibule-from-Street a test1:to ;
+	test1:links_from test1:Street-to-Vestibule ;
+	test1:links_to test1:Vestibule .
+
+test1:from-Vestibule-to-Office a test1:from ;
+	test1:links_from test1:Vestibule-to-Office ;
+	test1:links_to test1:Vestibule .
+
+test1:to-Office-from-Vestibule a test1:to ;
+	test1:links_from test1:Vestibule-to-Office ;
+	test1:links_to test1:Office .
+
+test1:from-Office-to-Vestibule a test1:from ;
+	test1:links_from test1:Office-to-Vestibule ;
+	test1:links_to test1:Office .
+
+test1:to-Vestibule-from-Office a test1:to ;
+	test1:links_from test1:Office-to-Vestibule ;
+	test1:links_to test1:Vestibule .
+
+test1:from-StrongRoom-to-Office a test1:from ;
+	test1:links_from test1:StrongRoom-to-Office ;
+	test1:links_to test1:StrongRoom .
+
+test1:to-Office-from-StrongRoom a test1:to ;
+	test1:links_from test1:StrongRoom-to-Office ;
+	test1:links_to test1:Office .
+
+test1:from-Office-to-StrongRoom a test1:from ;
+	test1:links_from test1:Office-to-StrongRoom ;
+	test1:links_to test1:Office .
+
+test1:to-StrongRoom-from-Office a test1:to ;
+	test1:links_from test1:Office-to-StrongRoom ;
+	test1:links_to test1:StrongRoom .
+
+test1:from-StrongRoom-to-Office a test1:from ;
+	test1:links_from test1:StrongRoom-to-Office ;
+	test1:links_to test1:StrongRoom .
+
+test1:to-Office-from-StrongRoom a test1:to ;
+	test1:links_from test1:StrongRoom-to-Office ;
+	test1:links_to test1:Office .
+
+test1:from-Office-to-StrongRoom a test1:from ;
+	test1:links_from test1:Office-to-StrongRoom ;
+	test1:links_to test1:Office .
+
+test1:to-StrongRoom-from-Office a test1:to ;
+	test1:links_from test1:Office-to-StrongRoom ;
+	test1:links_to test1:StrongRoom .
+
+# This part defines the causal system model elements
+
+## The asset properties
+
+test1:World-OccupantTW a test1:OccupantTW .
+test1:World-PhysicalIntrusion a test1:PhysicalIntrusion ;
+	score:undermines test1:World-OccupantTW .
+	
+test1:Street-OccupantTW a test1:OccupantTW .
+test1:Street-PhysicalIntrusion a test1:PhysicalIntrusion ;
+	score:undermines test1:Street-OccupantTW .
+
+test1:Vestibule-OccupantTW a test1:OccupantTW .
+test1:Vestibule-PhysicalIntrusion a test1:PhysicalIntrusion ;
+	score:undermines test1:Vestibule-OccupantTW .
+
+test1:Office-OccupantTW a test1:OccupantTW .
+test1:Office-PhysicalIntrusion a test1:PhysicalIntrusion ;
+	score:undermines test1:Office-OccupantTW .
+
+test1:StrongRoom-OccupantTW a test1:OccupantTW .
+test1:StrongRoom-PhysicalIntrusion a test1:PhysicalIntrusion ;
+	score:undermines test1:StrongRoom-OccupantTW .
+
+test1:Barn-OccupantTW a test1:OccupantTW .
+test1:Barn-PhysicalIntrusion a test1:PhysicalIntrusion ;
+	score:undermines test1:Barn-OccupantTW .
+
+test1:World-to-Street-PhysicalControl a test1:PhysicalControl .
+test1:World-to-Street-LossOfControl a test1:LossOfControl ;
+	score:undermines test1:World-to-Street-PhysicalControl .
+	
+test1:Street-to-World-PhysicalControl a test1:PhysicalControl .
+test1:Street-to-World-LossOfControl a test1:LossOfControl ;
+	score:undermines test1:Street-to-World-PhysicalControl .
+
+test1:Barn-to-Street-PhysicalControl a test1:PhysicalControl .
+test1:Barn-to-Street-LossOfControl a test1:LossOfControl ;
+	score:undermines test1:Barn-to-Street-PhysicalControl .
+test1:Barn-to-Street-PhysicalLock a test1:PhysicalLock .
+
+test1:Street-to-Barn-PhysicalControl a test1:PhysicalControl .
+test1:Street-to-Barn-LossOfControl a test1:LossOfControl ;
+	score:undermines test1:Street-to-Barn-PhysicalControl .
+test1:Street-to-Barn-PhysicalLock a test1:PhysicalLock .
+
+test1:Vestibule-to-Street-PhysicalControl a test1:PhysicalControl .
+test1:Vestibule-to-Street-LossOfControl a test1:LossOfControl ;
+	score:undermines test1:Vestibule-to-Street-PhysicalControl .
+test1:Vestibule-to-Street-PhysicalLock a test1:PhysicalLock .
+
+test1:Street-to-Vestibule-PhysicalControl a test1:PhysicalControl .
+test1:Street-to-Vestibule-LossOfControl a test1:LossOfControl ;
+	score:undermines test1:Street-to-Vestibule-PhysicalControl .
+test1:Street-to-Vestibule-PhysicalLock a test1:PhysicalLock .
+
+test1:Vestibule-to-Office-PhysicalControl a test1:PhysicalControl .
+test1:Vestibule-to-Office-LossOfControl a test1:LossOfControl ;
+	score:undermines test1:Vestibule-to-Office-PhysicalControl .
+test1:Vestibule-to-Office-PhysicalLock a test1:PhysicalLock .
+
+test1:Office-to-Vestibule-PhysicalControl a test1:PhysicalControl .
+test1:Office-to-Vestibule-LossOfControl a test1:LossOfControl ;
+	score:undermines test1:Office-to-Vestibule-PhysicalControl .
+test1:Office-to-Vestibule-PhysicalLock a test1:PhysicalLock .
+
+test1:StrongRoom-to-Office-PhysicalControl a test1:PhysicalControl .
+test1:StrongRoom-to-Office-LossOfControl a test1:LossOfControl ;
+	score:undermines test1:StrongRoom-to-Office-PhysicalControl .
+test1:StrongRoom-to-Office-PhysicalLock a test1:PhysicalLock .
+
+test1:Office-to-StrongRoom-PhysicalControl a test1:PhysicalControl .
+test1:Office-to-StrongRoom-LossOfControl a test1:LossOfControl ;
+	score:undermines test1:Office-to-StrongRoom-PhysicalControl .
+test1:Office-to-StrongRoom-PhysicalLock a test1:PhysicalLock .
+
+test1:World-to-Office-PhysicalControl a test1:PhysicalControl .
+test1:World-to-Office-LossOfControl a test1:LossOfControl ;
+	score:undermines test1:World-to-Office-PhysicalControl .
+test1:World-to-Office-PhysicalLock a test1:PhysicalLock .
+
+test1:Office-to-World-PhysicalControl a test1:PhysicalControl .
+test1:Office-to-World-LossOfControl a test1:LossOfControl ;
+	score:undermines test1:Office-to-World-PhysicalControl .
+test1:Office-to-World-PhysicalLock a test1:PhysicalLock .
+
+## The control strategies
+
+test1:Barn-to-Street-LockedDoor a test1:LockedDoor ;
+	score:has_control test1:Barn-to-Street-PhysicalLock .
+	
+test1:Street-to-Barn-LockedDoor a test1:LockedDoor ;
+	score:has_control test1:Street-to-Barn-PhysicalLock .
+
+test1:Vestibule-to-Street-LockedDoor a test1:LockedDoor ;
+	score:has_control test1:Vestibule-to-Street-PhysicalLock .
+
+test1:Street-to-Vestibule-LockedDoor a test1:LockedDoor ;
+	score:has_control test1:Street-to-Vestibule-PhysicalLock .
+
+test1:Vestibule-to-Office-LockedDoor a test1:LockedDoor ;
+	score:has_control test1:Vestibule-to-Office-PhysicalLock .
+
+test1:Office-to-Vestibule-LockedDoor a test1:LockedDoor ;
+	score:has_control test1:Office-to-Vestibule-PhysicalLock .
+
+test1:StrongRoom-to-Office-LockedDoor a test1:LockedDoor ;
+	score:has_control test1:StrongRoom-to-Office-PhysicalLock .
+
+test1:Office-to-StrongRoom-LockedDoor a test1:LockedDoor ;
+	score:has_control test1:Office-to-StrongRoom-PhysicalLock .
+
+test1:World-to-Office-LockedDoor a test1:LockedDoor ;
+	score:has_control test1:World-to-Office-PhysicalLock .
+
+test1:Office-to-World-LockedDoor a test1:LockedDoor ;
+	score:has_control test1:Office-to-World-PhysicalLock .
+
+## The threats
+
+#test1:S.L.SS.3-Street-to-Barn a test1:S.L.SS.3 ;
+#	score:caused_by test1:Street-OccupantTW ;
+#	score:caused_by test1:Street-to-Barn-LockedDoor ;
+#	score:induces test1:Barn-PhysicalIntrusion .
+
+test1:S.L.SS.3-Street-to-Barn a score:CausalEntity ;
+	score:caused_by test1:Street-OccupantTW ;
+	score:caused_by test1:Street-to-Barn-LockedDoor ;
+	score:induces test1:Barn-PhysicalIntrusion .
+	
+test1:S.L.SS.3-Vestibule-to-Office a test1:S.L.SS.3 ;
+	score:caused_by test1:Vestibule-OccupantTW ;
+	score:caused_by test1:Vestibule-to-Office-LockedDoor ;
+	score:induces test1:Office-PhysicalIntrusion .
+
+test1:S.L.SS.3-StrongRoom-to-Office a test1:S.L.SS.3 ;
+	score:caused_by test1:StrongRoom-OccupantTW ;
+	score:caused_by test1:StrongRoom-to-Office-LockedDoor ;
+	score:induces test1:Office-PhysicalIntrusion .
+
+test1:S.L.SS.3-Office-to-StrongRoom a test1:S.L.SS.3 ;
+	score:caused_by test1:Office-OccupantTW ;
+	score:caused_by test1:Office-to-StrongRoom-LockedDoor ;
+	score:induces test1:StrongRoom-PhysicalIntrusion .
+
+test1:S.L.SS.3-World-to-Office a test1:S.L.SS.3 ;
+	score:caused_by test1:World-OccupantTW ;
+	score:caused_by test1:World-to-Office-LockedDoor ;
+	score:induces test1:Office-PhysicalIntrusion .
