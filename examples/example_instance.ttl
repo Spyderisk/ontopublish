@@ -3,9 +3,9 @@
 @prefix rdfg: <http://www.w3.org/2004/03/trix/rdfg-1/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-@prefix send: <http://ontology.spyderisk.org/ns/endpoint#> .
-@prefix score: <http://ontology.spyderisk.org/ns/core#> .
-@prefix my: <http:/ontology.spyderisk.org/p/ex#> .
+@prefix send: <https://ontology.spyderisk.org/ns/endpoint#> .
+@prefix score: <https://ontology.spyderisk.org/ns/core#> .
+@prefix my: <https:/ontology.spyderisk.org/p/ex#> .
 
 my:SSHBastion a score:Asset ;
     rdfs:label "SSH bastion host"@en .
@@ -13,7 +13,7 @@ my:CoreVPN a score:Asset ;
     rdfs:label "core VPN asset"@en .
 my:CommunalLaptop a score:Asset ;
     rdfs:label "a shared laptop used as a test-bed"@en .
-    
+
 my:Laboratory a score:TargetSystem ;
     rdfs:label "scientific laboratory full of computer equipment"@en ;
     score:has_structure my:SSHBastion, my:CoreVPN, my:CommunalLaptop .
@@ -32,7 +32,7 @@ my:AttackerGivenAccessToWorkstation a my:AccessProvided, score:ThreatCause ;
 
 my:ScriptDeployment rdfs:subClassOf score:ThreatCause ;
     rdfs:comment "General script deployment threat cause, by an attacker. The idea is that deployment of a script *at* different assets would have different likelihoods. They are different things, but they are related."@en .
-    
+
 my:ScriptDeployedAtFirewall a my:ScriptDeployment, score:ThreatCause ;
     rdfs:label "attacker deploys malicious script at firewall"@en ;
     score:has_likelihood my:LeastLikely .
@@ -55,9 +55,9 @@ my:NetworkTrafficFromWorkstation a score:Threat ;
     rdfs:label "intense network traffic from workstation"@en ;
     score:involves my:SSHBastion ;
     score:induces  my:NetworkInterfaceUnderLoad ;
-    score:has_cause my:AttackerGivenACcessToWorkstation ;
+    score:has_cause my:AttackerGivenAccessToWorkstation ;
     score:has_likelihood my:MostLikely .
-    
+
 my:ScriptOnFirewall a score:Threat ;
     rdfs:label "attacker's script running on firewall"@en ;
     rdfs:comment "A script running at a high level on a firewall. Firewall rules applying to the rest of the network can be subverted. Further, the attacker resorts to this strategy after their previous access to the firewall over serial port becomes impossible (CCTV now watches it)."@en ;
@@ -66,7 +66,7 @@ my:ScriptOnFirewall a score:Threat ;
     score:has_cause my:ScriptDeployedAtFirewall ;
     score:has_likelihood my:LeastLikely ;
     score:triggered_by my:RestrictAccess .
-    
+
 my:UnknownFriendOfEmployees a score:Threat ;
     rdfs:label "unknown friend of one or more employees"@en ;
     rdfs:comment "this person sometimes finds their way into the lab"@en ;
@@ -78,12 +78,12 @@ my:RestrictAccess a score:ControlStrategy ;
     rdfs:comment "Management elects to closely monitor and restrict access, to ensure unknown parties do not find their way into the laboratory."@en ;
     score:has_control my:CCTVAcrossLab, my:CCTVAgainstFirewall ;
     score:has_likelihood my:MostLikely .
-    
+
 my:FinalResortStrategy a score:ControlStrategy ;
     rdfs:comment "The systems in the laboratory become unusable. The employees panic and turn everything off."@en ;
     score:has_control my:TurnOffSSHBastion, my:TurnOffCoreVPN ;
     score:has_likelihood my:LeastLikely .
-    
+
 my:DeployCCTV a score:AssetControl ;
     rdfs:comment "CCTV is deployed, looking at particular assets in the laboratory."@en .
 my:CCTVAcrossLab a score:AssetControl, my:DeployCCTV ;
@@ -92,39 +92,39 @@ my:CCTVAcrossLab a score:AssetControl, my:DeployCCTV ;
 my:CCTVAgainstFirewall a score:AssetControl ;
     rdfs:comment "CCCV focuses on the core VPN, especially serial ports which have poor access control."@en ;
     score:has_likelihood my:MostLikely .
-    
+
 my:TurnOffMachine a score:AssetControl .
 my:TurnOffSSHBastion a score:AssetControl ;
     score:has_likelihood my:LeastLikely .
 my:TurnOffCoreVPN a score:AssetControl ;
     score:has_likelihood my:MediumLikely .
-    
+
 my:SSHBastionReachability a score:AssetTrustworthiness ;
     score:has_likelihood my:MostLikely .
-    
+
 my:PortsProtected a score:AssetTrustworthiness ;
     score:has_likelihood my:MostLikely .
-    
+
 my:NetworkInterfaceUnderLoad a score:AssetBehaviour ;
     score:undermines my:SSHBastionReachability ;
     score:has_likelihood my:MostLikely .
-    
+
 my:NetworkInterfaceRaceCondition a score:AssetBehaviour ;
     score:undermines my:PortsProtected ;
     score:has_likelihood my:LeastLikely .
-        
+
 my:SSHBastion
-    score:has_property my:SSHBastionReachability ;
-    score:has_property my:NetworkInterfaceUnderLoad .
-    
+    score:has_asset_property my:SSHBastionReachability ;
+    score:has_asset_property my:NetworkInterfaceUnderLoad .
+
 my:CoreVPN
-    score:has_property my:PortsProtected ;
-    score:has_property my:NetworkInterfaceRaceCondition ;
-    score:has_property my:CCTVAgainstFirewall .
+    score:has_asset_property my:PortsProtected ;
+    score:has_asset_property my:NetworkInterfaceRaceCondition ;
+    score:has_asset_property my:CCTVAgainstFirewall .
 
 my:CommunalLaptop
-    score:has_property my:CCTVAcrossLab .
-    
+    score:has_asset_property my:CCTVAcrossLab .
+
 my:laptop_accessed_from a score:AssetRelation ;
     rdfs:domain my:CommunalLaptop ;
     rdfs:range  my:SSHBastion .

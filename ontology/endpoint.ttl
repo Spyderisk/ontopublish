@@ -2,7 +2,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix rdfg: <http://www.w3.org/2004/03/trix/rdfg-1/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix send: <http://ontology.spyderisk.org/ns/endpoint#> .
+@prefix send: <https://ontology.spyderisk.org/ns/endpoint#> .
 
 # Spyderisk ontology semantic endpoint
 #
@@ -57,13 +57,13 @@ send:patch_component a rdf:Property ;
     rdfs:domain send:Version ;
     rdfs:range  xsd:integer ;
     rdfs:label "has patch component"@en .
-    
+
 send:string_representation a rdf:Property ;
     rdfs:domain send:Version ;
     rdfs:range  xsd:string ;
     rdfs:label "version represented as string"@en ;
     rdfs:comment "String representation of the version. This is distinct from the three semantic components (major, minor, patch) as it may include annotations like the version being a release candidate. The string represntation should be seen as implementation-specific, and should not be used to compare different versions."@en .
-    
+
 send:recorded_as a rdf:Property ;
     rdfs:domain send:Version ;
     rdfs:range  send:Version ;
